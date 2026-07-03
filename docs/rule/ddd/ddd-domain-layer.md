@@ -50,11 +50,11 @@ domain/
 
 #### 正确做法
 
-| 场景                              | 正确做法                                             | 错误做法                               |
-| --------------------------------- | ---------------------------------------------------- | -------------------------------------- |
-| 不同类型的价格计算（如国内/国际） | 在 DomainService 或聚合根方法中用 `if/else` 直接处理 | 定义 `PriceStrategy` 接口 + 多个实现类 |
-| 不同乘客类型的费用规则            | 在聚合根方法中用 `if/else` 按乘客类型分支            | 定义 `FeeCalculateStrategy` + 工厂类   |
-| 不同状态下的业务校验              | 在聚合根方法中用状态枚举判断                         | 定义状态模式 + 多个 State 实现类       |
+| 场景                | 正确做法                                    | 错误做法                            |
+|-------------------|-----------------------------------------|---------------------------------|
+| 不同类型的价格计算（如国内/国际） | 在 DomainService 或聚合根方法中用 `if/else` 直接处理 | 定义 `PriceStrategy` 接口 + 多个实现类   |
+| 不同乘客类型的费用规则       | 在聚合根方法中用 `if/else` 按乘客类型分支              | 定义 `FeeCalculateStrategy` + 工厂类 |
+| 不同状态下的业务校验        | 在聚合根方法中用状态枚举判断                          | 定义状态模式 + 多个 State 实现类           |
 
 ```java
 // ✅ 正确：业务逻辑直接写在 DomainService/聚合根中，一目了然
@@ -81,11 +81,11 @@ public FeeCalculateResult calculateFee(FeeCalculateParam param) {
 
 ### 1.4 Param 对象规范
 
-| 规则项 | 规范                                        |
-| ------ | ------------------------------------------- |
-| 类名   | `{方法名}Param`                             |
-| 继承   | 必须继承 `BaseParam` 基类                   |
-| 用途   | DomainService 方法入参、聚合根/实体方法入参 |
+| 规则项 | 规范                            |
+|-----|-------------------------------|
+| 类名  | `{方法名}Param`                  |
+| 继承  | 必须继承 `BaseParam` 基类           |
+| 用途  | DomainService 方法入参、聚合根/实体方法入参 |
 
 ```java
 /**
@@ -103,11 +103,11 @@ public class ConfirmPaymentParam extends BaseParam {
 
 ### 1.5 Result 对象规范
 
-| 规则项 | 规范                  |
-| ------ | --------------------- |
-| 类名   | `{方法名}Result`      |
-| 继承   | 必须继承 `BaseResult` |
-| 特点   | 可以有充血方法        |
+| 规则项 | 规范                |
+|-----|-------------------|
+| 类名  | `{方法名}Result`     |
+| 继承  | 必须继承 `BaseResult` |
+| 特点  | 可以有充血方法           |
 
 **使用场景**：
 
@@ -134,20 +134,20 @@ public class FeeCalculateResult extends BaseResult {
 
 ### 1.6 异常处理规范
 
-| 异常类型             | 使用位置      | 说明                          |
-| -------------------- | ------------- | ----------------------------- |
-| `AggregateException` | 聚合根、实体  | 聚合根/实体内部校验失败时抛出 |
-| `BizException`       | DomainService | 业务逻辑校验失败时使用        |
+| 异常类型                 | 使用位置          | 说明              |
+|----------------------|---------------|-----------------|
+| `AggregateException` | 聚合根、实体        | 聚合根/实体内部校验失败时抛出 |
+| `BizException`       | DomainService | 业务逻辑校验失败时使用     |
 
 ### 1.7 Repository 接口定义规范
 
-| 规则项   | 规范                                                                            | 示例                                                                      |
-| -------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| 规则项  | 规范                                                     | 示例                                                                    |
+|------|--------------------------------------------------------|-----------------------------------------------------------------------|
 | 接口名称 | `{业务名}Repository`，与对应 DomainService 的业务名前缀保持一致，方便查找和对应 | DomainService 为 `OrderDomainService`，则 Repository 为 `OrderRepository` |
-| 继承     | 必须继承 `AggregateRepository` 基类                                             | —                                                                         |
-| 定义位置 | domain 层                                                                       | —                                                                         |
-| 实现位置 | infrastructure 层                                                               | —                                                                         |
-| 方法命名 | 必须为动词（如 `save`、`query`）                                                | —                                                                         |
+| 继承   | 必须继承 `AggregateRepository` 基类                          | —                                                                     |
+| 定义位置 | domain 层                                               | —                                                                     |
+| 实现位置 | infrastructure 层                                       | —                                                                     |
+| 方法命名 | 必须为动词（如 `save`、`query`）                                | —                                                                     |
 
 **核心职责**：
 
@@ -291,13 +291,13 @@ public class SalePriceCalculateQueryAppServiceImpl implements SalePriceCalculate
 
 #### 命名规范
 
-| 规则项     | 规范                                       | 示例                            |
-| ---------- | ------------------------------------------ | ------------------------------- |
-| 接口命名   | `{聚合根名}DomainService`                  | `OrderDomainService`            |
-| 实现类命名 | `{聚合根名}DomainServiceImpl`              | `OrderDomainServiceImpl`        |
-| 方法命名   | 使用业务动词，禁止技术动词                 | `confirmPayment`、`cancelOrder` |
-| 参数       | `{方法名}Param`，继承 `BaseParam`          | `ConfirmPaymentParam`           |
-| 返回值     | `ResultDO<Void>` 或 `ResultDO<聚合根类型>` | `ResultDO<Void>`                |
+| 规则项   | 规范                                   | 示例                             |
+|-------|--------------------------------------|--------------------------------|
+| 接口命名  | `{聚合根名}DomainService`                | `OrderDomainService`           |
+| 实现类命名 | `{聚合根名}DomainServiceImpl`            | `OrderDomainServiceImpl`       |
+| 方法命名  | 使用业务动词，禁止技术动词                        | `confirmPayment`、`cancelOrder` |
+| 参数    | `{方法名}Param`，继承 `BaseParam`          | `ConfirmPaymentParam`          |
+| 返回值   | `ResultDO<Void>` 或 `ResultDO<聚合根类型>` | `ResultDO<Void>`               |
 
 #### 角色定位
 
@@ -392,12 +392,12 @@ public class OrderDomainServiceImpl implements OrderDomainService {
 
 #### 命名规范
 
-| 规则项   | 规范                                         | 示例                            |
-| -------- | -------------------------------------------- | ------------------------------- |
-| 类名     | `{名词}Aggregate`，继承 `BaseAggregate`      | `OrderAggregate`                |
-| 方法命名 | 必须是动词                                   | `confirmPayment`、`cancelOrder` |
-| 参数     | `{方法名}Param` 继承 `BaseParam`，或基础类型 | `ConfirmPaymentParam`           |
-| 返回值   | 基础数据类型                                 | `void`、`boolean`、`Long`       |
+| 规则项  | 规范                                 | 示例                             |
+|------|------------------------------------|--------------------------------|
+| 类名   | `{名词}Aggregate`，继承 `BaseAggregate` | `OrderAggregate`               |
+| 方法命名 | 必须是动词                              | `confirmPayment`、`cancelOrder` |
+| 参数   | `{方法名}Param` 继承 `BaseParam`，或基础类型  | `ConfirmPaymentParam`          |
+| 返回值  | 基础数据类型                             | `void`、`boolean`、`Long`        |
 
 #### 四种方法类型
 
@@ -478,14 +478,14 @@ public boolean isPaymentConfirmed() {
 
 Entity 遵循写模式聚合根开发规范，核心差异如下：
 
-| 规则项       | 规范                                               | 示例              |
-| ------------ | -------------------------------------------------- | ----------------- |
-| 类名         | `{名词}Entity`，继承 `BaseEntity`                  | `OrderItemEntity` |
-| 方法命名     | 必须是动词                                         | `updatePrice`     |
-| 参数         | `{方法名}Param` 继承 `BaseParam`，或基础类型       | —                 |
-| 返回值       | 基础数据类型                                       | —                 |
-| 属性类型     | 使用普通类型（如 `Long`、`String`、领域枚举）      | —                 |
-| 异常处理     | 抛出 `AggregateException`                          | —                 |
+| 规则项  | 规范                                | 示例                |
+|------|-----------------------------------|-------------------|
+| 类名   | `{名词}Entity`，继承 `BaseEntity`      | `OrderItemEntity` |
+| 方法命名 | 必须是动词                             | `updatePrice`     |
+| 参数   | `{方法名}Param` 继承 `BaseParam`，或基础类型 | —                 |
+| 返回值  | 基础数据类型                            | —                 |
+| 属性类型 | 使用普通类型（如 `Long`、`String`、领域枚举）    | —                 |
+| 异常处理 | 抛出 `AggregateException`           | —                 |
 
 ```java
 @Data
@@ -510,21 +510,21 @@ public class OrderItemEntity extends BaseEntity<Long> {
 
 #### 核心特征
 
-| 特性     | Value Object   | Entity         |
-| -------- | -------------- | -------------- |
-| 标识     | 无             | 有唯一 ID      |
-| 相等性   | 属性值相等     | ID 相等        |
-| 生命周期 | 可自由创建销毁 | 有明确生命周期 |
-| 可变性   | **不可变**     | 可变（写模式） |
+| 特性   | Value Object | Entity  |
+|------|--------------|---------|
+| 标识   | 无            | 有唯一 ID  |
+| 相等性  | 属性值相等        | ID 相等   |
+| 生命周期 | 可自由创建销毁      | 有明确生命周期 |
+| 可变性  | **不可变**      | 可变（写模式） |
 
 #### 命名规范
 
-| 规则项   | 规范                                         | 示例                      |
-| -------- | -------------------------------------------- | ------------------------- |
-| 类名     | `{名词}Value`，继承 `BaseValue`              | `PassengerValue`          |
-| 方法命名 | 必须是动词，且为**计算类、判断类**操作       | `passengerAge`、`isAdult` |
-| 参数     | `{方法名}Param` 继承 `BaseParam`，或基础类型 | —                         |
-| 返回值   | 基础数据类型                                 | —                         |
+| 规则项  | 规范                                | 示例                       |
+|------|-----------------------------------|--------------------------|
+| 类名   | `{名词}Value`，继承 `BaseValue`        | `PassengerValue`         |
+| 方法命名 | 必须是动词，且为**计算类、判断类**操作             | `passengerAge`、`isAdult` |
+| 参数   | `{方法名}Param` 继承 `BaseParam`，或基础类型 | —                        |
+| 返回值  | 基础数据类型                            | —                        |
 
 #### 在架构中的位置
 
@@ -553,11 +553,11 @@ public class PassengerValue extends BaseValue {
 
 ### 2.5 Repository 写模式规范
 
-| 规则项   | 规范                                                       |
-| -------- | ---------------------------------------------------------- |
-| 方法命名 | 使用动词，如 `save`、`query`                               |
-| 参数     | 聚合根对象（如 `OrderAggregate`）或查询对象                |
-| 返回值   | `ResultDO<Void>`（save）或 `ResultDO<聚合根类型>`（query） |
+| 规则项  | 规范                                               |
+|------|--------------------------------------------------|
+| 方法命名 | 使用动词，如 `save`、`query`                            |
+| 参数   | 聚合根对象（如 `OrderAggregate`）或查询对象                   |
+| 返回值  | `ResultDO<Void>`（save）或 `ResultDO<聚合根类型>`（query） |
 
 ```java
 public interface OrderRepository extends AggregateRepository<OrderAggregate, Long> {
@@ -587,11 +587,11 @@ public interface OrderRepository extends AggregateRepository<OrderAggregate, Lon
 
 ### 3.1 Repository 读模式规范
 
-| 规则项   | 规范                                           | 示例                                                         |
-| -------- | ---------------------------------------------- | ------------------------------------------------------------ |
-| 方法命名 | 使用动词明确查询意图，避免抽象词汇             | `queryOrderList`、`getOrderDetail`                           |
-| 参数     | `{方法名}Query` 或基础数据类型                 | `QueryOrderListQuery`、`Long`                                |
-| 返回值   | `ResultDO<聚合根>` 或 `ResultDO<List<聚合根>>` | `ResultDO<OrderAggregate>`、`ResultDO<List<OrderAggregate>>` |
+| 规则项  | 规范                                      | 示例                                                          |
+|------|-----------------------------------------|-------------------------------------------------------------|
+| 方法命名 | 使用动词明确查询意图，避免抽象词汇                       | `queryOrderList`、`getOrderDetail`                           |
+| 参数   | `{方法名}Query` 或基础数据类型                    | `QueryOrderListQuery`、`Long`                                |
+| 返回值  | `ResultDO<聚合根>` 或 `ResultDO<List<聚合根>>` | `ResultDO<OrderAggregate>`、`ResultDO<List<OrderAggregate>>` |
 
 ```java
 public interface OrderRepository extends AggregateRepository<OrderAggregate, Long> {
@@ -621,13 +621,13 @@ public interface OrderRepository extends AggregateRepository<OrderAggregate, Lon
 
 #### 命名规范
 
-| 规则项     | 规范                       | 示例                             |
-| ---------- | -------------------------- | -------------------------------- |
-| 接口命名   | `{动词}DomainService`      | `SearchControlDomainService`     |
-| 实现类命名 | `{动词}DomainServiceImpl`  | `SearchControlDomainServiceImpl` |
-| 方法命名   | 动词                       | `searchControl`                  |
-| 参数       | `{方法名}Param`            | `SearchControlParam`             |
-| 返回值     | `ResultDO<{方法名}Result>` | `ResultDO<SearchControlResult>`  |
+| 规则项   | 规范                      | 示例                               |
+|-------|-------------------------|----------------------------------|
+| 接口命名  | `{动词}DomainService`     | `SearchControlDomainService`     |
+| 实现类命名 | `{动词}DomainServiceImpl` | `SearchControlDomainServiceImpl` |
+| 方法命名  | 动词                      | `searchControl`                  |
+| 参数    | `{方法名}Param`            | `SearchControlParam`             |
+| 返回值   | `ResultDO<{方法名}Result>` | `ResultDO<SearchControlResult>`  |
 
 #### 代码模板
 
@@ -680,13 +680,13 @@ public class SearchControlDomainServiceImpl implements SearchControlDomainServic
 
 #### 命名规范
 
-| 规则项     | 规范                       | 示例                              |
-| ---------- | -------------------------- | --------------------------------- |
-| 接口命名   | `{动词}DomainService`      | `CalculateBonusDomainService`     |
-| 实现类命名 | `{动词}DomainServiceImpl`  | `CalculateBonusDomainServiceImpl` |
-| 方法命名   | 动词                       | `calculateBonus`                  |
-| 参数       | `{方法名}Param`            | `CalculateBonusParam`             |
-| 返回值     | `ResultDO<{方法名}Result>` | `ResultDO<CalculateBonusResult>`  |
+| 规则项   | 规范                      | 示例                                |
+|-------|-------------------------|-----------------------------------|
+| 接口命名  | `{动词}DomainService`     | `CalculateBonusDomainService`     |
+| 实现类命名 | `{动词}DomainServiceImpl` | `CalculateBonusDomainServiceImpl` |
+| 方法命名  | 动词                      | `calculateBonus`                  |
+| 参数    | `{方法名}Param`            | `CalculateBonusParam`             |
+| 返回值   | `ResultDO<{方法名}Result>` | `ResultDO<CalculateBonusResult>`  |
 
 #### 方法实现流程
 
@@ -764,9 +764,9 @@ public class CalculateBonusDomainServiceImpl implements CalculateBonusDomainServ
 
 #### 命名规范
 
-| 规则项 | 规范                              |
-| ------ | --------------------------------- |
-| 参数   | `{方法名}Param`，继承 `BaseParam` |
+| 规则项 | 规范                          |
+|-----|-----------------------------|
+| 参数  | `{方法名}Param`，继承 `BaseParam` |
 | 返回值 | `Result` 类型，`{方法名}Result`   |
 
 #### 代码模板

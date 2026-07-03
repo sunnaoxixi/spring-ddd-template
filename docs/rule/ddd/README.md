@@ -16,15 +16,15 @@
 
 ## 📁 文档结构
 
-| 文件                                                       | 说明                                                           |
-| ---------------------------------------------------------- | -------------------------------------------------------------- |
-| [DDD.md](DDD.md)                                           | **总览**：架构设计原则、工程结构、四种开发模式、模式选择决策树 |
+| 文件                                                         | 说明                                   |
+|------------------------------------------------------------|--------------------------------------|
+| [DDD.md](DDD.md)                                           | **总览**：架构设计原则、工程结构、四种开发模式、模式选择决策树    |
 | [ddd-domain-layer.md](ddd-domain-layer.md)                 | **领域层规范**：聚合根、实体、值对象、领域服务、仓储接口       |
-| [ddd-application-layer.md](ddd-application-layer.md)       | **应用层规范**：场景编排、Assembler、AppService                |
-| [ddd-adaptor-layer.md](ddd-adaptor-layer.md)               | **适配器层规范**：Input/Output Adaptor、防腐层                 |
-| [ddd-infrastructure-layer.md](ddd-infrastructure-layer.md) | **基础设施层规范**：仓储实现、PO、Mapper、Converter            |
-| [ddd-client-layer.md](ddd-client-layer.md)                 | **Client 层规范**：对外 RPC 接口定义、DTO                      |
-| [ddd-model-layer.md](ddd-model-layer.md)                   | **Model 层规范**：内部共享模型、枚举                           |
+| [ddd-application-layer.md](ddd-application-layer.md)       | **应用层规范**：场景编排、Assembler、AppService  |
+| [ddd-adaptor-layer.md](ddd-adaptor-layer.md)               | **适配器层规范**：Input/Output Adaptor、防腐层  |
+| [ddd-infrastructure-layer.md](ddd-infrastructure-layer.md) | **基础设施层规范**：仓储实现、PO、Mapper、Converter |
+| [ddd-client-layer.md](ddd-client-layer.md)                 | **Client 层规范**：对外 RPC 接口定义、DTO       |
+| [ddd-model-layer.md](ddd-model-layer.md)                   | **Model 层规范**：内部共享模型、枚举              |
 
 ## 🚀 快速开始
 
@@ -81,17 +81,9 @@
 
 ## 🔀 四种开发模式
 
-| 模式              | 聚合根/实体       | 业务逻辑位置    | 修改状态 | 典型场景           |
-| ----------------- | ----------------- | --------------- | -------- | ------------------ |
-| **写模式**        | ✅ 有             | 聚合根/实体方法 | ✅ 是    | 订单创建、状态变更 |
-| **读模式**        | ✅ 有（数据载体） | 无              | ❌ 否    | 订单查询           |
-| **规则+计算模式** | ✅ 有             | 聚合根/实体方法 | ❌ 否    | 补贴规则匹配与计算 |
-| **纯计算模式**    | ❌ 无             | DomainService   | ❌ 否    | 费用计算、视图渲染 |
-
-## 🤝 Contributing
-
-欢迎提交 Issue 和 PR！如果你在实践中有更好的 DDD 落地经验，欢迎贡献。
-
-## 📄 License
-
-[MIT](LICENSE)
+| 模式          | 聚合根/实体    | 业务逻辑位置        | 修改状态 | 典型场景      |
+|-------------|-----------|---------------|------|-----------|
+| **写模式**     | ✅ 有       | 聚合根/实体方法      | ✅ 是  | 订单创建、状态变更 |
+| **读模式**     | ✅ 有（数据载体） | 无             | ❌ 否  | 订单查询      |
+| **规则+计算模式** | ✅ 有       | 聚合根/实体方法      | ❌ 否  | 补贴规则匹配与计算 |
+| **纯计算模式**   | ❌ 无       | DomainService | ❌ 否  | 费用计算、视图渲染 |
