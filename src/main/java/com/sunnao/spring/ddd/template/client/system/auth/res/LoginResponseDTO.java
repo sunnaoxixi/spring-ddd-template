@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 登录响应DTO
@@ -30,6 +31,6 @@ public class LoginResponseDTO extends BaseDto {
     /** 昵称 */
     private String nickname;
 
-    /** 角色：1-管理员，0-普通用户 */
-    private Integer role;
+    /** 角色标识集合（如 ["admin","user"]） */
+    private List<String> roles;
 }

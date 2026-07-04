@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 用户 DTO
@@ -33,8 +34,8 @@ public class UserDTO extends BaseDto {
     /** 状态：1-启用，0-禁用 */
     private Integer status;
 
-    /** 角色：1-管理员，0-普通用户 */
-    private Integer role;
+    /** 角色标识集合（如 ["admin","user"]） */
+    private List<String> roles;
 
     /** 头像URL */
     private String avatar;

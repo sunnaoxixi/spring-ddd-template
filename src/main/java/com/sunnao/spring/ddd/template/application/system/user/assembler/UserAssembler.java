@@ -15,7 +15,6 @@ import com.sunnao.spring.ddd.template.domain.system.user.model.param.CreateUserP
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.DeleteUserParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UpdateUserParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UserQuery;
-import com.sunnao.spring.ddd.template.model.system.user.UserRoleEnum;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
 
 import java.util.Collections;
@@ -39,8 +38,7 @@ public class UserAssembler {
         param.setNickname(requestDTO.getNickname());
         param.setPassword(requestDTO.getPassword());
         param.setAvatar(requestDTO.getAvatar());
-        // client 角色码 → model 枚举
-        param.setRole(UserRoleEnum.getByCode(requestDTO.getRole()));
+        param.setRoleIds(requestDTO.getRoleIds());
         param.setOperatorId(operatorId);
         return param;
     }
@@ -105,9 +103,7 @@ public class UserAssembler {
         if (entity.getStatus() != null) {
             dto.setStatus(entity.getStatus().getCode());
         }
-        if (entity.getRole() != null) {
-            dto.setRole(entity.getRole().getCode());
-        }
+        dto.setRoles(entity.getRoles() == null ? Collections.emptyList() : entity.getRoles());
         dto.setCreateAt(entity.getCreateAt());
         dto.setUpdateAt(entity.getUpdateAt());
         return dto;

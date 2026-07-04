@@ -11,6 +11,7 @@ import com.sunnao.spring.ddd.template.domain.system.user.model.param.UserQuery;
  * <p>
  * 定义在 domain 层，实现在 infrastructure 层。
  * 继承基类的 query(Long) / query(UserQuery) / queryPage(PageQuery) / save 能力。
+ * 用户的角色数据归属 role 领域（RoleRepository），本仓储不感知。
  */
 public interface UserRepository extends AggregateRepository<UserAggregate, UserQuery> {
 

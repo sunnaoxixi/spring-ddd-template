@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serial;
+import java.util.List;
 
 /**
  * 当前登录用户信息响应DTO
@@ -30,8 +31,8 @@ public class GetLoginUserResponseDTO extends BaseDto {
     /** 头像URL */
     private String avatar;
 
-    /** 角色：1-管理员，0-普通用户 */
-    private Integer role;
+    /** 角色标识集合（如 ["admin","user"]） */
+    private List<String> roles;
 
     /** 状态：1-启用，0-禁用 */
     private Integer status;

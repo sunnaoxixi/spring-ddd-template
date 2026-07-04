@@ -1,6 +1,5 @@
 package com.sunnao.spring.ddd.template.client.system.user.req;
 
-import com.sunnao.spring.ddd.template.client.system.user.enums.UserRoleEnum;
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
@@ -8,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -35,8 +35,8 @@ public class CreateUserRequestDTO extends BaseDto {
     /** 头像URL */
     private String avatar;
 
-    /** 角色：1-管理员，0-普通用户；为空时默认普通用户 */
-    private Integer role;
+    /** 角色ID集合；为空时默认授予 user 角色 */
+    private List<Long> roleIds;
 
     @Override
     public ResultDO<Void> check() {
@@ -52,8 +52,8 @@ public class CreateUserRequestDTO extends BaseDto {
         if (password == null || password.length() < 6) {
             return ResultDO.buildFailResult("PARAM_ERROR", "密码长度不能小于6位");
         }
-        if (role != null && UserRoleEnum.getByCode(role) == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色不合法");
+        if (roleIds != null && roleIds.stream().anyMatch(id -> id == null)) {
+            return ResultDO.buildFailResult("PARAM_ERROR", "角色ID不能包含空值");
         }
         return ResultDO.buildSuccessResult();
     }

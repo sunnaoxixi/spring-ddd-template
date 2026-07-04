@@ -7,7 +7,6 @@ import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.ChangeUserStatusParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.CreateUserParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UpdateUserParam;
-import com.sunnao.spring.ddd.template.model.system.user.UserRoleEnum;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,7 +52,6 @@ public class UserAggregate extends BaseAggregate {
         entity.setPassword(encodedPassword);
         entity.setAvatar(param.getAvatar());
         entity.setStatus(UserStatusEnum.ENABLED);
-        entity.setRole(param.getRole() != null ? param.getRole() : UserRoleEnum.USER);
         entity.setCreateBy(param.getOperatorId());
         entity.setUpdateBy(param.getOperatorId());
 

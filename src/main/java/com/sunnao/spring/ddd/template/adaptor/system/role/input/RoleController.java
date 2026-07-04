@@ -1,0 +1,145 @@
+package com.sunnao.spring.ddd.template.adaptor.system.role.input;
+
+import cn.dev33.satoken.annotation.SaCheckRole;
+import com.sunnao.spring.ddd.template.client.system.role.RoleAppService;
+import com.sunnao.spring.ddd.template.client.system.role.RoleQueryAppService;
+import com.sunnao.spring.ddd.template.client.system.role.req.AssignPermissionRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.AssignUserRoleRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.CreateRoleRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.DeleteRoleRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.GetRoleDetailRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.QueryRolePageRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.UpdateRoleRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.AssignPermissionResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.AssignUserRoleResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.CreateRoleResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.DeleteRoleResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.QueryRolePageResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.UpdateRoleResponseDTO;
+import com.sunnao.spring.ddd.template.common.result.ResultDO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 角色管理 Controller（Input Adaptor）
+ * 职责：接收 HTTP 请求，转换参数后调用应用层服务，禁止编写业务逻辑
+ * <p>
+ * 角色管理仅管理员可访问（Sa-Token 角色鉴权）。
+ */
+@Tag(name = "角色管理", description = "角色增删改查、分配权限、给用户授角色（仅管理员）")
+@SaCheckRole("admin")
+@RestController
+@RequestMapping("/api/system/roles")
+public class RoleController {
+
+    @Resource
+    private RoleAppService roleAppService;
+
+    @Resource
+    private RoleQueryAppService roleQueryAppService;
+
+    /**
+     * 创建角色
+     */
+    @Operation(summary = "创建角色")
+    @PostMapping
+    public ResultDO<CreateRoleResponseDTO> createRole(@RequestBody CreateRoleRequestDTO requestDTO) {
+        return roleAppService.createRole(requestDTO);
+    }
+
+    /**
+     * 修改角色（名称/状态/备注）
+     */
+    @Operation(summary = "修改角色", description = "名称/状态/备注，roleKey 不可变更")
+    @PutMapping("/{id}")
+    public ResultDO<UpdateRoleResponseDTO> updateRole(@PathVariable("id") Long id,
+                                                      @RequestBody UpdateRoleRequestDTO requestDTO) {
+        requestDTO.setRoleId(id);
+        return roleAppService.updateRole(requestDTO);
+    }
+
+    /**
+     * 删除角色（逻辑删除，内置角色不可删除）
+     */
+    @Operation(summary = "删除角色", description = "逻辑删除，内置角色（admin/user）不可删除")
+    @DeleteMapping("/{id}")
+    public ResultDO<DeleteRoleResponseDTO> deleteRole(@PathVariable("id") Long id) {
+        DeleteRoleRequestDTO requestDTO = new DeleteRoleRequestDTO();
+        requestDTO.setRoleId(id);
+        return roleAppService.deleteRole(requestDTO);
+    }
+
+    /**
+     * 给角色分配权限（全量覆盖）
+     */
+    @Operation(summary = "分配权限", description = "全量覆盖角色的权限集合")
+    @PutMapping("/{id}/permissions")
+    public ResultDO<AssignPermissionResponseDTO> assignPermissions(@PathVariable("id") Long id,
+                                                                   @RequestBody AssignPermissionRequestDTO requestDTO) {
+        requestDTO.setRoleId(id);
+        return roleAppService.assignPermissions(requestDTO);
+    }
+
+    /**
+     * 给用户授予角色（全量覆盖）
+     */
+    @Operation(summary = "给用户授角色", description = "全量覆盖用户的角色集合")
+    @PutMapping("/users/{userId}")
+    public ResultDO<AssignUserRoleResponseDTO> assignUserRoles(@PathVariable("userId") Long userId,
+                                                               @RequestBody AssignUserRoleRequestDTO requestDTO) {
+        requestDTO.setUserId(userId);
+        return roleAppService.assignUserRoles(requestDTO);
+    }
+
+    /**
+     * 获取角色详情（含权限 key 集合）
+     */
+    @Operation(summary = "获取角色详情", description = "含权限 key 集合")
+    @GetMapping("/{id}")
+    public ResultDO<GetRoleDetailResponseDTO> getRoleDetail(@PathVariable("id") Long id) {
+        GetRoleDetailRequestDTO requestDTO = new GetRoleDetailRequestDTO();
+        requestDTO.setRoleId(id);
+        return roleQueryAppService.getRoleDetail(requestDTO);
+    }
+
+    /**
+     * 分页查询角色列表
+     */
+    @Operation(summary = "分页查询角色列表")
+    @GetMapping("/page")
+    public ResultDO<QueryRolePageResponseDTO> queryRolePage(
+            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "roleKey", required = false) String roleKey,
+            @RequestParam(value = "roleName", required = false) String roleName,
+            @RequestParam(value = "status", required = false) Integer status) {
+        QueryRolePageRequestDTO requestDTO = new QueryRolePageRequestDTO();
+        requestDTO.setPageNum(pageNum);
+        requestDTO.setPageSize(pageSize);
+        requestDTO.setRoleKey(roleKey);
+        requestDTO.setRoleName(roleName);
+        requestDTO.setStatus(status);
+        return roleQueryAppService.queryRolePage(requestDTO);
+    }
+
+    /**
+     * 查询全部权限点（供分配权限时选择）
+     */
+    @Operation(summary = "查询全部权限点")
+    @GetMapping("/permissions")
+    public ResultDO<QueryPermissionListResponseDTO> queryPermissionList() {
+        return roleQueryAppService.queryPermissionList();
+    }
+}

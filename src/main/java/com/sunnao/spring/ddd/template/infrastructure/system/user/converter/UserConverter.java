@@ -3,7 +3,6 @@ package com.sunnao.spring.ddd.template.infrastructure.system.user.converter;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 import com.sunnao.spring.ddd.template.infrastructure.system.user.mysql.po.UserPO;
-import com.sunnao.spring.ddd.template.model.system.user.UserRoleEnum;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
 
 import java.util.Collections;
@@ -31,9 +30,8 @@ public class UserConverter {
         entity.setNickname(po.getNickname());
         entity.setPassword(po.getPassword());
         entity.setAvatar(po.getAvatar());
-        // 枚举转换：数据库 Integer → 领域枚举
+        // 枚举转换：数据库 Integer → 领域枚举（roles 归属 role 领域，由应用层按需填充）
         entity.setStatus(UserStatusEnum.getByCode(po.getStatus()));
-        entity.setRole(UserRoleEnum.getByCode(po.getRole()));
         entity.setCreateAt(po.getCreateAt());
         entity.setUpdateAt(po.getUpdateAt());
         entity.setCreateBy(po.getCreateBy());
@@ -61,9 +59,6 @@ public class UserConverter {
         // 枚举转换：领域枚举 → 数据库 Integer
         if (entity.getStatus() != null) {
             po.setStatus(entity.getStatus().getCode());
-        }
-        if (entity.getRole() != null) {
-            po.setRole(entity.getRole().getCode());
         }
         po.setCreateAt(entity.getCreateAt());
         po.setUpdateAt(entity.getUpdateAt());

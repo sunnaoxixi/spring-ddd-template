@@ -7,6 +7,8 @@ import com.sunnao.spring.ddd.template.domain.system.auth.model.param.LoginParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 
+import java.util.Collections;
+
 /**
  * 认证转换器
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
@@ -36,9 +38,7 @@ public class AuthAssembler {
         responseDTO.setTokenValue(tokenValue);
         responseDTO.setUserId(entity.getId());
         responseDTO.setNickname(entity.getNickname());
-        if (entity.getRole() != null) {
-            responseDTO.setRole(entity.getRole().getCode());
-        }
+        responseDTO.setRoles(entity.getRoles() == null ? Collections.emptyList() : entity.getRoles());
         return responseDTO;
     }
 
@@ -55,9 +55,7 @@ public class AuthAssembler {
         responseDTO.setEmail(entity.getEmail());
         responseDTO.setNickname(entity.getNickname());
         responseDTO.setAvatar(entity.getAvatar());
-        if (entity.getRole() != null) {
-            responseDTO.setRole(entity.getRole().getCode());
-        }
+        responseDTO.setRoles(entity.getRoles() == null ? Collections.emptyList() : entity.getRoles());
         if (entity.getStatus() != null) {
             responseDTO.setStatus(entity.getStatus().getCode());
         }

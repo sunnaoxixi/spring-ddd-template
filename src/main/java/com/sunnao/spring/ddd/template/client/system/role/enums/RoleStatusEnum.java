@@ -1,28 +1,28 @@
-package com.sunnao.spring.ddd.template.client.system.user.enums;
+package com.sunnao.spring.ddd.template.client.system.role.enums;
 
 import lombok.Getter;
 
 /**
- * 用户角色枚举（对外）
+ * 角色状态枚举（对外）
  * <p>
  * client 层禁止依赖内部 model 层，故独立定义，
  * 与内部枚举的转换由 application 层 Assembler 完成。
  */
 @Getter
-public enum UserRoleEnum {
+public enum RoleStatusEnum {
 
-    /** 管理员 */
-    ADMIN(1, "管理员"),
+    /** 启用 */
+    ENABLED(1, "启用"),
 
-    /** 普通用户 */
-    USER(0, "普通用户"),
+    /** 禁用 */
+    DISABLED(0, "禁用"),
     ;
 
     private final Integer code;
 
     private final String description;
 
-    UserRoleEnum(Integer code, String description) {
+    RoleStatusEnum(Integer code, String description) {
         this.code = code;
         this.description = description;
     }
@@ -33,13 +33,13 @@ public enum UserRoleEnum {
      * @param code 码值
      * @return 枚举，未匹配返回 null
      */
-    public static UserRoleEnum getByCode(Integer code) {
+    public static RoleStatusEnum getByCode(Integer code) {
         if (code == null) {
             return null;
         }
-        for (UserRoleEnum role : values()) {
-            if (role.code.equals(code)) {
-                return role;
+        for (RoleStatusEnum status : values()) {
+            if (status.code.equals(code)) {
+                return status;
             }
         }
         return null;

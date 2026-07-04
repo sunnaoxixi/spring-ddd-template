@@ -1,10 +1,13 @@
 package com.sunnao.spring.ddd.template.domain.system.user.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
 import com.sunnao.spring.ddd.template.common.exception.BizException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
+import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
+import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.domain.system.user.event.UserCreatedEvent;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
@@ -16,6 +19,8 @@ import com.sunnao.spring.ddd.template.domain.system.user.repository.UserReposito
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 用户领域服务实现（写模式）
@@ -29,6 +34,9 @@ public class UserDomainServiceImpl implements UserDomainService {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private RoleRepository roleRepository;
 
     @Resource
     private DomainEventPublisher domainEventPublisher;
@@ -47,15 +55,24 @@ public class UserDomainServiceImpl implements UserDomainService {
                 return ResultDO.buildFailResult("EMAIL_DUPLICATE", "邮箱已被注册");
             }
 
-            // 3. 密码加密后构建聚合根
+            // 3. 解析角色（未指定时默认授予 user 角色）
+            List<RoleAggregate> roles = resolveRoles(param.getRoleIds());
+            if (roles.isEmpty()) {
+                return ResultDO.buildFailResult("ROLE_NOT_FOUND", "存在无效的角色ID");
+            }
+
+            // 4. 密码加密后构建聚合根
             String encodedPassword = BCrypt.hashpw(param.getPassword());
             UserAggregate aggregate = UserAggregate.create(param, encodedPassword);
 
-            // 4. 持久化（仓储回填ID）
+            // 5. 持久化（仓储回填ID）+ 建立用户角色关联
             userRepository.save(aggregate);
-
-            // 5. 发布领域事件（异步消费，失败不影响主流程）
             UserEntity entity = aggregate.getUserEntity();
+            roleRepository.saveUserRoles(entity.getId(),
+                    roles.stream().map(role -> role.getRoleEntity().getId()).toList());
+            entity.setRoles(roles.stream().map(role -> role.getRoleEntity().getRoleKey()).toList());
+
+            // 6. 发布领域事件（异步消费，失败不影响主流程）
             domainEventPublisher.publish(new UserCreatedEvent(
                     entity.getId(), entity.getEmail(), entity.getNickname(), param.getOperatorId()));
 
@@ -149,8 +166,9 @@ public class UserDomainServiceImpl implements UserDomainService {
                 return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
             }
 
-            // 3. 逻辑删除
+            // 3. 逻辑删除 + 清理用户角色关联
             userRepository.delete(param.getUserId(), param.getOperatorId());
+            roleRepository.saveUserRoles(param.getUserId(), List.of());
 
             return ResultDO.buildSuccessResult();
         } catch (BizException e) {
@@ -162,5 +180,25 @@ public class UserDomainServiceImpl implements UserDomainService {
         } finally {
             levelLock.unlock();
         }
+    }
+
+    /**
+     * 解析创建用户的角色集合：未指定时默认授予 user 角色；
+     * 指定时校验角色存在性，存在无效ID返回空列表由调用方转失败结果
+     */
+    private List<RoleAggregate> resolveRoles(List<Long> roleIds) throws BizException {
+        if (CollUtil.isEmpty(roleIds)) {
+            RoleAggregate defaultRole = roleRepository.queryByRoleKey("user");
+            if (defaultRole == null) {
+                throw new BizException("ROLE_NOT_FOUND", "默认角色 user 不存在，请检查初始化数据");
+            }
+            return List.of(defaultRole);
+        }
+        List<Long> distinctIds = roleIds.stream().distinct().toList();
+        List<RoleAggregate> roles = roleRepository.queryByIds(distinctIds);
+        if (roles.size() != distinctIds.size()) {
+            return List.of();
+        }
+        return roles;
     }
 }
