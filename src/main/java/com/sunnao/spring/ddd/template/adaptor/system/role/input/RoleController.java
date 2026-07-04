@@ -18,6 +18,7 @@ import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailRespon
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryRolePageResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.UpdateRoleResponseDTO;
+import com.sunnao.spring.ddd.template.common.annotation.OperLog;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,6 +55,7 @@ public class RoleController {
      * 创建角色
      */
     @Operation(summary = "创建角色")
+    @OperLog(module = "role", action = "创建角色")
     @PostMapping
     public ResultDO<CreateRoleResponseDTO> createRole(@RequestBody CreateRoleRequestDTO requestDTO) {
         return roleAppService.createRole(requestDTO);
@@ -63,6 +65,7 @@ public class RoleController {
      * 修改角色（名称/状态/备注）
      */
     @Operation(summary = "修改角色", description = "名称/状态/备注，roleKey 不可变更")
+    @OperLog(module = "role", action = "修改角色")
     @PutMapping("/{id}")
     public ResultDO<UpdateRoleResponseDTO> updateRole(@PathVariable("id") Long id,
                                                       @RequestBody UpdateRoleRequestDTO requestDTO) {
@@ -74,6 +77,7 @@ public class RoleController {
      * 删除角色（逻辑删除，内置角色不可删除）
      */
     @Operation(summary = "删除角色", description = "逻辑删除，内置角色（admin/user）不可删除")
+    @OperLog(module = "role", action = "删除角色")
     @DeleteMapping("/{id}")
     public ResultDO<DeleteRoleResponseDTO> deleteRole(@PathVariable("id") Long id) {
         DeleteRoleRequestDTO requestDTO = new DeleteRoleRequestDTO();
@@ -85,6 +89,7 @@ public class RoleController {
      * 给角色分配权限（全量覆盖）
      */
     @Operation(summary = "分配权限", description = "全量覆盖角色的权限集合")
+    @OperLog(module = "role", action = "分配权限")
     @PutMapping("/{id}/permissions")
     public ResultDO<AssignPermissionResponseDTO> assignPermissions(@PathVariable("id") Long id,
                                                                    @RequestBody AssignPermissionRequestDTO requestDTO) {
@@ -96,6 +101,7 @@ public class RoleController {
      * 给用户授予角色（全量覆盖）
      */
     @Operation(summary = "给用户授角色", description = "全量覆盖用户的角色集合")
+    @OperLog(module = "role", action = "给用户授角色")
     @PutMapping("/users/{userId}")
     public ResultDO<AssignUserRoleResponseDTO> assignUserRoles(@PathVariable("userId") Long userId,
                                                                @RequestBody AssignUserRoleRequestDTO requestDTO) {

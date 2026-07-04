@@ -1,0 +1,17 @@
+# 测试环境：连接云上 PostgreSQL / Redis，全部走环境变量占位
+# 缺失 TEST_PG_URL / TEST_REDIS_HOST 时集成测试自动跳过（见 @EnabledIfEnvironmentVariable）
+# 示例：
+#   TEST_PG_URL=jdbc:postgresql://your-host:5432/spring_ddd_template_test
+#   TEST_PG_USERNAME=postgres  TEST_PG_PASSWORD=***
+#   TEST_REDIS_HOST=your-redis-host  TEST_REDIS_PORT=6379  TEST_REDIS_PASSWORD=***
+spring:
+  datasource:
+    url: ${TEST_PG_URL}
+    username: ${TEST_PG_USERNAME:postgres}
+    password: ${TEST_PG_PASSWORD:}
+  data:
+    redis:
+      host: ${TEST_REDIS_HOST}
+      port: ${TEST_REDIS_PORT:6379}
+      password: ${TEST_REDIS_PASSWORD:}
+      database: ${TEST_REDIS_DATABASE:0}

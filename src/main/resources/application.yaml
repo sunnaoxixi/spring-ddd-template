@@ -7,6 +7,11 @@ spring:
     active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      # 与 app.file.max-size 保持一致（框架层先行拦截超大请求）
+      max-file-size: 10MB
+      max-request-size: 20MB
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -43,3 +48,9 @@ app:
   lock:
     # 分级锁实现：redis-分布式（默认）| jvm-单机
     type: redis
+  file:
+    # 单文件大小上限（LocalFileStorage 校验，与 spring.servlet.multipart 保持一致）
+    max-size: 10MB
+    local:
+      # 本地存储根目录（相对应用工作目录或绝对路径）
+      base-path: ./data/files

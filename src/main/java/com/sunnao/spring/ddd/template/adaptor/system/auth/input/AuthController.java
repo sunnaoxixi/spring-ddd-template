@@ -5,6 +5,7 @@ import com.sunnao.spring.ddd.template.client.system.auth.AuthQueryAppService;
 import com.sunnao.spring.ddd.template.client.system.auth.req.LoginRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.auth.res.GetLoginUserResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.auth.res.LoginResponseDTO;
+import com.sunnao.spring.ddd.template.common.annotation.OperLog;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,7 @@ public class AuthController {
      * 登录
      */
     @Operation(summary = "登录", description = "邮箱 + 密码登录，返回 satoken")
+    @OperLog(module = "auth", action = "登录")
     @PostMapping("/login")
     public ResultDO<LoginResponseDTO> login(@RequestBody LoginRequestDTO requestDTO) {
         return authAppService.login(requestDTO);

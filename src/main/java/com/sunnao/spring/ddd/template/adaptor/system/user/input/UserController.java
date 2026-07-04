@@ -15,6 +15,7 @@ import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailRespon
 import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.UpdateUserResponseDTO;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.sunnao.spring.ddd.template.common.annotation.OperLog;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,6 +52,7 @@ public class UserController {
      * 创建用户
      */
     @Operation(summary = "创建用户")
+    @OperLog(module = "user", action = "创建用户")
     @PostMapping
     public ResultDO<CreateUserResponseDTO> createUser(@RequestBody CreateUserRequestDTO requestDTO) {
         return userAppService.createUser(requestDTO);
@@ -60,6 +62,7 @@ public class UserController {
      * 修改用户资料
      */
     @Operation(summary = "修改用户资料")
+    @OperLog(module = "user", action = "修改用户资料")
     @PutMapping("/{id}")
     public ResultDO<UpdateUserResponseDTO> updateUser(@PathVariable Long id,
                                                       @RequestBody UpdateUserRequestDTO requestDTO) {
@@ -71,6 +74,7 @@ public class UserController {
      * 变更用户状态（启用/禁用）
      */
     @Operation(summary = "变更用户状态", description = "启用/禁用")
+    @OperLog(module = "user", action = "变更用户状态")
     @PutMapping("/{id}/status")
     public ResultDO<ChangeUserStatusResponseDTO> changeUserStatus(@PathVariable("id") Long id,
                                                                   @RequestBody ChangeUserStatusRequestDTO requestDTO) {
@@ -82,6 +86,7 @@ public class UserController {
      * 删除用户（逻辑删除）
      */
     @Operation(summary = "删除用户", description = "逻辑删除")
+    @OperLog(module = "user", action = "删除用户")
     @DeleteMapping("/{id}")
     public ResultDO<DeleteUserResponseDTO> deleteUser(@PathVariable("id") Long id) {
         DeleteUserRequestDTO requestDTO = new DeleteUserRequestDTO();
