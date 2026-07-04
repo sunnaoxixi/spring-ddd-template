@@ -1,3 +1,14 @@
 spring:
   application:
     name: spring-ddd-template
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/spring_ddd_template
+    username: postgres
+    password: postgres
+
+mybatis-flex:
+  global-config:
+    # 逻辑删除：0-正常，1-已删除
+    normal-value-of-logic-delete: 0
+    deleted-value-of-logic-delete: 1

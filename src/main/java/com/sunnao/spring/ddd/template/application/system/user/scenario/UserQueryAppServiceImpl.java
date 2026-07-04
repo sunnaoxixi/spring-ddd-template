@@ -1,0 +1,78 @@
+package com.sunnao.spring.ddd.template.application.system.user.scenario;
+
+import com.sunnao.spring.ddd.template.application.system.user.assembler.UserAssembler;
+import com.sunnao.spring.ddd.template.client.system.user.UserQueryAppService;
+import com.sunnao.spring.ddd.template.client.system.user.req.GetUserDetailRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.user.req.QueryUserPageRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;
+import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ResultDO;
+import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
+import com.sunnao.spring.ddd.template.domain.system.user.model.param.UserQuery;
+import com.sunnao.spring.ddd.template.domain.system.user.repository.UserRepository;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+
+/**
+ * 用户查询应用服务实现（读模式）
+ * 职责：领域内查询，通过 Repository 获取聚合根后经 Assembler 转换为 DTO
+ */
+@Slf4j
+@Service
+public class UserQueryAppServiceImpl implements UserQueryAppService {
+
+    @Resource
+    private UserRepository userRepository;
+
+    @Override
+    public ResultDO<GetUserDetailResponseDTO> getUserDetail(GetUserDetailRequestDTO requestDTO) {
+        try {
+            // 1. 参数自校验
+            ResultDO<Void> checkResult = requestDTO.check();
+            if (!checkResult.isSuccess()) {
+                return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
+            }
+
+            // 2. 查询本领域用户数据
+            UserAggregate aggregate = userRepository.query(requestDTO.getUserId());
+            if (aggregate == null) {
+                return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
+            }
+
+            // 3. 组装响应 DTO
+            return ResultDO.buildSuccessResult(UserAssembler.toGetUserDetailResponseDTO(aggregate));
+        } catch (Exception e) {
+            log.error("获取用户详情失败, requestDTO: {}", requestDTO, e);
+            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+        }
+    }
+
+    @Override
+    public ResultDO<QueryUserPageResponseDTO> queryUserPage(QueryUserPageRequestDTO requestDTO) {
+        try {
+            // 1. 参数自校验
+            ResultDO<Void> checkResult = requestDTO.check();
+            if (!checkResult.isSuccess()) {
+                return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
+            }
+
+            // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
+            PageQuery<UserQuery> pageQuery = PageQuery.build(UserAssembler.toUserQuery(requestDTO));
+            pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
+            pageQuery.setPageSize(requestDTO.getPageSize());
+
+            // 3. 查询本领域用户分页数据
+            Page<UserAggregate> page = userRepository.queryPage(pageQuery);
+
+            // 4. 组装响应 DTO
+            return ResultDO.buildSuccessResult(
+                    UserAssembler.toQueryUserPageResponseDTO(page.getTotalElements(), page.getContent()));
+        } catch (Exception e) {
+            log.error("分页查询用户失败, requestDTO: {}", requestDTO, e);
+            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+        }
+    }
+}
