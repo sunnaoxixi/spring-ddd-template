@@ -22,9 +22,6 @@ public class DeleteUserRequestDTO extends BaseDto {
     /** 用户ID */
     private Long userId;
 
-    /** 操作人ID */
-    private Long operatorId;
-
     @Override
     public ResultDO<Void> check() {
         if (userId == null) {

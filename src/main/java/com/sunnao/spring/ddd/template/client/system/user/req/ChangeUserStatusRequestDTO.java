@@ -26,9 +26,6 @@ public class ChangeUserStatusRequestDTO extends BaseDto {
     /** 目标状态：1-启用，0-禁用 */
     private Integer status;
 
-    /** 操作人ID */
-    private Long operatorId;
-
     @Override
     public ResultDO<Void> check() {
         if (userId == null) {

@@ -28,9 +28,6 @@ public class UpdateUserRequestDTO extends BaseDto {
     /** 头像URL */
     private String avatar;
 
-    /** 操作人ID */
-    private Long operatorId;
-
     @Override
     public ResultDO<Void> check() {
         if (userId == null) {

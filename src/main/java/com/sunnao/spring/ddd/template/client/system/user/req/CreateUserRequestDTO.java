@@ -38,9 +38,6 @@ public class CreateUserRequestDTO extends BaseDto {
     /** 角色：1-管理员，0-普通用户；为空时默认普通用户 */
     private Integer role;
 
-    /** 操作人ID */
-    private Long operatorId;
-
     @Override
     public ResultDO<Void> check() {
         if (email == null || email.isBlank()) {

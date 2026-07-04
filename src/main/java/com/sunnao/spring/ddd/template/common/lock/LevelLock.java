@@ -1,52 +1,32 @@
 package com.sunnao.spring.ddd.template.common.lock;
 
-import lombok.Getter;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
- * 分级锁
+ * 分级锁接口
  * <p>
- * 由 Repository 的 buildLock 方法构建，DomainService 在写模式标准流程中通过
- * tryLock / unlock 保证并发安全。
+ * 由 LockFactory 构建（Repository 实现侧注入工厂并实现 buildLock），
+ * DomainService 在写模式标准流程中通过 tryLock / unlock 保证并发安全。
  * <p>
- * 注意：骨架默认提供基于 JVM 的单机实现，生产环境集群部署时应替换为
- * 分布式锁实现（如 Redis），替换时保持 tryLock / unlock 语义不变。
+ * 实现：JvmLevelLock（单机）、RedisLevelLock（分布式，默认），
+ * 通过配置 app.lock.type: jvm|redis 切换，两者保持相同语义。
  */
-public class LevelLock {
-
-    private static final ConcurrentMap<String, ReentrantLock> LOCK_REGISTRY = new ConcurrentHashMap<>();
-
-    /**
-     * 锁标识
-     */
-    @Getter
-    private final String lockKey;
-
-    private final ReentrantLock lock;
-
-    public LevelLock(String lockKey) {
-        this.lockKey = lockKey;
-        this.lock = LOCK_REGISTRY.computeIfAbsent(lockKey, key -> new ReentrantLock());
-    }
+public interface LevelLock {
 
     /**
      * 尝试获取锁（不阻塞）
      *
      * @return 是否获取成功
      */
-    public boolean tryLock() {
-        return lock.tryLock();
-    }
+    boolean tryLock();
 
     /**
-     * 释放锁（仅当前线程持有时生效）
+     * 释放锁（仅当前持有者释放生效）
      */
-    public void unlock() {
-        if (lock.isHeldByCurrentThread()) {
-            lock.unlock();
-        }
-    }
+    void unlock();
+
+    /**
+     * 获取锁标识
+     *
+     * @return 锁标识
+     */
+    String getLockKey();
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.sunnao.spring.ddd.template.common.exception.RepositoryException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
+import com.sunnao.spring.ddd.template.common.lock.LockFactory;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
@@ -19,7 +20,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -32,6 +32,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private LockFactory lockFactory;
 
     @Override
     public UserAggregate query(Long id) throws RepositoryException {
@@ -80,22 +83,20 @@ public class UserRepositoryImpl implements UserRepository {
                 throw new RepositoryException("DATA_ERROR", "用户数据为空，无法保存");
             }
 
-            LocalDateTime now = LocalDateTime.now();
+            // 审计字段（createAt/updateAt/createBy/updateBy）由全局监听器自动填充
             UserEntity entity = aggregate.getUserEntity();
             if (po.getId() == null) {
-                // 新增：填充创建/更新时间，插入后回填ID到聚合根
-                po.setCreateAt(now);
-                po.setUpdateAt(now);
+                // 新增：插入后回填ID到聚合根
                 userMapper.insertSelective(po);
                 entity.setId(po.getId());
                 entity.setCreateAt(po.getCreateAt());
             } else {
-                // 更新：仅更新非空字段
+                // 更新：仅更新非空字段，创建信息不可变
                 po.setCreateAt(null);
-                po.setUpdateAt(now);
+                po.setCreateBy(null);
                 userMapper.update(po);
             }
-            entity.setUpdateAt(now);
+            entity.setUpdateAt(po.getUpdateAt());
         } catch (RepositoryException e) {
             throw e;
         } catch (Exception e) {
@@ -119,11 +120,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(Long userId, Long operatorId) throws RepositoryException {
         try {
-            // 1. 记录删除操作人与时间
+            // 1. 记录删除操作人（更新时间由全局监听器自动填充）
             UserPO po = new UserPO();
             po.setId(userId);
             po.setUpdateBy(operatorId);
-            po.setUpdateAt(LocalDateTime.now());
             userMapper.update(po);
 
             // 2. 逻辑删除（deleted 置为 1）
@@ -136,7 +136,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public LevelLock buildLock(String lockKey) {
-        return new LevelLock(lockKey);
+        return lockFactory.buildLock(lockKey);
     }
 
     /**

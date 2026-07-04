@@ -1,0 +1,16 @@
+# 开发环境：本地 PostgreSQL + Redis（可用根目录 docker-compose.yaml 一键启动）
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spring_ddd_template
+    username: postgres
+    password: postgres
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0

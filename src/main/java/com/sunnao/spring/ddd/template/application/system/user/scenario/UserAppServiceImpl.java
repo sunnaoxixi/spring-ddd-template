@@ -10,6 +10,7 @@ import com.sunnao.spring.ddd.template.client.system.user.res.ChangeUserStatusRes
 import com.sunnao.spring.ddd.template.client.system.user.res.CreateUserResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.DeleteUserResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.UpdateUserResponseDTO;
+import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.service.UserDomainService;
@@ -37,8 +38,9 @@ public class UserAppServiceImpl implements UserAppService {
                 return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
             }
 
-            // 2. 调用领域服务创建用户
-            ResultDO<UserAggregate> domainResult = userDomainService.createUser(UserAssembler.toCreateParam(requestDTO));
+            // 2. 调用领域服务创建用户（操作人取自当前登录用户）
+            ResultDO<UserAggregate> domainResult = userDomainService.createUser(
+                    UserAssembler.toCreateParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -62,8 +64,9 @@ public class UserAppServiceImpl implements UserAppService {
                 return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
             }
 
-            // 2. 调用领域服务修改资料
-            ResultDO<Void> domainResult = userDomainService.updateUser(UserAssembler.toUpdateParam(requestDTO));
+            // 2. 调用领域服务修改资料（操作人取自当前登录用户）
+            ResultDO<Void> domainResult = userDomainService.updateUser(
+                    UserAssembler.toUpdateParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -87,8 +90,9 @@ public class UserAppServiceImpl implements UserAppService {
                 return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
             }
 
-            // 2. 调用领域服务变更状态
-            ResultDO<Void> domainResult = userDomainService.changeUserStatus(UserAssembler.toChangeStatusParam(requestDTO));
+            // 2. 调用领域服务变更状态（操作人取自当前登录用户）
+            ResultDO<Void> domainResult = userDomainService.changeUserStatus(
+                    UserAssembler.toChangeStatusParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -113,8 +117,9 @@ public class UserAppServiceImpl implements UserAppService {
                 return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
             }
 
-            // 2. 调用领域服务逻辑删除
-            ResultDO<Void> domainResult = userDomainService.deleteUser(UserAssembler.toDeleteParam(requestDTO));
+            // 2. 调用领域服务逻辑删除（操作人取自当前登录用户）
+            ResultDO<Void> domainResult = userDomainService.deleteUser(
+                    UserAssembler.toDeleteParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }

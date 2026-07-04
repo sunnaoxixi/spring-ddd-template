@@ -1,21 +1,17 @@
+# 公共配置（环境相关配置见 application-dev.yaml / application-prod.yaml）
 spring:
   application:
     name: spring-ddd-template
+  profiles:
+    # 默认激活 dev，生产通过环境变量 SPRING_PROFILES_ACTIVE=prod 覆盖
+    active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/spring_ddd_template
-    username: postgres
-    password: postgres
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      database: 0
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    # 兼容已有库：schema 非空时以当前版本为基线（V1 不再执行），全新库正常从 V1 迁移
+    baseline-on-migrate: true
 
 mybatis-flex:
   global-config:
@@ -36,3 +32,14 @@ sa-token:
   token-style: uuid
   # 允许同一账号多地登录
   is-concurrent: true
+
+# springdoc-openapi：/swagger-ui.html（UI）、/v3/api-docs（JSON）
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+# 应用自定义配置
+app:
+  lock:
+    # 分级锁实现：redis-分布式（默认）| jvm-单机
+    type: redis

@@ -1,10 +1,13 @@
 package com.sunnao.spring.ddd.template.domain.system.user.service;
 
 import cn.hutool.crypto.digest.BCrypt;
+import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
 import com.sunnao.spring.ddd.template.common.exception.BizException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
+import com.sunnao.spring.ddd.template.domain.system.user.event.UserCreatedEvent;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
+import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.ChangeUserStatusParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.CreateUserParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.DeleteUserParam;
@@ -27,6 +30,9 @@ public class UserDomainServiceImpl implements UserDomainService {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    private DomainEventPublisher domainEventPublisher;
+
     @Override
     public ResultDO<UserAggregate> createUser(CreateUserParam param) {
         // 1. 获取锁（按邮箱防并发重复创建）
@@ -47,6 +53,11 @@ public class UserDomainServiceImpl implements UserDomainService {
 
             // 4. 持久化（仓储回填ID）
             userRepository.save(aggregate);
+
+            // 5. 发布领域事件（异步消费，失败不影响主流程）
+            UserEntity entity = aggregate.getUserEntity();
+            domainEventPublisher.publish(new UserCreatedEvent(
+                    entity.getId(), entity.getEmail(), entity.getNickname(), param.getOperatorId()));
 
             return ResultDO.buildSuccessResult(aggregate);
         } catch (BizException e) {

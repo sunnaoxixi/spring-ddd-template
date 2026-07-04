@@ -31,9 +31,9 @@ public class UserAssembler {
     }
 
     /**
-     * 创建用户 RequestDTO 转领域 Param
+     * 创建用户 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static CreateUserParam toCreateParam(CreateUserRequestDTO requestDTO) {
+    public static CreateUserParam toCreateParam(CreateUserRequestDTO requestDTO, Long operatorId) {
         CreateUserParam param = new CreateUserParam();
         param.setEmail(requestDTO.getEmail());
         param.setNickname(requestDTO.getNickname());
@@ -41,40 +41,40 @@ public class UserAssembler {
         param.setAvatar(requestDTO.getAvatar());
         // client 角色码 → model 枚举
         param.setRole(UserRoleEnum.getByCode(requestDTO.getRole()));
-        param.setOperatorId(requestDTO.getOperatorId());
+        param.setOperatorId(operatorId);
         return param;
     }
 
     /**
-     * 修改用户资料 RequestDTO 转领域 Param
+     * 修改用户资料 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static UpdateUserParam toUpdateParam(UpdateUserRequestDTO requestDTO) {
+    public static UpdateUserParam toUpdateParam(UpdateUserRequestDTO requestDTO, Long operatorId) {
         UpdateUserParam param = new UpdateUserParam();
         param.setUserId(requestDTO.getUserId());
         param.setNickname(requestDTO.getNickname());
         param.setAvatar(requestDTO.getAvatar());
-        param.setOperatorId(requestDTO.getOperatorId());
+        param.setOperatorId(operatorId);
         return param;
     }
 
     /**
-     * 变更用户状态 RequestDTO 转领域 Param（client 状态码 → model 枚举）
+     * 变更用户状态 RequestDTO 转领域 Param（client 状态码 → model 枚举，操作人由应用层从当前用户上下文获取）
      */
-    public static ChangeUserStatusParam toChangeStatusParam(ChangeUserStatusRequestDTO requestDTO) {
+    public static ChangeUserStatusParam toChangeStatusParam(ChangeUserStatusRequestDTO requestDTO, Long operatorId) {
         ChangeUserStatusParam param = new ChangeUserStatusParam();
         param.setUserId(requestDTO.getUserId());
         param.setTargetStatus(UserStatusEnum.getByCode(requestDTO.getStatus()));
-        param.setOperatorId(requestDTO.getOperatorId());
+        param.setOperatorId(operatorId);
         return param;
     }
 
     /**
-     * 删除用户 RequestDTO 转领域 Param
+     * 删除用户 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static DeleteUserParam toDeleteParam(DeleteUserRequestDTO requestDTO) {
+    public static DeleteUserParam toDeleteParam(DeleteUserRequestDTO requestDTO, Long operatorId) {
         DeleteUserParam param = new DeleteUserParam();
         param.setUserId(requestDTO.getUserId());
-        param.setOperatorId(requestDTO.getOperatorId());
+        param.setOperatorId(operatorId);
         return param;
     }
 
