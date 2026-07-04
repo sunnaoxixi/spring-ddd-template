@@ -6,9 +6,33 @@ spring:
     url: jdbc:postgresql://localhost:5432/spring_ddd_template
     username: postgres
     password: postgres
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
 
 mybatis-flex:
   global-config:
     # 逻辑删除：0-正常，1-已删除
     normal-value-of-logic-delete: 0
     deleted-value-of-logic-delete: 1
+
+# Sa-Token 配置
+sa-token:
+  # token 名称（同时也是请求头名称）
+  token-name: satoken
+  # token 有效期（秒），30 天；-1 代表永不过期
+  timeout: 2592000
+  # 仅从请求头读取 token，前后端分离场景关闭 cookie
+  is-read-header: true
+  is-read-cookie: false
+  # token 风格
+  token-style: uuid
+  # 允许同一账号多地登录
+  is-concurrent: true

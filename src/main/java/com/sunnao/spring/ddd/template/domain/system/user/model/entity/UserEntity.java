@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseEntity;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UpdateUserParam;
+import com.sunnao.spring.ddd.template.model.system.user.UserRoleEnum;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,9 @@ public class UserEntity extends BaseEntity {
 
     /** 状态 */
     private UserStatusEnum status;
+
+    /** 角色 */
+    private UserRoleEnum role;
 
     /** 头像URL */
     private String avatar;

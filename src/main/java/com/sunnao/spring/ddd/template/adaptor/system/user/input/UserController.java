@@ -14,6 +14,7 @@ import com.sunnao.spring.ddd.template.client.system.user.res.DeleteUserResponseD
 import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.UpdateUserResponseDTO;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,7 +30,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 用户管理 Controller（Input Adaptor）
  * 职责：接收 HTTP 请求，转换参数后调用应用层服务，禁止编写业务逻辑
+ * <p>
+ * 用户管理仅管理员可访问（Sa-Token 角色鉴权）。
  */
+@SaCheckRole("admin")
 @RestController
 @RequestMapping("/api/system/users")
 public class UserController {

@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.domain.system.user.model.param;
 
 import com.sunnao.spring.ddd.template.common.model.BaseParam;
+import com.sunnao.spring.ddd.template.model.system.user.UserRoleEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,6 +25,9 @@ public class CreateUserParam extends BaseParam {
 
     /** 头像URL */
     private String avatar;
+
+    /** 角色（为空时默认普通用户） */
+    private UserRoleEnum role;
 
     /** 操作人ID */
     private Long operatorId;

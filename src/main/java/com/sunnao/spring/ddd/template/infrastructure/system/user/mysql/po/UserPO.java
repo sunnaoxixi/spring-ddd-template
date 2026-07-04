@@ -36,6 +36,9 @@ public class UserPO {
     /** 状态：1-启用，0-禁用 */
     private Integer status;
 
+    /** 角色：1-管理员，0-普通用户 */
+    private Integer role;
+
     /** 头像URL */
     private String avatar;
 

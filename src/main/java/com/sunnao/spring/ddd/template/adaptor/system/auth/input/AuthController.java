@@ -1,0 +1,53 @@
+package com.sunnao.spring.ddd.template.adaptor.system.auth.input;
+
+import com.sunnao.spring.ddd.template.client.system.auth.AuthAppService;
+import com.sunnao.spring.ddd.template.client.system.auth.AuthQueryAppService;
+import com.sunnao.spring.ddd.template.client.system.auth.req.LoginRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.auth.res.GetLoginUserResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.auth.res.LoginResponseDTO;
+import com.sunnao.spring.ddd.template.common.result.ResultDO;
+import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 认证 Controller（Input Adaptor）
+ * 职责：接收 HTTP 请求，转换参数后调用应用层服务，禁止编写业务逻辑
+ */
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    @Resource
+    private AuthAppService authAppService;
+
+    @Resource
+    private AuthQueryAppService authQueryAppService;
+
+    /**
+     * 登录
+     */
+    @PostMapping("/login")
+    public ResultDO<LoginResponseDTO> login(@RequestBody LoginRequestDTO requestDTO) {
+        return authAppService.login(requestDTO);
+    }
+
+    /**
+     * 登出
+     */
+    @PostMapping("/logout")
+    public ResultDO<Void> logout() {
+        return authAppService.logout();
+    }
+
+    /**
+     * 获取当前登录用户信息
+     */
+    @GetMapping("/me")
+    public ResultDO<GetLoginUserResponseDTO> getLoginUserInfo() {
+        return authQueryAppService.getLoginUserInfo();
+    }
+}

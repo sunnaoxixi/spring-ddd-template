@@ -1,6 +1,5 @@
-package com.sunnao.spring.ddd.template.client.system.user.req;
+package com.sunnao.spring.ddd.template.client.system.auth.req;
 
-import com.sunnao.spring.ddd.template.client.system.user.enums.UserRoleEnum;
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
@@ -11,12 +10,12 @@ import java.io.Serial;
 import java.util.regex.Pattern;
 
 /**
- * 创建用户请求DTO
+ * 登录请求DTO
  */
 @Getter
 @Setter
 @ToString(exclude = "password")
-public class CreateUserRequestDTO extends BaseDto {
+public class LoginRequestDTO extends BaseDto {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -26,20 +25,8 @@ public class CreateUserRequestDTO extends BaseDto {
     /** 邮箱 */
     private String email;
 
-    /** 昵称 */
-    private String nickname;
-
     /** 密码（明文） */
     private String password;
-
-    /** 头像URL */
-    private String avatar;
-
-    /** 角色：1-管理员，0-普通用户；为空时默认普通用户 */
-    private Integer role;
-
-    /** 操作人ID */
-    private Long operatorId;
 
     @Override
     public ResultDO<Void> check() {
@@ -49,14 +36,8 @@ public class CreateUserRequestDTO extends BaseDto {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             return ResultDO.buildFailResult("PARAM_ERROR", "邮箱格式不正确");
         }
-        if (nickname == null || nickname.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "昵称不能为空");
-        }
-        if (password == null || password.length() < 6) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "密码长度不能小于6位");
-        }
-        if (role != null && UserRoleEnum.getByCode(role) == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色不合法");
+        if (password == null || password.isBlank()) {
+            return ResultDO.buildFailResult("PARAM_ERROR", "密码不能为空");
         }
         return ResultDO.buildSuccessResult();
     }
