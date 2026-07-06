@@ -20,19 +20,29 @@ import java.util.Set;
 @Setter
 public class RoleEntity extends BaseEntity {
 
-    /** 内置角色标识（不可删除，admin 不可禁用） */
+    /**
+     * 内置角色标识（不可删除，admin 不可禁用）
+     */
     public static final Set<String> BUILT_IN_ROLE_KEYS = Set.of("admin", "user");
 
-    /** 角色标识（Sa-Token 鉴权使用，创建后不可变更） */
+    /**
+     * 角色标识（Sa-Token 鉴权使用，创建后不可变更）
+     */
     private String roleKey;
 
-    /** 角色名称 */
+    /**
+     * 角色名称
+     */
     private String roleName;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private RoleStatusEnum status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
     /**

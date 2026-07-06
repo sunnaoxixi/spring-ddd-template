@@ -2,26 +2,14 @@ package com.sunnao.spring.ddd.template.application.system.dict.assembler;
 
 import com.sunnao.spring.ddd.template.client.system.dict.model.DictDataDTO;
 import com.sunnao.spring.ddd.template.client.system.dict.model.DictTypeDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.CreateDictDataRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.CreateDictTypeRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.DeleteDictDataRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.DeleteDictTypeRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.QueryDictTypePageRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.UpdateDictDataRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.UpdateDictTypeRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.dict.req.*;
 import com.sunnao.spring.ddd.template.client.system.dict.res.QueryDictDataListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.dict.res.QueryDictTypePageResponseDTO;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictDataAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictTypeAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.entity.DictDataEntity;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.entity.DictTypeEntity;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.CreateDictDataParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.CreateDictTypeParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.DeleteDictDataParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.DeleteDictTypeParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.DictTypeQuery;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictDataParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictTypeParam;
+import com.sunnao.spring.ddd.template.domain.system.dict.model.param.*;
 import com.sunnao.spring.ddd.template.model.system.dict.DictStatusEnum;
 
 import java.util.Collections;

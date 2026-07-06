@@ -20,22 +20,34 @@ public class UpdateDictDataRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 字典数据ID */
+    /**
+     * 字典数据ID
+     */
     private Long dataId;
 
-    /** 字典标签 */
+    /**
+     * 字典标签
+     */
     private String label;
 
-    /** 字典值 */
+    /**
+     * 字典值
+     */
     private String value;
 
-    /** 排序（升序） */
+    /**
+     * 排序（升序）
+     */
     private Integer sort;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
     @Override

@@ -13,9 +13,13 @@ import lombok.ToString;
 @ToString
 public class FileQuery extends BaseParam {
 
-    /** 原始文件名（模糊匹配） */
+    /**
+     * 原始文件名（模糊匹配）
+     */
     private String originalName;
 
-    /** 上传人ID */
+    /**
+     * 上传人ID
+     */
     private Long uploadBy;
 }

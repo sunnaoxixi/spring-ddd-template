@@ -13,21 +13,33 @@ import lombok.ToString;
 @ToString
 public class CreateFileParam extends BaseParam {
 
-    /** 原始文件名 */
+    /**
+     * 原始文件名
+     */
     private String originalName;
 
-    /** 存储路径（相对存储根目录） */
+    /**
+     * 存储路径（相对存储根目录）
+     */
     private String path;
 
-    /** 文件大小（字节） */
+    /**
+     * 文件大小（字节）
+     */
     private Long size;
 
-    /** 文件 MIME 类型 */
+    /**
+     * 文件 MIME 类型
+     */
     private String contentType;
 
-    /** 存储类型标识（如 local） */
+    /**
+     * 存储类型标识（如 local）
+     */
     private String storageType;
 
-    /** 操作人ID（上传人） */
+    /**
+     * 操作人ID（上传人）
+     */
     private Long operatorId;
 }

@@ -13,9 +13,13 @@ import lombok.ToString;
 @ToString
 public class DeleteDictTypeParam extends BaseParam {
 
-    /** 字典类型ID */
+    /**
+     * 字典类型ID
+     */
     private Long typeId;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

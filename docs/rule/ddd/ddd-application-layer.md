@@ -172,11 +172,13 @@ RequestDTO 和 ResponseDTO 的存放位置取决于其**使用范围**：
 | 作为接口服务对外提供          | `client` 模块的 `req/` 和 `res/` 包 | 外部调用方需要依赖这些 DTO，必须定义在 client 中               |
 | 仅 Application 层内部使用 | `application` 模块的 `model/` 包   | 不对外暴露，仅用于 Application 内部编排，定义在 application 中 |
 
-**判断标准**：该 DTO 是否会被 Input Adaptor（Controller、HSF 等）直接透传给外部调用方，如果是放 `client`；如果仅在 Application 内部流转，放 `application/model/`。
+**判断标准**：该 DTO 是否会被 Input Adaptor（Controller、HSF 等）直接透传给外部调用方，如果是放 `client`；如果仅在 Application
+内部流转，放 `application/model/`。
 
 #### 示例对比
 
-**场景**：一个 AppService 方法需要先查订单、再查汇率、最后计算费用。其中"查订单详情"的接口 DTO 对外暴露，而"内部费用计算"的中间 DTO 仅在 Application 层流转。
+**场景**：一个 AppService 方法需要先查订单、再查汇率、最后计算费用。其中"查订单详情"的接口 DTO 对外暴露，而"内部费用计算"的中间
+DTO 仅在 Application 层流转。
 
 ```java
 // ✅ 对外提供的接口 DTO → 定义在 client 中
@@ -252,7 +254,8 @@ public class OrderFeeCalcInternalDTO {
 - 直接访问外部服务（应通过 Adaptor）
 - 包含核心业务逻辑（应放在 DomainService 或聚合根中）
 
-**注意区分**：Application 层允许包含**编排流程控制**（如根据 Adaptor 返回结果决定是否继续、提前返回错误码等），这属于场景编排职责，不属于业务逻辑。核心业务逻辑指的是聚合根状态变更规则、业务计算公式、规则匹配等，这些必须放在领域层。
+**注意区分**：Application 层允许包含**编排流程控制**（如根据 Adaptor
+返回结果决定是否继续、提前返回错误码等），这属于场景编排职责，不属于业务逻辑。核心业务逻辑指的是聚合根状态变更规则、业务计算公式、规则匹配等，这些必须放在领域层。
 
 ### 1.8 Assembler 转换类规范
 

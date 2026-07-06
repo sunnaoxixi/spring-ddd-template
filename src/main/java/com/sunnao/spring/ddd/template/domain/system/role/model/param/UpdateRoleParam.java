@@ -14,18 +14,28 @@ import lombok.ToString;
 @ToString
 public class UpdateRoleParam extends BaseParam {
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long roleId;
 
-    /** 角色名称 */
+    /**
+     * 角色名称
+     */
     private String roleName;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private RoleStatusEnum status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

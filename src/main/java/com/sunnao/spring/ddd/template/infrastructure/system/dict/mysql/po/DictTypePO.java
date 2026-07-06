@@ -20,23 +20,35 @@ import lombok.ToString;
 @Table("sys_dict_type")
 public class DictTypePO extends BasePO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 字典类型键（唯一标识） */
+    /**
+     * 字典类型键（唯一标识）
+     */
     private String typeKey;
 
-    /** 字典类型名称 */
+    /**
+     * 字典类型名称
+     */
     private String typeName;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 逻辑删除：0-正常，1-已删除 */
+    /**
+     * 逻辑删除：0-正常，1-已删除
+     */
     @Column(isLogicDelete = true)
     private Integer deleted;
 }

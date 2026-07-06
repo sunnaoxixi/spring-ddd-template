@@ -15,18 +15,28 @@ import lombok.Setter;
 @Setter
 public class FileEntity extends BaseEntity {
 
-    /** 原始文件名 */
+    /**
+     * 原始文件名
+     */
     private String originalName;
 
-    /** 存储路径（相对存储根目录） */
+    /**
+     * 存储路径（相对存储根目录）
+     */
     private String path;
 
-    /** 文件大小（字节） */
+    /**
+     * 文件大小（字节）
+     */
     private Long size;
 
-    /** 文件 MIME 类型 */
+    /**
+     * 文件 MIME 类型
+     */
     private String contentType;
 
-    /** 存储类型 */
+    /**
+     * 存储类型
+     */
     private FileStorageTypeEnum storageType;
 }

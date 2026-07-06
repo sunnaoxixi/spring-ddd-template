@@ -20,9 +20,13 @@ public class QueryDictTypePageResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 总条数 */
+    /**
+     * 总条数
+     */
     private Long total;
 
-    /** 字典类型列表 */
+    /**
+     * 字典类型列表
+     */
     private List<DictTypeDTO> types;
 }

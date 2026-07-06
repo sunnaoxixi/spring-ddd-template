@@ -20,19 +20,29 @@ public class QueryDictTypePageRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 页码，从1开始 */
+    /**
+     * 页码，从1开始
+     */
     private Integer pageNum = 1;
 
-    /** 每页条数 */
+    /**
+     * 每页条数
+     */
     private Integer pageSize = 10;
 
-    /** 字典类型键（精确匹配，可选） */
+    /**
+     * 字典类型键（精确匹配，可选）
+     */
     private String typeKey;
 
-    /** 字典类型名称（模糊匹配，可选） */
+    /**
+     * 字典类型名称（模糊匹配，可选）
+     */
     private String typeName;
 
-    /** 状态：1-启用，0-禁用（可选） */
+    /**
+     * 状态：1-启用，0-禁用（可选）
+     */
     private Integer status;
 
     @Override

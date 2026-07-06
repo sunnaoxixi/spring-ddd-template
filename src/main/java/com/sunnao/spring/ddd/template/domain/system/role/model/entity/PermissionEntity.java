@@ -14,12 +14,18 @@ import lombok.Setter;
 @Setter
 public class PermissionEntity extends BaseEntity {
 
-    /** 权限标识（Sa-Token 鉴权使用，唯一） */
+    /**
+     * 权限标识（Sa-Token 鉴权使用，唯一）
+     */
     private String permKey;
 
-    /** 权限名称 */
+    /**
+     * 权限名称
+     */
     private String permName;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 }

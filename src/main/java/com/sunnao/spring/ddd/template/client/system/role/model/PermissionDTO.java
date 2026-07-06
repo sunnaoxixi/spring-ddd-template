@@ -20,15 +20,23 @@ public class PermissionDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 权限ID */
+    /**
+     * 权限ID
+     */
     private Long id;
 
-    /** 权限标识 */
+    /**
+     * 权限标识
+     */
     private String permKey;
 
-    /** 权限名称 */
+    /**
+     * 权限名称
+     */
     private String permName;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 }

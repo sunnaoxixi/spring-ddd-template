@@ -38,10 +38,14 @@ import java.util.List;
 @Component
 public class DictRepositoryImpl implements DictRepository {
 
-    /** 缓存 key 前缀，完整 key：dict:data:{typeKey} */
+    /**
+     * 缓存 key 前缀，完整 key：dict:data:{typeKey}
+     */
     private static final String CACHE_KEY_PREFIX = "dict:data:";
 
-    /** 缓存过期时间（写操作会主动失效，过期兜底防脏数据长存） */
+    /**
+     * 缓存过期时间（写操作会主动失效，过期兜底防脏数据长存）
+     */
     private static final Duration CACHE_TTL = Duration.ofHours(1);
 
     @Resource

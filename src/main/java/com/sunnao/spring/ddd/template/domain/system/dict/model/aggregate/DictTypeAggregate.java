@@ -24,7 +24,9 @@ public class DictTypeAggregate extends BaseAggregate {
 
     private static final Pattern TYPE_KEY_PATTERN = Pattern.compile("^[a-z][a-z0-9_]{1,63}$");
 
-    /** 字典类型实体 */
+    /**
+     * 字典类型实体
+     */
     private DictTypeEntity dictTypeEntity;
 
     /**

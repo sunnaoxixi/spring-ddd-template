@@ -20,10 +20,14 @@ public class ChangeUserStatusRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 目标状态：1-启用，0-禁用 */
+    /**
+     * 目标状态：1-启用，0-禁用
+     */
     private Integer status;
 
     @Override

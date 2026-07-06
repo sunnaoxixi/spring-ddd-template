@@ -1,34 +1,16 @@
 package com.sunnao.spring.ddd.template.adaptor.system.user.input;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.sunnao.spring.ddd.template.client.system.user.UserAppService;
 import com.sunnao.spring.ddd.template.client.system.user.UserQueryAppService;
-import com.sunnao.spring.ddd.template.client.system.user.req.ChangeUserStatusRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.CreateUserRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.DeleteUserRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.GetUserDetailRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.QueryUserPageRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.UpdateUserRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.res.ChangeUserStatusResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.user.res.CreateUserResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.user.res.DeleteUserResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.user.res.UpdateUserResponseDTO;
-import cn.dev33.satoken.annotation.SaCheckRole;
+import com.sunnao.spring.ddd.template.client.system.user.req.*;
+import com.sunnao.spring.ddd.template.client.system.user.res.*;
 import com.sunnao.spring.ddd.template.common.annotation.OperLog;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户管理 Controller（Input Adaptor）

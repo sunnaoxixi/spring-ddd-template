@@ -19,16 +19,24 @@ import java.time.LocalDateTime;
 @Table("sys_user_role")
 public class UserRolePO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long roleId;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private LocalDateTime createAt;
 }

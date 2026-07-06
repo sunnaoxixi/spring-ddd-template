@@ -19,16 +19,24 @@ public class QueryFilePageRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 页码，从1开始 */
+    /**
+     * 页码，从1开始
+     */
     private Integer pageNum = 1;
 
-    /** 每页条数 */
+    /**
+     * 每页条数
+     */
     private Integer pageSize = 10;
 
-    /** 原始文件名（模糊匹配，可选） */
+    /**
+     * 原始文件名（模糊匹配，可选）
+     */
     private String originalName;
 
-    /** 上传人ID（可选） */
+    /**
+     * 上传人ID（可选）
+     */
     private Long uploadBy;
 
     @Override

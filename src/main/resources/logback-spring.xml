@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 日志目录与应用名（可通过 logging.file.path / spring.application.name 覆盖） -->
-    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="spring-ddd-template"/>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name"
+                    defaultValue="spring-ddd-template"/>
     <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="logs"/>
 
     <!-- 统一 pattern：含 %X{traceId}（由 TraceIdFilter 写入 MDC，异步线程经 AsyncConfig 透传） -->

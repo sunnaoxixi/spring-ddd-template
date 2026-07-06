@@ -1,17 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.dict;
 
-import com.sunnao.spring.ddd.template.client.system.dict.req.CreateDictDataRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.CreateDictTypeRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.DeleteDictDataRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.DeleteDictTypeRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.UpdateDictDataRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.req.UpdateDictTypeRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.res.CreateDictDataResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.res.CreateDictTypeResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.res.DeleteDictDataResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.res.DeleteDictTypeResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.res.UpdateDictDataResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.res.UpdateDictTypeResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.dict.req.*;
+import com.sunnao.spring.ddd.template.client.system.dict.res.*;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.common.service.ApplicationCmdService;
 

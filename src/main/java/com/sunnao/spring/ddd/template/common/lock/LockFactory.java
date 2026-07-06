@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LockFactory {
 
-    /** 锁类型：redis | jvm */
+    /**
+     * 锁类型：redis | jvm
+     */
     @Value("${app.lock.type:redis}")
     private String lockType;
 

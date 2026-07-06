@@ -20,10 +20,14 @@ public class AssignUserRoleRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 角色ID集合（全量覆盖，空集合表示清空角色） */
+    /**
+     * 角色ID集合（全量覆盖，空集合表示清空角色）
+     */
     private List<Long> roleIds;
 
     @Override

@@ -20,20 +20,30 @@ import lombok.ToString;
 @Table("sys_permission")
 public class PermissionPO extends BasePO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 权限标识（Sa-Token 鉴权使用，唯一） */
+    /**
+     * 权限标识（Sa-Token 鉴权使用，唯一）
+     */
     private String permKey;
 
-    /** 权限名称 */
+    /**
+     * 权限名称
+     */
     private String permName;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 逻辑删除：0-正常，1-已删除 */
+    /**
+     * 逻辑删除：0-正常，1-已删除
+     */
     @Column(isLogicDelete = true)
     private Integer deleted;
 }

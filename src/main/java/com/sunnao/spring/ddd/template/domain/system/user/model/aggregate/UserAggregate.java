@@ -21,7 +21,9 @@ import lombok.Setter;
 @Setter
 public class UserAggregate extends BaseAggregate {
 
-    /** 用户实体 */
+    /**
+     * 用户实体
+     */
     private UserEntity userEntity;
 
     /**

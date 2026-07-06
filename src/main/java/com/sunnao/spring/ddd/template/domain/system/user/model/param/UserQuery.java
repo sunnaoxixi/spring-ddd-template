@@ -14,12 +14,18 @@ import lombok.ToString;
 @ToString
 public class UserQuery extends BaseParam {
 
-    /** 邮箱（精确匹配） */
+    /**
+     * 邮箱（精确匹配）
+     */
     private String email;
 
-    /** 昵称（模糊匹配） */
+    /**
+     * 昵称（模糊匹配）
+     */
     private String nickname;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private UserStatusEnum status;
 }

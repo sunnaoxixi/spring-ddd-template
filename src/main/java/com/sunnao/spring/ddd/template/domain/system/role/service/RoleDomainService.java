@@ -3,11 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.role.service;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.common.service.DomainService;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.AssignPermissionParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.AssignUserRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.CreateRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.DeleteRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.UpdateRoleParam;
+import com.sunnao.spring.ddd.template.domain.system.role.model.param.*;
 
 /**
  * 角色领域服务接口（写模式）

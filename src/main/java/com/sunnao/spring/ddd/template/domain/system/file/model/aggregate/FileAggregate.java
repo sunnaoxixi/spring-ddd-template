@@ -19,7 +19,9 @@ import lombok.Setter;
 @Setter
 public class FileAggregate extends BaseAggregate {
 
-    /** 文件实体 */
+    /**
+     * 文件实体
+     */
     private FileEntity fileEntity;
 
     /**

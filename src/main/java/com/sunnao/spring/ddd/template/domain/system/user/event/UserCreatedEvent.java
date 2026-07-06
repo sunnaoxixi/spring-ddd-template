@@ -14,13 +14,19 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UserCreatedEvent extends DomainEvent {
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private final Long userId;
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private final String email;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private final String nickname;
 
     public UserCreatedEvent(Long userId, String email, String nickname, Long operatorId) {

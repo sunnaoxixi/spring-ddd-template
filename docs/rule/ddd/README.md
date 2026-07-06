@@ -44,7 +44,8 @@
 
 ## 📖 实践案例
 
-- [DDD 实践案例：从理论到落地的完整实战](https://mp.weixin.qq.com/s/QRq_mnifw62LMoHey-tMiQ) — 结合真实业务场景的 DDD 落地经验分享，推荐配合本规范一起阅读
+- [DDD 实践案例：从理论到落地的完整实战](https://mp.weixin.qq.com/s/QRq_mnifw62LMoHey-tMiQ) — 结合真实业务场景的 DDD
+  落地经验分享，推荐配合本规范一起阅读
 
 ## 🏗️ 工程结构
 

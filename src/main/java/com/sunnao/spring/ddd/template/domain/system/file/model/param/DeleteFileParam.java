@@ -13,9 +13,13 @@ import lombok.ToString;
 @ToString
 public class DeleteFileParam extends BaseParam {
 
-    /** 文件ID */
+    /**
+     * 文件ID
+     */
     private Long fileId;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

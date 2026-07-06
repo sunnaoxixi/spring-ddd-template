@@ -21,30 +21,46 @@ import lombok.ToString;
 @Table("sys_dict_data")
 public class DictDataPO extends BasePO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 字典类型键 */
+    /**
+     * 字典类型键
+     */
     private String typeKey;
 
-    /** 字典标签 */
+    /**
+     * 字典标签
+     */
     private String label;
 
-    /** 字典值 */
+    /**
+     * 字典值
+     */
     @Column("dict_value")
     private String dictValue;
 
-    /** 排序（升序） */
+    /**
+     * 排序（升序）
+     */
     private Integer sort;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 逻辑删除：0-正常，1-已删除 */
+    /**
+     * 逻辑删除：0-正常，1-已删除
+     */
     @Column(isLogicDelete = true)
     private Integer deleted;
 }

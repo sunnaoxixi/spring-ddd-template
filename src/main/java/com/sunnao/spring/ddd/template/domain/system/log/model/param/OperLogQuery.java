@@ -15,15 +15,23 @@ import java.time.LocalDateTime;
 @ToString
 public class OperLogQuery extends BaseParam {
 
-    /** 业务模块（精确匹配） */
+    /**
+     * 业务模块（精确匹配）
+     */
     private String module;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 
-    /** 操作时间下限（含） */
+    /**
+     * 操作时间下限（含）
+     */
     private LocalDateTime startTime;
 
-    /** 操作时间上限（含） */
+    /**
+     * 操作时间上限（含）
+     */
     private LocalDateTime endTime;
 }

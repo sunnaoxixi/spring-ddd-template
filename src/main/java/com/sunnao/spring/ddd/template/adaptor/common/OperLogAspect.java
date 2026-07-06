@@ -36,10 +36,14 @@ import java.util.StringJoiner;
 @Component
 public class OperLogAspect {
 
-    /** 参数摘要最大长度（与 sys_oper_log.params 列宽对齐） */
+    /**
+     * 参数摘要最大长度（与 sys_oper_log.params 列宽对齐）
+     */
     private static final int PARAMS_MAX_LENGTH = 2000;
 
-    /** 未捕获异常的结果码（正常业务失败为 ResultDO 错误码） */
+    /**
+     * 未捕获异常的结果码（正常业务失败为 ResultDO 错误码）
+     */
     private static final String EXCEPTION_CODE = "EXCEPTION";
 
     @Resource

@@ -13,15 +13,23 @@ import lombok.ToString;
 @ToString
 public class UpdateUserParam extends BaseParam {
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

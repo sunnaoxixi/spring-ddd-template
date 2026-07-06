@@ -18,6 +18,8 @@ public class UpdateDictDataResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 字典数据ID */
+    /**
+     * 字典数据ID
+     */
     private Long dataId;
 }

@@ -20,22 +20,34 @@ public class QueryOperLogPageRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 页码，从1开始 */
+    /**
+     * 页码，从1开始
+     */
     private Integer pageNum = 1;
 
-    /** 每页条数 */
+    /**
+     * 每页条数
+     */
     private Integer pageSize = 10;
 
-    /** 业务模块（精确匹配，可选） */
+    /**
+     * 业务模块（精确匹配，可选）
+     */
     private String module;
 
-    /** 操作人ID（可选） */
+    /**
+     * 操作人ID（可选）
+     */
     private Long operatorId;
 
-    /** 操作时间下限（含，可选，ISO 格式） */
+    /**
+     * 操作时间下限（含，可选，ISO 格式）
+     */
     private LocalDateTime startTime;
 
-    /** 操作时间上限（含，可选，ISO 格式） */
+    /**
+     * 操作时间上限（含，可选，ISO 格式）
+     */
     private LocalDateTime endTime;
 
     @Override

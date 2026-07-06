@@ -1,4 +1,4 @@
-package com.sunnao.spring.ddd.template.client.system.auth.req;
+package com.sunnao.spring.ddd.template.client.auth.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
@@ -22,10 +22,14 @@ public class LoginRequestDTO extends BaseDto {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$");
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private String email;
 
-    /** 密码（明文） */
+    /**
+     * 密码（明文）
+     */
     private String password;
 
     @Override
@@ -34,7 +38,7 @@ public class LoginRequestDTO extends BaseDto {
             return ResultDO.buildFailResult("PARAM_ERROR", "邮箱不能为空");
         }
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "邮箱格式不正确");
+            return ResultDO.buildFailResult("PARAM_ERROR", "邮箱格式不正�?);
         }
         if (password == null || password.isBlank()) {
             return ResultDO.buildFailResult("PARAM_ERROR", "密码不能为空");

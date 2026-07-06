@@ -1,16 +1,16 @@
-package com.sunnao.spring.ddd.template.application.system.auth.assembler;
+package com.sunnao.spring.ddd.template.application.auth.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.auth.req.LoginRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.auth.res.GetLoginUserResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.auth.res.LoginResponseDTO;
-import com.sunnao.spring.ddd.template.domain.system.auth.model.param.LoginParam;
+import com.sunnao.spring.ddd.template.client.auth.req.LoginRequestDTO;
+import com.sunnao.spring.ddd.template.client.auth.res.GetLoginUserResponseDTO;
+import com.sunnao.spring.ddd.template.client.auth.res.LoginResponseDTO;
+import com.sunnao.spring.ddd.template.domain.auth.model.param.LoginParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 
 import java.util.Collections;
 
 /**
- * 认证转换器
+ * 认证转换�?
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
  */
 public class AuthAssembler {
@@ -19,7 +19,7 @@ public class AuthAssembler {
     }
 
     /**
-     * 登录 RequestDTO 转领域 Param
+     * 登录 RequestDTO 转领�?Param
      */
     public static LoginParam toLoginParam(LoginRequestDTO requestDTO) {
         LoginParam param = new LoginParam();
@@ -29,7 +29,7 @@ public class AuthAssembler {
     }
 
     /**
-     * 聚合根 + token 信息转登录 ResponseDTO（model 枚举 → client 角色码）
+     * 聚合�?+ token 信息转登�?ResponseDTO（model 枚举 �?client 角色码）
      */
     public static LoginResponseDTO toLoginResponseDTO(UserAggregate aggregate, String tokenName, String tokenValue) {
         UserEntity entity = aggregate.getUserEntity();

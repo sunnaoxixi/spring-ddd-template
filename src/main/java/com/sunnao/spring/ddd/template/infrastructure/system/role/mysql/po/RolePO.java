@@ -20,23 +20,35 @@ import lombok.ToString;
 @Table("sys_role")
 public class RolePO extends BasePO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 角色标识（Sa-Token 鉴权使用，唯一） */
+    /**
+     * 角色标识（Sa-Token 鉴权使用，唯一）
+     */
     private String roleKey;
 
-    /** 角色名称 */
+    /**
+     * 角色名称
+     */
     private String roleName;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 逻辑删除：0-正常，1-已删除 */
+    /**
+     * 逻辑删除：0-正常，1-已删除
+     */
     @Column(isLogicDelete = true)
     private Integer deleted;
 }

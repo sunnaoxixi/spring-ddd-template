@@ -18,15 +18,23 @@ import java.time.LocalDateTime;
 @Setter
 public abstract class BasePO {
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private LocalDateTime createAt;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private LocalDateTime updateAt;
 
-    /** 创建人ID */
+    /**
+     * 创建人ID
+     */
     private Long createBy;
 
-    /** 更新人ID */
+    /**
+     * 更新人ID
+     */
     private Long updateBy;
 }

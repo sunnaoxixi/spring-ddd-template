@@ -22,27 +22,43 @@ public class UserDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long id;
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private String email;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 角色标识集合（如 ["admin","user"]） */
+    /**
+     * 角色标识集合（如 ["admin","user"]）
+     */
     private List<String> roles;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private LocalDateTime createAt;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private LocalDateTime updateAt;
 }

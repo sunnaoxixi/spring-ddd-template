@@ -19,16 +19,24 @@ import java.time.LocalDateTime;
 @Table("sys_role_permission")
 public class RolePermissionPO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long roleId;
 
-    /** 权限ID */
+    /**
+     * 权限ID
+     */
     private Long permissionId;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private LocalDateTime createAt;
 }

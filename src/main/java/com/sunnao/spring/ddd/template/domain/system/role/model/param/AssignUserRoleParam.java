@@ -15,12 +15,18 @@ import java.util.List;
 @ToString
 public class AssignUserRoleParam extends BaseParam {
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 角色ID集合（全量覆盖，空集合表示清空角色） */
+    /**
+     * 角色ID集合（全量覆盖，空集合表示清空角色）
+     */
     private List<Long> roleIds;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

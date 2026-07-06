@@ -9,11 +9,15 @@ import lombok.Getter;
 @Getter
 public enum FileStorageTypeEnum {
 
-    /** 本地磁盘存储 */
+    /**
+     * 本地磁盘存储
+     */
     LOCAL("local", "本地磁盘"),
     ;
 
-    /** 存储类型标识（数据库存储） */
+    /**
+     * 存储类型标识（数据库存储）
+     */
     private final String code;
 
     private final String description;

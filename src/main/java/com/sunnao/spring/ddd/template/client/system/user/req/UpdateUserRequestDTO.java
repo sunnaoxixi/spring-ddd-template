@@ -19,13 +19,19 @@ public class UpdateUserRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
     @Override

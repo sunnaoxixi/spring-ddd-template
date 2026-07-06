@@ -21,24 +21,38 @@ public class FileDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 文件ID */
+    /**
+     * 文件ID
+     */
     private Long id;
 
-    /** 原始文件名 */
+    /**
+     * 原始文件名
+     */
     private String originalName;
 
-    /** 文件大小（字节） */
+    /**
+     * 文件大小（字节）
+     */
     private Long size;
 
-    /** 文件 MIME 类型 */
+    /**
+     * 文件 MIME 类型
+     */
     private String contentType;
 
-    /** 存储类型：local-本地磁盘 */
+    /**
+     * 存储类型：local-本地磁盘
+     */
     private String storageType;
 
-    /** 上传人ID */
+    /**
+     * 上传人ID
+     */
     private Long uploadBy;
 
-    /** 上传时间 */
+    /**
+     * 上传时间
+     */
     private LocalDateTime createAt;
 }

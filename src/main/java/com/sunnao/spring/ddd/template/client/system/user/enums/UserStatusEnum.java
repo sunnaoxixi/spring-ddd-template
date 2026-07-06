@@ -11,10 +11,14 @@ import lombok.Getter;
 @Getter
 public enum UserStatusEnum {
 
-    /** 启用 */
+    /**
+     * 启用
+     */
     ENABLED(1, "启用"),
 
-    /** 禁用 */
+    /**
+     * 禁用
+     */
     DISABLED(0, "禁用"),
     ;
 

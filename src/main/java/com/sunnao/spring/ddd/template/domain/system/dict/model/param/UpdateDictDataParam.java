@@ -14,24 +14,38 @@ import lombok.ToString;
 @ToString
 public class UpdateDictDataParam extends BaseParam {
 
-    /** 字典数据ID */
+    /**
+     * 字典数据ID
+     */
     private Long dataId;
 
-    /** 字典标签 */
+    /**
+     * 字典标签
+     */
     private String label;
 
-    /** 字典值 */
+    /**
+     * 字典值
+     */
     private String value;
 
-    /** 排序（升序） */
+    /**
+     * 排序（升序）
+     */
     private Integer sort;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private DictStatusEnum status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

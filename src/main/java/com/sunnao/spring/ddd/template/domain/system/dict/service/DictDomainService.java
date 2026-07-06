@@ -4,12 +4,7 @@ import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.common.service.DomainService;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictDataAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictTypeAggregate;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.CreateDictDataParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.CreateDictTypeParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.DeleteDictDataParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.DeleteDictTypeParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictDataParam;
-import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictTypeParam;
+import com.sunnao.spring.ddd.template.domain.system.dict.model.param.*;
 
 /**
  * 字典领域服务接口（写模式）

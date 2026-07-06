@@ -18,7 +18,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-    /** 与 sa-token.token-name 配置保持一致 */
+    /**
+     * 与 sa-token.token-name 配置保持一致
+     */
     private static final String TOKEN_HEADER = "satoken";
 
     @Bean

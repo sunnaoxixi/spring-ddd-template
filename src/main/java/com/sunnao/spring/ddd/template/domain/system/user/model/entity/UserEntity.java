@@ -20,22 +20,34 @@ import java.util.List;
 @Setter
 public class UserEntity extends BaseEntity {
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private String email;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 密码（加密后） */
+    /**
+     * 密码（加密后）
+     */
     private String password;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private UserStatusEnum status;
 
-    /** 角色标识集合（RBAC，归属 role 领域，由查询侧按需填充，仅数据载体） */
+    /**
+     * 角色标识集合（RBAC，归属 role 领域，由查询侧按需填充，仅数据载体）
+     */
     private List<String> roles;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
     /**

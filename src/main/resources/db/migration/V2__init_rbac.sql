@@ -15,17 +15,28 @@ CREATE TABLE sys_role
     deleted   SMALLINT     NOT NULL DEFAULT 0
 );
 
-COMMENT ON TABLE sys_role IS '系统角色表';
-COMMENT ON COLUMN sys_role.id IS '主键ID';
-COMMENT ON COLUMN sys_role.role_key IS '角色标识（Sa-Token 鉴权使用，唯一）';
-COMMENT ON COLUMN sys_role.role_name IS '角色名称';
-COMMENT ON COLUMN sys_role.status IS '状态：1-启用，0-禁用';
-COMMENT ON COLUMN sys_role.remark IS '备注';
-COMMENT ON COLUMN sys_role.create_at IS '创建时间';
-COMMENT ON COLUMN sys_role.update_at IS '更新时间';
-COMMENT ON COLUMN sys_role.create_by IS '创建人ID';
-COMMENT ON COLUMN sys_role.update_by IS '更新人ID';
-COMMENT ON COLUMN sys_role.deleted IS '逻辑删除：0-正常，1-已删除';
+COMMENT
+ON TABLE sys_role IS '系统角色表';
+COMMENT
+ON COLUMN sys_role.id IS '主键ID';
+COMMENT
+ON COLUMN sys_role.role_key IS '角色标识（Sa-Token 鉴权使用，唯一）';
+COMMENT
+ON COLUMN sys_role.role_name IS '角色名称';
+COMMENT
+ON COLUMN sys_role.status IS '状态：1-启用，0-禁用';
+COMMENT
+ON COLUMN sys_role.remark IS '备注';
+COMMENT
+ON COLUMN sys_role.create_at IS '创建时间';
+COMMENT
+ON COLUMN sys_role.update_at IS '更新时间';
+COMMENT
+ON COLUMN sys_role.create_by IS '创建人ID';
+COMMENT
+ON COLUMN sys_role.update_by IS '更新人ID';
+COMMENT
+ON COLUMN sys_role.deleted IS '逻辑删除：0-正常，1-已删除';
 
 CREATE UNIQUE INDEX uk_sys_role_key ON sys_role (role_key) WHERE deleted = 0;
 
@@ -43,16 +54,26 @@ CREATE TABLE sys_permission
     deleted   SMALLINT     NOT NULL DEFAULT 0
 );
 
-COMMENT ON TABLE sys_permission IS '系统权限表';
-COMMENT ON COLUMN sys_permission.id IS '主键ID';
-COMMENT ON COLUMN sys_permission.perm_key IS '权限标识（Sa-Token 鉴权使用，唯一）';
-COMMENT ON COLUMN sys_permission.perm_name IS '权限名称';
-COMMENT ON COLUMN sys_permission.remark IS '备注';
-COMMENT ON COLUMN sys_permission.create_at IS '创建时间';
-COMMENT ON COLUMN sys_permission.update_at IS '更新时间';
-COMMENT ON COLUMN sys_permission.create_by IS '创建人ID';
-COMMENT ON COLUMN sys_permission.update_by IS '更新人ID';
-COMMENT ON COLUMN sys_permission.deleted IS '逻辑删除：0-正常，1-已删除';
+COMMENT
+ON TABLE sys_permission IS '系统权限表';
+COMMENT
+ON COLUMN sys_permission.id IS '主键ID';
+COMMENT
+ON COLUMN sys_permission.perm_key IS '权限标识（Sa-Token 鉴权使用，唯一）';
+COMMENT
+ON COLUMN sys_permission.perm_name IS '权限名称';
+COMMENT
+ON COLUMN sys_permission.remark IS '备注';
+COMMENT
+ON COLUMN sys_permission.create_at IS '创建时间';
+COMMENT
+ON COLUMN sys_permission.update_at IS '更新时间';
+COMMENT
+ON COLUMN sys_permission.create_by IS '创建人ID';
+COMMENT
+ON COLUMN sys_permission.update_by IS '更新人ID';
+COMMENT
+ON COLUMN sys_permission.deleted IS '逻辑删除：0-正常，1-已删除';
 
 CREATE UNIQUE INDEX uk_sys_permission_key ON sys_permission (perm_key) WHERE deleted = 0;
 
@@ -65,9 +86,12 @@ CREATE TABLE sys_role_permission
     create_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-COMMENT ON TABLE sys_role_permission IS '角色-权限关联表';
-COMMENT ON COLUMN sys_role_permission.role_id IS '角色ID';
-COMMENT ON COLUMN sys_role_permission.permission_id IS '权限ID';
+COMMENT
+ON TABLE sys_role_permission IS '角色-权限关联表';
+COMMENT
+ON COLUMN sys_role_permission.role_id IS '角色ID';
+COMMENT
+ON COLUMN sys_role_permission.permission_id IS '权限ID';
 
 CREATE UNIQUE INDEX uk_sys_role_permission ON sys_role_permission (role_id, permission_id);
 
@@ -80,9 +104,12 @@ CREATE TABLE sys_user_role
     create_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-COMMENT ON TABLE sys_user_role IS '用户-角色关联表';
-COMMENT ON COLUMN sys_user_role.user_id IS '用户ID';
-COMMENT ON COLUMN sys_user_role.role_id IS '角色ID';
+COMMENT
+ON TABLE sys_user_role IS '用户-角色关联表';
+COMMENT
+ON COLUMN sys_user_role.user_id IS '用户ID';
+COMMENT
+ON COLUMN sys_user_role.role_id IS '角色ID';
 
 CREATE UNIQUE INDEX uk_sys_user_role ON sys_user_role (user_id, role_id);
 CREATE INDEX idx_sys_user_role_user ON sys_user_role (user_id);
@@ -126,4 +153,5 @@ FROM sys_user u
 
 -- 迁移完成后删除 sys_user.role 列
 ALTER TABLE sys_user
-    DROP COLUMN role;
+DROP
+COLUMN role;

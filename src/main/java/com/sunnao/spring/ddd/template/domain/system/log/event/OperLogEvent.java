@@ -14,28 +14,44 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class OperLogEvent extends DomainEvent {
 
-    /** 链路追踪ID */
+    /**
+     * 链路追踪ID
+     */
     private final String traceId;
 
-    /** 业务模块 */
+    /**
+     * 业务模块
+     */
     private final String module;
 
-    /** 操作动作 */
+    /**
+     * 操作动作
+     */
     private final String action;
 
-    /** 请求 URI */
+    /**
+     * 请求 URI
+     */
     private final String uri;
 
-    /** 请求参数摘要（超长截断） */
+    /**
+     * 请求参数摘要（超长截断）
+     */
     private final String params;
 
-    /** 结果码（SUCCESS 或错误码） */
+    /**
+     * 结果码（SUCCESS 或错误码）
+     */
     private final String resultCode;
 
-    /** 耗时（毫秒） */
+    /**
+     * 耗时（毫秒）
+     */
     private final Long costMs;
 
-    /** 客户端IP */
+    /**
+     * 客户端IP
+     */
     private final String ip;
 
     public OperLogEvent(String traceId, Long operatorId, String module, String action,

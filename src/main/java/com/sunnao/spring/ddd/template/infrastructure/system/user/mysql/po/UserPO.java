@@ -20,26 +20,40 @@ import lombok.ToString;
 @Table("sys_user")
 public class UserPO extends BasePO {
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     @Id(keyType = KeyType.Auto)
     private Long id;
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private String email;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 密码（BCrypt 加密） */
+    /**
+     * 密码（BCrypt 加密）
+     */
     private String password;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
-    /** 逻辑删除：0-正常，1-已删除 */
+    /**
+     * 逻辑删除：0-正常，1-已删除
+     */
     @Column(isLogicDelete = true)
     private Integer deleted;
 }

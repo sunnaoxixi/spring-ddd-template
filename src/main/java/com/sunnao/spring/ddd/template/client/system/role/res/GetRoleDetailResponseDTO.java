@@ -20,9 +20,13 @@ public class GetRoleDetailResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 角色信息 */
+    /**
+     * 角色信息
+     */
     private RoleDTO role;
 
-    /** 角色拥有的权限标识集合 */
+    /**
+     * 角色拥有的权限标识集合
+     */
     private List<String> permKeys;
 }

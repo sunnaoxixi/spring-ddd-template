@@ -20,9 +20,13 @@ public class QueryDictDataListResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 字典类型键 */
+    /**
+     * 字典类型键
+     */
     private String typeKey;
 
-    /** 字典数据列表（按 sort 升序） */
+    /**
+     * 字典数据列表（按 sort 升序）
+     */
     private List<DictDataDTO> dataList;
 }

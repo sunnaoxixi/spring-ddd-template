@@ -18,6 +18,8 @@ public class AssignPermissionResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long roleId;
 }

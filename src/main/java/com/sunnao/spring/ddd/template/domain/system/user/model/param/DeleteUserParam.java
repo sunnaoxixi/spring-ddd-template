@@ -13,9 +13,13 @@ import lombok.ToString;
 @ToString
 public class DeleteUserParam extends BaseParam {
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

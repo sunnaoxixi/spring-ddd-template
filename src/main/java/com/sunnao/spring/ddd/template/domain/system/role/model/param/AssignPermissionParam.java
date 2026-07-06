@@ -15,12 +15,18 @@ import java.util.List;
 @ToString
 public class AssignPermissionParam extends BaseParam {
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long roleId;
 
-    /** 权限ID集合（全量覆盖，空集合表示清空权限） */
+    /**
+     * 权限ID集合（全量覆盖，空集合表示清空权限）
+     */
     private List<Long> permissionIds;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

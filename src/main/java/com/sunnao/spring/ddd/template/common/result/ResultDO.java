@@ -1,10 +1,10 @@
 package com.sunnao.spring.ddd.template.common.result;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * 统一结果对象
@@ -21,19 +21,29 @@ public class ResultDO<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 默认失败错误码 */
+    /**
+     * 默认失败错误码
+     */
     private static final String DEFAULT_FAIL_CODE = "FAIL";
 
-    /** 是否成功 */
+    /**
+     * 是否成功
+     */
     private boolean success;
 
-    /** 错误码 */
+    /**
+     * 错误码
+     */
     private String code;
 
-    /** 错误信息 */
+    /**
+     * 错误信息
+     */
     private String msg;
 
-    /** 返回数据 */
+    /**
+     * 返回数据
+     */
     private T data;
 
     /**

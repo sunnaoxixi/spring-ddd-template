@@ -23,7 +23,8 @@ domain/
 │   └── repository/         # 仓储接口
 ```
 
-**包规范约束**：domain 层只能包含上述类型的代码（聚合根、实体、值对象、Param、Result、DomainService、Repository，以及配合懒加载使用的函数式接口 Provider，见 1.8 节），禁止出现 Utils、常量类、配置类等非领域概念的代码。
+**包规范约束**：domain 层只能包含上述类型的代码（聚合根、实体、值对象、Param、Result、DomainService、Repository，以及配合懒加载使用的函数式接口
+Provider，见 1.8 节），禁止出现 Utils、常量类、配置类等非领域概念的代码。
 
 ### 1.2 领域层隔离性规则
 
@@ -34,7 +35,8 @@ domain/
 
 ### 1.3 领域层禁止使用设计模式
 
-**禁止在领域层（domain）使用任何设计模式**，包括但不限于：策略模式（Strategy）、工厂模式（Factory）、模板方法模式（Template Method）、责任链模式（Chain of Responsibility）等。
+**禁止在领域层（domain）使用任何设计模式**，包括但不限于：策略模式（Strategy）、工厂模式（Factory）、模板方法模式（Template
+Method）、责任链模式（Chain of Responsibility）等。
 
 #### 禁止原因
 
@@ -46,7 +48,9 @@ domain/
 
 #### 核心原则
 
-**行业业务是可穷举的，不需要为扩展性引入设计模式。** 我们是行业业务系统，不是中台模式，不需要支持 N 种不同的行业接入。领域内的业务分支（如国内/国际、成人/儿童/婴儿、不同计价规则等）数量有限且可穷举，直接用 `if/else` 或 `switch` 在 DomainService、聚合根、实体、值对象中处理即可。
+**行业业务是可穷举的，不需要为扩展性引入设计模式。** 我们是行业业务系统，不是中台模式，不需要支持 N
+种不同的行业接入。领域内的业务分支（如国内/国际、成人/儿童/婴儿、不同计价规则等）数量有限且可穷举，直接用 `if/else` 或
+`switch` 在 DomainService、聚合根、实体、值对象中处理即可。
 
 #### 正确做法
 
@@ -77,7 +81,8 @@ public FeeCalculateResult calculateFee(FeeCalculateParam param) {
 
 #### 设计模式的正确归属
 
-设计模式不属于领域层，但**允许在 Adaptor 层使用**。例如基于不同渠道ID路由接入不同的第三方接口，这属于**技术适配**职责，可以在 Output Adaptor 实现类中使用策略模式或路由模式。详见 `ddd-adaptor-layer.md` 1.6 节。
+设计模式不属于领域层，但**允许在 Adaptor 层使用**。例如基于不同渠道ID路由接入不同的第三方接口，这属于**技术适配**职责，可以在
+Output Adaptor 实现类中使用策略模式或路由模式。详见 `ddd-adaptor-layer.md` 1.6 节。
 
 ### 1.4 Param 对象规范
 
@@ -156,9 +161,11 @@ public class FeeCalculateResult extends BaseResult {
 
 ### 1.8 DomainService 按需查询外部数据的懒加载模式
 
-**场景**：DomainService 在循环处理业务逻辑时需要按需查询外部数据（如循环计算每个商品按销售渠道币种的销售价，需要逐个查询汇率），但 DomainService 只能访问自己领域的 Repository，**禁止直接依赖 Adaptor**。
+**场景**：DomainService 在循环处理业务逻辑时需要按需查询外部数据（如循环计算每个商品按销售渠道币种的销售价，需要逐个查询汇率），但
+DomainService 只能访问自己领域的 Repository，**禁止直接依赖 Adaptor**。
 
-**解决方案**：在 Param 对象中定义一个**函数式接口属性**，由 Application 层在构造 Param 时注入 Adaptor 调用的实现。DomainService 通过调用该接口按需获取外部数据，无需感知 Adaptor 的存在。
+**解决方案**：在 Param 对象中定义一个**函数式接口属性**，由 Application 层在构造 Param 时注入 Adaptor 调用的实现。DomainService
+通过调用该接口按需获取外部数据，无需感知 Adaptor 的存在。
 
 **核心价值**：
 
@@ -166,7 +173,8 @@ public class FeeCalculateResult extends BaseResult {
 - 外部数据的获取逻辑由 Application 层控制，符合分层架构原则
 - 支持按需查询（懒加载），避免一次性加载所有数据
 
-**适用场景**：仅适用于**循环中按需查询**的场景。简单场景（非循环查询）由 Application 层在调用 DomainService 前通过 Adaptor 获取数据后传入 Param 即可。
+**适用场景**：仅适用于**循环中按需查询**的场景。简单场景（非循环查询）由 Application 层在调用 DomainService 前通过 Adaptor
+获取数据后传入 Param 即可。
 
 #### 步骤1：在 domain 层定义函数式接口
 
@@ -461,14 +469,15 @@ public boolean isPaymentConfirmed() {
 **2. 非状态相关写操作的抽象**
 
 - **问题**：补充数据类操作（如更新银行卡号、费用信息）可能因字段差异导致方法膨胀
-- **解决方案**：通过**业务语义抽象**合并同类操作为业务概念（如 `回填费用` 代替多个字段的 `update` 方法），避免纯技术意义的通用 `update`，方法名需体现业务意图（如 `更新支付信息`）
+- **解决方案**：通过**业务语义抽象**合并同类操作为业务概念（如 `回填费用` 代替多个字段的 `update` 方法），避免纯技术意义的通用
+  `update`，方法名需体现业务意图（如 `更新支付信息`）
 
 **3. 读操作与判断方法的拆分**
 
 - **问题**：查询类方法（如 `findXxx`、`isValid`）易膨胀，增加聚合根复杂度
 - **解决方案**：
-  - **代码分层**：拆分为基类（写操作）和子类（读操作），提升可读性
-  - **延迟暴露**：通过聚合根提供查找方法，让调用方直接访问实体/值对象的方法（减少聚合根方法数量）
+    - **代码分层**：拆分为基类（写操作）和子类（读操作），提升可读性
+    - **延迟暴露**：通过聚合根提供查找方法，让调用方直接访问实体/值对象的方法（减少聚合根方法数量）
 
 #### 异常处理
 

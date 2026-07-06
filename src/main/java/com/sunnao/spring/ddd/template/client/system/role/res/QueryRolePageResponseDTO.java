@@ -20,9 +20,13 @@ public class QueryRolePageResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 总条数 */
+    /**
+     * 总条数
+     */
     private Long total;
 
-    /** 角色列表 */
+    /**
+     * 角色列表
+     */
     private List<RoleDTO> roles;
 }

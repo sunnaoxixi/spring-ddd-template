@@ -27,10 +27,14 @@ import java.io.IOException;
 @Component
 public class TraceIdFilter extends OncePerRequestFilter {
 
-    /** traceId 的 MDC key，与 logback-spring.xml 中的 %X{traceId} 对应 */
+    /**
+     * traceId 的 MDC key，与 logback-spring.xml 中的 %X{traceId} 对应
+     */
     public static final String TRACE_ID = "traceId";
 
-    /** traceId 请求/响应头名称 */
+    /**
+     * traceId 请求/响应头名称
+     */
     public static final String TRACE_ID_HEADER = "X-Trace-Id";
 
     @Override

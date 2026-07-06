@@ -22,13 +22,19 @@ public class CreateRoleRequestDTO extends BaseDto {
 
     private static final Pattern ROLE_KEY_PATTERN = Pattern.compile("^[a-z][a-z0-9_-]{1,63}$");
 
-    /** 角色标识（创建后不可变更） */
+    /**
+     * 角色标识（创建后不可变更）
+     */
     private String roleKey;
 
-    /** 角色名称 */
+    /**
+     * 角色名称
+     */
     private String roleName;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
     @Override

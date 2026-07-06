@@ -18,16 +18,24 @@ import lombok.Setter;
 @Setter
 public class DictTypeEntity extends BaseEntity {
 
-    /** 字典类型键（唯一标识，创建后不可变更） */
+    /**
+     * 字典类型键（唯一标识，创建后不可变更）
+     */
     private String typeKey;
 
-    /** 字典类型名称 */
+    /**
+     * 字典类型名称
+     */
     private String typeName;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private DictStatusEnum status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
     /**

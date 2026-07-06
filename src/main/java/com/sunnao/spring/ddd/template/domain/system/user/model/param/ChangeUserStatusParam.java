@@ -14,12 +14,18 @@ import lombok.ToString;
 @ToString
 public class ChangeUserStatusParam extends BaseParam {
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private Long userId;
 
-    /** 目标状态 */
+    /**
+     * 目标状态
+     */
     private UserStatusEnum targetStatus;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

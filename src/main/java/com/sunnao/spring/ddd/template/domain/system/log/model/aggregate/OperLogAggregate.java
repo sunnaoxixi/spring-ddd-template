@@ -17,7 +17,9 @@ import lombok.Setter;
 @Setter
 public class OperLogAggregate extends BaseAggregate {
 
-    /** 操作日志实体 */
+    /**
+     * 操作日志实体
+     */
     private OperLogEntity operLogEntity;
 
     /**

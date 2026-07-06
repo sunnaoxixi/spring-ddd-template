@@ -2,24 +2,14 @@ package com.sunnao.spring.ddd.template.application.system.role.assembler;
 
 import com.sunnao.spring.ddd.template.client.system.role.model.PermissionDTO;
 import com.sunnao.spring.ddd.template.client.system.role.model.RoleDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.AssignPermissionRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.AssignUserRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.CreateRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.DeleteRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.QueryRolePageRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.UpdateRoleRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.*;
 import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryRolePageResponseDTO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.AssignPermissionParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.AssignUserRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.CreateRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.DeleteRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.RoleQuery;
-import com.sunnao.spring.ddd.template.domain.system.role.model.param.UpdateRoleParam;
+import com.sunnao.spring.ddd.template.domain.system.role.model.param.*;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
 
 import java.util.Collections;

@@ -14,30 +14,48 @@ import lombok.Setter;
 @Setter
 public class OperLogEntity extends BaseEntity {
 
-    /** 链路追踪ID */
+    /**
+     * 链路追踪ID
+     */
     private String traceId;
 
-    /** 操作人ID（登录前操作如 login 可为空） */
+    /**
+     * 操作人ID（登录前操作如 login 可为空）
+     */
     private Long operatorId;
 
-    /** 业务模块 */
+    /**
+     * 业务模块
+     */
     private String module;
 
-    /** 操作动作 */
+    /**
+     * 操作动作
+     */
     private String action;
 
-    /** 请求 URI */
+    /**
+     * 请求 URI
+     */
     private String uri;
 
-    /** 请求参数摘要（超长截断） */
+    /**
+     * 请求参数摘要（超长截断）
+     */
     private String params;
 
-    /** 结果码（SUCCESS 或错误码） */
+    /**
+     * 结果码（SUCCESS 或错误码）
+     */
     private String resultCode;
 
-    /** 耗时（毫秒） */
+    /**
+     * 耗时（毫秒）
+     */
     private Long costMs;
 
-    /** 客户端IP */
+    /**
+     * 客户端IP
+     */
     private String ip;
 }

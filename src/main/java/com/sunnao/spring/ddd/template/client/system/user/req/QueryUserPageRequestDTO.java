@@ -20,19 +20,29 @@ public class QueryUserPageRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 页码，从1开始 */
+    /**
+     * 页码，从1开始
+     */
     private Integer pageNum = 1;
 
-    /** 每页条数 */
+    /**
+     * 每页条数
+     */
     private Integer pageSize = 10;
 
-    /** 邮箱（精确匹配，可选） */
+    /**
+     * 邮箱（精确匹配，可选）
+     */
     private String email;
 
-    /** 昵称（模糊匹配，可选） */
+    /**
+     * 昵称（模糊匹配，可选）
+     */
     private String nickname;
 
-    /** 状态：1-启用，0-禁用（可选） */
+    /**
+     * 状态：1-启用，0-禁用（可选）
+     */
     private Integer status;
 
     @Override

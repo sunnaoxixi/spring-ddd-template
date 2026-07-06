@@ -22,13 +22,19 @@ public class CreateDictTypeRequestDTO extends BaseDto {
 
     private static final Pattern TYPE_KEY_PATTERN = Pattern.compile("^[a-z][a-z0-9_]{1,63}$");
 
-    /** 字典类型键（创建后不可变更） */
+    /**
+     * 字典类型键（创建后不可变更）
+     */
     private String typeKey;
 
-    /** 字典类型名称 */
+    /**
+     * 字典类型名称
+     */
     private String typeName;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
     @Override

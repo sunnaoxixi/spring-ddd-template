@@ -13,15 +13,23 @@ import lombok.ToString;
 @ToString
 public class CreateRoleParam extends BaseParam {
 
-    /** 角色标识 */
+    /**
+     * 角色标识
+     */
     private String roleKey;
 
-    /** 角色名称 */
+    /**
+     * 角色名称
+     */
     private String roleName;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }

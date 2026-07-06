@@ -14,12 +14,18 @@ import lombok.ToString;
 @ToString
 public class DictTypeQuery extends BaseParam {
 
-    /** 字典类型键（精确匹配） */
+    /**
+     * 字典类型键（精确匹配）
+     */
     private String typeKey;
 
-    /** 字典类型名称（模糊匹配） */
+    /**
+     * 字典类型名称（模糊匹配）
+     */
     private String typeName;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private DictStatusEnum status;
 }

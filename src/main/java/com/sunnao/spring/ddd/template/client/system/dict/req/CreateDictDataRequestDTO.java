@@ -19,19 +19,29 @@ public class CreateDictDataRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 字典类型键 */
+    /**
+     * 字典类型键
+     */
     private String typeKey;
 
-    /** 字典标签 */
+    /**
+     * 字典标签
+     */
     private String label;
 
-    /** 字典值 */
+    /**
+     * 字典值
+     */
     private String value;
 
-    /** 排序（升序，可选，默认0） */
+    /**
+     * 排序（升序，可选，默认0）
+     */
     private Integer sort;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
     @Override

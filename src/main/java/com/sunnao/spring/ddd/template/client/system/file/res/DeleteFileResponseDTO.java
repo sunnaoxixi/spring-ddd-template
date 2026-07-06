@@ -18,6 +18,8 @@ public class DeleteFileResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 文件ID */
+    /**
+     * 文件ID
+     */
     private Long fileId;
 }

@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -23,19 +24,29 @@ public class CreateUserRequestDTO extends BaseDto {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,}$");
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private String email;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 密码（明文） */
+    /**
+     * 密码（明文）
+     */
     private String password;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
-    /** 角色ID集合；为空时默认授予 user 角色 */
+    /**
+     * 角色ID集合；为空时默认授予 user 角色
+     */
     private List<Long> roleIds;
 
     @Override
@@ -52,7 +63,7 @@ public class CreateUserRequestDTO extends BaseDto {
         if (password == null || password.length() < 6) {
             return ResultDO.buildFailResult("PARAM_ERROR", "密码长度不能小于6位");
         }
-        if (roleIds != null && roleIds.stream().anyMatch(id -> id == null)) {
+        if (roleIds != null && roleIds.stream().anyMatch(Objects::isNull)) {
             return ResultDO.buildFailResult("PARAM_ERROR", "角色ID不能包含空值");
         }
         return ResultDO.buildSuccessResult();

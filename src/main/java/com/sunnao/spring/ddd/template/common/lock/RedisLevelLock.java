@@ -20,10 +20,14 @@ import java.util.List;
 @Slf4j
 public class RedisLevelLock implements LevelLock {
 
-    /** 锁默认过期时间 */
+    /**
+     * 锁默认过期时间
+     */
     private static final Duration DEFAULT_EXPIRE = Duration.ofSeconds(30);
 
-    /** 释放锁 Lua 脚本：token 匹配才删除，避免误删他人持有的锁 */
+    /**
+     * 释放锁 Lua 脚本：token 匹配才删除，避免误删他人持有的锁
+     */
     private static final DefaultRedisScript<Long> UNLOCK_SCRIPT = new DefaultRedisScript<>(
             "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end",
             Long.class);
@@ -36,7 +40,9 @@ public class RedisLevelLock implements LevelLock {
     @Getter
     private final String lockKey;
 
-    /** 持有者随机凭证 */
+    /**
+     * 持有者随机凭证
+     */
     private final String token;
 
     public RedisLevelLock(StringRedisTemplate redisTemplate, String lockKey) {

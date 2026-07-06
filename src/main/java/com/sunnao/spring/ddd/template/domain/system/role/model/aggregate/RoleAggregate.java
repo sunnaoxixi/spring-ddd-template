@@ -25,10 +25,14 @@ public class RoleAggregate extends BaseAggregate {
 
     private static final Pattern ROLE_KEY_PATTERN = Pattern.compile("^[a-z][a-z0-9_-]{1,63}$");
 
-    /** 角色实体 */
+    /**
+     * 角色实体
+     */
     private RoleEntity roleEntity;
 
-    /** 权限 key 集合（仓储查询详情时填充，仅数据载体） */
+    /**
+     * 权限 key 集合（仓储查询详情时填充，仅数据载体）
+     */
     private List<String> permKeys;
 
     /**

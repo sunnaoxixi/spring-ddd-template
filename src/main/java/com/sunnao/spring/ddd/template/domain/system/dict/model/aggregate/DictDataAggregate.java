@@ -20,7 +20,9 @@ import lombok.Setter;
 @Setter
 public class DictDataAggregate extends BaseAggregate {
 
-    /** 字典数据实体 */
+    /**
+     * 字典数据实体
+     */
     private DictDataEntity dictDataEntity;
 
     /**

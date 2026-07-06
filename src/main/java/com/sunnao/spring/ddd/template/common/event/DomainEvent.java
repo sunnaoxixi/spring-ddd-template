@@ -22,13 +22,19 @@ public abstract class DomainEvent implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 事件ID（全局唯一，用于追踪与幂等） */
+    /**
+     * 事件ID（全局唯一，用于追踪与幂等）
+     */
     private final String eventId;
 
-    /** 事件发生时间 */
+    /**
+     * 事件发生时间
+     */
     private final LocalDateTime occurredAt;
 
-    /** 操作人ID（可为空，如系统触发） */
+    /**
+     * 操作人ID（可为空，如系统触发）
+     */
     private final Long operatorId;
 
     protected DomainEvent(Long operatorId) {

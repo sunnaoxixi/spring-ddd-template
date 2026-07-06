@@ -30,11 +30,15 @@ public class LocalFileStorage implements FileStorage {
 
     private static final DateTimeFormatter DATE_DIR_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-    /** 存储根目录 */
+    /**
+     * 存储根目录
+     */
     @Value("${app.file.local.base-path:./data/files}")
     private String basePath;
 
-    /** 单文件大小上限 */
+    /**
+     * 单文件大小上限
+     */
     @Value("${app.file.max-size:10MB}")
     private DataSize maxSize;
 

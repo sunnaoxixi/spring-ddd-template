@@ -20,6 +20,8 @@ public class QueryPermissionListResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 权限点列表 */
+    /**
+     * 权限点列表
+     */
     private List<PermissionDTO> permissions;
 }

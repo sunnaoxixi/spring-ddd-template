@@ -1,20 +1,12 @@
 package com.sunnao.spring.ddd.template.application.system.user.assembler;
 
 import com.sunnao.spring.ddd.template.client.system.user.model.UserDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.ChangeUserStatusRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.CreateUserRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.DeleteUserRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.QueryUserPageRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.user.req.UpdateUserRequestDTO;
+import com.sunnao.spring.ddd.template.client.system.user.req.*;
 import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
-import com.sunnao.spring.ddd.template.domain.system.user.model.param.ChangeUserStatusParam;
-import com.sunnao.spring.ddd.template.domain.system.user.model.param.CreateUserParam;
-import com.sunnao.spring.ddd.template.domain.system.user.model.param.DeleteUserParam;
-import com.sunnao.spring.ddd.template.domain.system.user.model.param.UpdateUserParam;
-import com.sunnao.spring.ddd.template.domain.system.user.model.param.UserQuery;
+import com.sunnao.spring.ddd.template.domain.system.user.model.param.*;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
 
 import java.util.Collections;

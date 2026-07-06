@@ -20,9 +20,13 @@ public class QueryUserPageResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 总条数 */
+    /**
+     * 总条数
+     */
     private Long total;
 
-    /** 用户列表 */
+    /**
+     * 用户列表
+     */
     private List<UserDTO> users;
 }

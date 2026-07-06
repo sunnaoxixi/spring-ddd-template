@@ -18,12 +18,18 @@ public class UploadFileResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 文件ID */
+    /**
+     * 文件ID
+     */
     private Long fileId;
 
-    /** 原始文件名 */
+    /**
+     * 原始文件名
+     */
     private String originalName;
 
-    /** 文件大小（字节） */
+    /**
+     * 文件大小（字节）
+     */
     private Long size;
 }

@@ -2,16 +2,8 @@ package com.sunnao.spring.ddd.template.application.system.role.scenario;
 
 import com.sunnao.spring.ddd.template.application.system.role.assembler.RoleAssembler;
 import com.sunnao.spring.ddd.template.client.system.role.RoleAppService;
-import com.sunnao.spring.ddd.template.client.system.role.req.AssignPermissionRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.AssignUserRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.CreateRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.DeleteRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.req.UpdateRoleRequestDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.AssignPermissionResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.AssignUserRoleResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.CreateRoleResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.DeleteRoleResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.UpdateRoleResponseDTO;
+import com.sunnao.spring.ddd.template.client.system.role.req.*;
+import com.sunnao.spring.ddd.template.client.system.role.res.*;
 import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;

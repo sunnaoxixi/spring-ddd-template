@@ -20,9 +20,13 @@ public class QueryFilePageResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 总条数 */
+    /**
+     * 总条数
+     */
     private Long total;
 
-    /** 文件列表 */
+    /**
+     * 文件列表
+     */
     private List<FileDTO> files;
 }

@@ -21,13 +21,19 @@ public class UploadFileRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 原始文件名 */
+    /**
+     * 原始文件名
+     */
     private String originalName;
 
-    /** 文件 MIME 类型 */
+    /**
+     * 文件 MIME 类型
+     */
     private String contentType;
 
-    /** 文件内容 */
+    /**
+     * 文件内容
+     */
     private byte[] content;
 
     @Override

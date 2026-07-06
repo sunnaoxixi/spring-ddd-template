@@ -19,7 +19,9 @@ public class QueryDictDataListRequestDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 字典类型键 */
+    /**
+     * 字典类型键
+     */
     private String typeKey;
 
     @Override

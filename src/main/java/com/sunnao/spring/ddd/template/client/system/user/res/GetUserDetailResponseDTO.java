@@ -19,6 +19,8 @@ public class GetUserDetailResponseDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 用户信息 */
+    /**
+     * 用户信息
+     */
     private UserDTO user;
 }

@@ -14,12 +14,18 @@ import lombok.ToString;
 @ToString
 public class RoleQuery extends BaseParam {
 
-    /** 角色标识（精确匹配） */
+    /**
+     * 角色标识（精确匹配）
+     */
     private String roleKey;
 
-    /** 角色名称（模糊匹配） */
+    /**
+     * 角色名称（模糊匹配）
+     */
     private String roleName;
 
-    /** 状态 */
+    /**
+     * 状态
+     */
     private RoleStatusEnum status;
 }

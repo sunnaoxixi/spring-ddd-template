@@ -21,24 +21,38 @@ public class RoleDTO extends BaseDto {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long id;
 
-    /** 角色标识 */
+    /**
+     * 角色标识
+     */
     private String roleKey;
 
-    /** 角色名称 */
+    /**
+     * 角色名称
+     */
     private String roleName;
 
-    /** 状态：1-启用，0-禁用 */
+    /**
+     * 状态：1-启用，0-禁用
+     */
     private Integer status;
 
-    /** 备注 */
+    /**
+     * 备注
+     */
     private String remark;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private LocalDateTime createAt;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private LocalDateTime updateAt;
 }

@@ -15,21 +15,33 @@ import java.util.List;
 @ToString(exclude = "password")
 public class CreateUserParam extends BaseParam {
 
-    /** 邮箱 */
+    /**
+     * 邮箱
+     */
     private String email;
 
-    /** 昵称 */
+    /**
+     * 昵称
+     */
     private String nickname;
 
-    /** 密码（明文，由 DomainService 加密） */
+    /**
+     * 密码（明文，由 DomainService 加密）
+     */
     private String password;
 
-    /** 头像URL */
+    /**
+     * 头像URL
+     */
     private String avatar;
 
-    /** 角色ID集合（为空时默认授予 user 角色） */
+    /**
+     * 角色ID集合（为空时默认授予 user 角色）
+     */
     private List<Long> roleIds;
 
-    /** 操作人ID */
+    /**
+     * 操作人ID
+     */
     private Long operatorId;
 }
