@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.file.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,13 +40,13 @@ public class UploadFileRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (originalName == null || originalName.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "文件名不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "文件名不能为空");
         }
         if (originalName.contains("..") || originalName.contains("/") || originalName.contains("\\")) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "文件名不合法");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "文件名不合法");
         }
         if (content == null || content.length == 0) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "文件内容不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "文件内容不能为空");
         }
         return ResultDO.buildSuccessResult();
     }

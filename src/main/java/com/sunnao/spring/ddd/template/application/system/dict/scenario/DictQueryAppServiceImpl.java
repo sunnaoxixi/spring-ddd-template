@@ -7,6 +7,7 @@ import com.sunnao.spring.ddd.template.client.system.dict.req.QueryDictTypePageRe
 import com.sunnao.spring.ddd.template.client.system.dict.res.QueryDictDataListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.dict.res.QueryDictTypePageResponseDTO;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictDataAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictTypeAggregate;
@@ -53,7 +54,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
                     DictAssembler.toQueryDictTypePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询字典类型失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -75,7 +76,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
                     DictAssembler.toQueryDictDataListResponseDTO(requestDTO.getTypeKey(), aggregates));
         } catch (Exception e) {
             log.error("按类型键查询字典数据失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -97,7 +98,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
                     DictAssembler.toQueryDictDataListResponseDTO(requestDTO.getTypeKey(), aggregates));
         } catch (Exception e) {
             log.error("按类型键查询全部字典数据失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.sunnao.spring.ddd.template.domain.system.user.service;
 
 import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
@@ -117,7 +118,7 @@ class UserDomainServiceImplTest {
         ResultDO<UserAggregate> result = userDomainService.createUser(buildCreateParam());
 
         assertFalse(result.isSuccess());
-        assertEquals("EMAIL_DUPLICATE", result.getCode());
+        assertEquals(ErrorCodeEnum.EMAIL_DUPLICATE.getCode(), result.getCode());
         verify(userRepository, never()).save(any(UserAggregate.class));
         verify(levelLock).unlock();
     }
@@ -130,7 +131,7 @@ class UserDomainServiceImplTest {
         ResultDO<UserAggregate> result = userDomainService.createUser(buildCreateParam());
 
         assertFalse(result.isSuccess());
-        assertEquals("LOCK_FAIL", result.getCode());
+        assertEquals(ErrorCodeEnum.LOCK_FAIL.getCode(), result.getCode());
         verify(userRepository, never()).save(any(UserAggregate.class));
     }
 
@@ -146,7 +147,7 @@ class UserDomainServiceImplTest {
         ResultDO<UserAggregate> result = userDomainService.createUser(param);
 
         assertFalse(result.isSuccess());
-        assertEquals("ROLE_NOT_FOUND", result.getCode());
+        assertEquals(ErrorCodeEnum.ROLE_NOT_FOUND.getCode(), result.getCode());
         verify(userRepository, never()).save(any(UserAggregate.class));
     }
 
@@ -162,7 +163,7 @@ class UserDomainServiceImplTest {
         ResultDO<Void> result = userDomainService.updateUser(param);
 
         assertFalse(result.isSuccess());
-        assertEquals("USER_NOT_FOUND", result.getCode());
+        assertEquals(ErrorCodeEnum.USER_NOT_FOUND.getCode(), result.getCode());
     }
 
     @Test
@@ -214,7 +215,7 @@ class UserDomainServiceImplTest {
         ResultDO<Void> result = userDomainService.changeUserStatus(param);
 
         assertFalse(result.isSuccess());
-        assertEquals("STATUS_INVALID", result.getCode());
+        assertEquals(ErrorCodeEnum.STATUS_INVALID.getCode(), result.getCode());
         verify(userRepository, never()).save(any(UserAggregate.class));
     }
 
@@ -247,7 +248,7 @@ class UserDomainServiceImplTest {
         ResultDO<Void> result = userDomainService.deleteUser(param);
 
         assertFalse(result.isSuccess());
-        assertEquals("DB_QUERY_ERROR", result.getCode());
+        assertEquals(ErrorCodeEnum.DB_QUERY_ERROR.getCode(), result.getCode());
         assertNotNull(result.getMsg());
     }
 }

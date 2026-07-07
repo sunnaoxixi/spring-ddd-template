@@ -19,7 +19,7 @@ public class LoginParam extends BaseParam {
     private String email;
 
     /**
-     * 密码（明文，�?DomainService 校验�?
+     * 密码（明文，由 DomainService 校验）
      */
     private String password;
 }

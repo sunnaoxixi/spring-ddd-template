@@ -8,6 +8,7 @@ import com.sunnao.spring.ddd.template.client.system.file.req.UploadFileRequestDT
 import com.sunnao.spring.ddd.template.client.system.file.res.DeleteFileResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.file.res.UploadFileResponseDTO;
 import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.file.model.aggregate.FileAggregate;
 import com.sunnao.spring.ddd.template.domain.system.file.service.FileDomainService;
@@ -62,7 +63,7 @@ public class FileAppServiceImpl implements FileAppService {
                     FileAssembler.toUploadFileResponseDTO(domainResult.getData()));
         } catch (Exception e) {
             log.error("上传文件系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -96,7 +97,7 @@ public class FileAppServiceImpl implements FileAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("删除文件系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

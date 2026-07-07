@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.auth.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,13 +36,13 @@ public class LoginRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (email == null || email.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "邮箱不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "邮箱不能为空");
         }
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "邮箱格式不正�?);
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "邮箱格式不正确");
         }
         if (password == null || password.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "密码不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "密码不能为空");
         }
         return ResultDO.buildSuccessResult();
     }

@@ -12,6 +12,7 @@ import com.sunnao.spring.ddd.template.client.system.file.res.DownloadFileRespons
 import com.sunnao.spring.ddd.template.client.system.file.res.QueryFilePageResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.file.res.UploadFileResponseDTO;
 import com.sunnao.spring.ddd.template.common.annotation.OperLog;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,7 +57,7 @@ public class FileController {
             requestDTO.setContent(file.getBytes());
         } catch (Exception e) {
             log.error("读取上传文件内容失败, name: {}", file.getOriginalFilename(), e);
-            return ResultDO.buildFailResult("FILE_READ_ERROR", "读取上传文件内容失败");
+            return ResultDO.buildFailResult(ErrorCodeEnum.FILE_READ_ERROR, "读取上传文件内容失败");
         }
         return fileAppService.uploadFile(requestDTO);
     }

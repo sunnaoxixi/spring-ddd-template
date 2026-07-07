@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.log.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,13 +54,13 @@ public class QueryOperLogPageRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (pageNum == null || pageNum < 1) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "页码必须大于等于1");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "页码必须大于等于1");
         }
         if (pageSize == null || pageSize < 1 || pageSize > 100) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "每页条数必须在1~100之间");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "每页条数必须在1~100之间");
         }
         if (startTime != null && endTime != null && startTime.isAfter(endTime)) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "时间范围不合法");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "时间范围不合法");
         }
         return ResultDO.buildSuccessResult();
     }

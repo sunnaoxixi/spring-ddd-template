@@ -8,6 +8,7 @@ import com.sunnao.spring.ddd.template.client.system.file.req.QueryFilePageReques
 import com.sunnao.spring.ddd.template.client.system.file.res.DownloadFileResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.file.res.QueryFilePageResponseDTO;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.file.model.aggregate.FileAggregate;
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.FileQuery;
@@ -43,7 +44,7 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
             // 2. 查询文件元数据
             FileAggregate aggregate = fileRepository.query(requestDTO.getFileId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("FILE_NOT_FOUND", "文件不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.FILE_NOT_FOUND);
             }
 
             // 3. 读取物理内容（outAdaptor）
@@ -57,7 +58,7 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
                     FileAssembler.toDownloadFileResponseDTO(aggregate, readResult.getData()));
         } catch (Exception e) {
             log.error("下载文件失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -83,7 +84,7 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
                     FileAssembler.toQueryFilePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询文件失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.dict.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class QueryDictDataListRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (typeKey == null || typeKey.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "字典类型键不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "字典类型键不能为空");
         }
         return ResultDO.buildSuccessResult();
     }

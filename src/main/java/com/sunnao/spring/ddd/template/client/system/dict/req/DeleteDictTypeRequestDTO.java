@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.dict.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class DeleteDictTypeRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (typeId == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "字典类型ID不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "字典类型ID不能为空");
         }
         return ResultDO.buildSuccessResult();
     }

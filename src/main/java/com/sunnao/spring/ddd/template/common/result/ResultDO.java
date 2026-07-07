@@ -24,7 +24,7 @@ public class ResultDO<T> implements Serializable {
     /**
      * 默认失败错误码
      */
-    private static final String DEFAULT_FAIL_CODE = "FAIL";
+    private static final String DEFAULT_FAIL_CODE = ErrorCodeEnum.FAIL.getCode();
 
     /**
      * 是否成功
@@ -72,6 +72,25 @@ public class ResultDO<T> implements Serializable {
      */
     public static <T> ResultDO<T> buildFailResult(String msg) {
         return buildFailResult(DEFAULT_FAIL_CODE, msg);
+    }
+
+    /**
+     * 构建失败结果（错误码枚举，使用默认文案）
+     *
+     * @param errorCode 错误码枚举
+     */
+    public static <T> ResultDO<T> buildFailResult(ErrorCodeEnum errorCode) {
+        return buildFailResult(errorCode.getCode(), errorCode.getDefaultMsg());
+    }
+
+    /**
+     * 构建失败结果（错误码枚举 + 自定义文案）
+     *
+     * @param errorCode 错误码枚举
+     * @param msg       错误信息
+     */
+    public static <T> ResultDO<T> buildFailResult(ErrorCodeEnum errorCode, String msg) {
+        return buildFailResult(errorCode.getCode(), msg);
     }
 
     /**

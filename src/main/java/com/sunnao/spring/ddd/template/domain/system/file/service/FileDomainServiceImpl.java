@@ -2,6 +2,7 @@ package com.sunnao.spring.ddd.template.domain.system.file.service;
 
 import com.sunnao.spring.ddd.template.common.exception.BizException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.file.model.aggregate.FileAggregate;
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.CreateFileParam;
@@ -29,7 +30,7 @@ public class FileDomainServiceImpl implements FileDomainService {
         // 1. 获取锁（按存储路径防重复登记，路径由存储层生成保证唯一）
         LevelLock levelLock = fileRepository.buildLock("system:file:create:" + param.getPath());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 构建聚合根
@@ -44,7 +45,7 @@ public class FileDomainServiceImpl implements FileDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("登记文件元数据系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -55,13 +56,13 @@ public class FileDomainServiceImpl implements FileDomainService {
         // 1. 获取锁
         LevelLock levelLock = fileRepository.buildLock("system:file:update:" + param.getFileId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根，确认存在
             FileAggregate aggregate = fileRepository.query(param.getFileId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("FILE_NOT_FOUND", "文件不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.FILE_NOT_FOUND);
             }
 
             // 3. 逻辑删除元数据
@@ -74,7 +75,7 @@ public class FileDomainServiceImpl implements FileDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("删除文件系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }

@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.sunnao.spring.ddd.template.common.exception.RepositoryException;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.log.model.aggregate.OperLogAggregate;
 import com.sunnao.spring.ddd.template.domain.system.log.model.param.OperLogQuery;
 import com.sunnao.spring.ddd.template.domain.system.log.repository.OperLogRepository;
@@ -35,7 +36,7 @@ public class OperLogRepositoryImpl implements OperLogRepository {
         try {
             OperLogPO po = OperLogConverter.toPO(aggregate);
             if (po == null) {
-                throw new RepositoryException("DATA_ERROR", "操作日志数据为空，无法保存");
+                throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "操作日志数据为空，无法保存");
             }
             operLogMapper.insertSelective(po);
             aggregate.getOperLogEntity().setId(po.getId());
@@ -43,7 +44,7 @@ public class OperLogRepositoryImpl implements OperLogRepository {
             throw e;
         } catch (Exception e) {
             log.error("保存操作日志失败, aggregate: {}", aggregate, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存操作日志异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存操作日志异常", e);
         }
     }
 
@@ -60,7 +61,7 @@ public class OperLogRepositoryImpl implements OperLogRepository {
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询操作日志失败, pageQuery: {}", pageQuery.getQuery(), e);
-            throw new RepositoryException("DB_QUERY_ERROR", "分页查询操作日志异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "分页查询操作日志异常", e);
         }
     }
 

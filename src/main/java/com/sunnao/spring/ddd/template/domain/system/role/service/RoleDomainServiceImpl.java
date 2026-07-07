@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.role.service;
 import cn.hutool.core.collection.CollUtil;
 import com.sunnao.spring.ddd.template.common.exception.BizException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
@@ -36,13 +37,13 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         // 1. 获取锁（按角色标识防并发重复创建）
         LevelLock levelLock = roleRepository.buildLock("system:role:create:" + param.getRoleKey());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 角色标识唯一性校验
             RoleAggregate exist = roleRepository.queryByRoleKey(param.getRoleKey());
             if (exist != null) {
-                return ResultDO.buildFailResult("ROLE_KEY_DUPLICATE", "角色标识已存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_KEY_DUPLICATE);
             }
 
             // 3. 构建聚合根
@@ -57,7 +58,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("创建角色系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -68,13 +69,13 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         // 1. 获取锁
         LevelLock levelLock = roleRepository.buildLock("system:role:update:" + param.getRoleId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根
             RoleAggregate aggregate = roleRepository.query(param.getRoleId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("ROLE_NOT_FOUND", "角色不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND);
             }
 
             // 3. 执行业务逻辑（通过聚合根方法）
@@ -89,7 +90,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("修改角色系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -100,13 +101,13 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         // 1. 获取锁
         LevelLock levelLock = roleRepository.buildLock("system:role:update:" + param.getRoleId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根，确认存在
             RoleAggregate aggregate = roleRepository.query(param.getRoleId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("ROLE_NOT_FOUND", "角色不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND);
             }
 
             // 3. 删除前校验（内置角色不可删除）
@@ -121,7 +122,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("删除角色系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -132,13 +133,13 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         // 1. 获取锁
         LevelLock levelLock = roleRepository.buildLock("system:role:update:" + param.getRoleId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根，确认存在
             RoleAggregate aggregate = roleRepository.query(param.getRoleId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("ROLE_NOT_FOUND", "角色不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND);
             }
 
             // 3. 校验权限点存在性
@@ -147,7 +148,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             if (CollUtil.isNotEmpty(permissionIds)) {
                 List<PermissionEntity> permissions = roleRepository.queryPermissionsByIds(permissionIds);
                 if (permissions.size() != permissionIds.size()) {
-                    return ResultDO.buildFailResult("PERMISSION_NOT_FOUND", "存在无效的权限ID");
+                    return ResultDO.buildFailResult(ErrorCodeEnum.PERMISSION_NOT_FOUND, "存在无效的权限ID");
                 }
             }
 
@@ -160,7 +161,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("分配权限系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -171,12 +172,12 @@ public class RoleDomainServiceImpl implements RoleDomainService {
         // 1. 获取锁（按用户维度）
         LevelLock levelLock = roleRepository.buildLock("system:role:assign-user:" + param.getUserId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 校验用户存在
             if (userRepository.query(param.getUserId()) == null) {
-                return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.USER_NOT_FOUND);
             }
 
             // 3. 校验角色存在性
@@ -185,7 +186,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             if (CollUtil.isNotEmpty(roleIds)) {
                 List<RoleAggregate> roles = roleRepository.queryByIds(roleIds);
                 if (roles.size() != roleIds.size()) {
-                    return ResultDO.buildFailResult("ROLE_NOT_FOUND", "存在无效的角色ID");
+                    return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND, "存在无效的角色ID");
                 }
             }
 
@@ -198,7 +199,7 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("给用户授角色系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }

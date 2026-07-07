@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.user.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,19 +53,19 @@ public class CreateUserRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (email == null || email.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "邮箱不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "邮箱不能为空");
         }
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "邮箱格式不正确");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "邮箱格式不正确");
         }
         if (nickname == null || nickname.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "昵称不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "昵称不能为空");
         }
         if (password == null || password.length() < 6) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "密码长度不能小于6位");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "密码长度不能小于6位");
         }
         if (roleIds != null && roleIds.stream().anyMatch(Objects::isNull)) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色ID不能包含空值");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色ID不能包含空值");
         }
         return ResultDO.buildSuccessResult();
     }

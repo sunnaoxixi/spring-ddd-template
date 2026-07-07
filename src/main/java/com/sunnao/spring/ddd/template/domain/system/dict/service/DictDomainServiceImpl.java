@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.dict.service;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.BizException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictDataAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictTypeAggregate;
@@ -31,13 +32,13 @@ public class DictDomainServiceImpl implements DictDomainService {
         // 1. 获取锁（按类型键防并发重复创建）
         LevelLock levelLock = dictRepository.buildLock("system:dict:type:create:" + param.getTypeKey());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 类型键唯一性校验
             DictTypeAggregate exist = dictRepository.queryTypeByKey(param.getTypeKey());
             if (exist != null) {
-                return ResultDO.buildFailResult("TYPE_KEY_DUPLICATE", "字典类型键已存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.TYPE_KEY_DUPLICATE);
             }
 
             // 3. 构建聚合根
@@ -52,7 +53,7 @@ public class DictDomainServiceImpl implements DictDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("创建字典类型系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -63,13 +64,13 @@ public class DictDomainServiceImpl implements DictDomainService {
         // 1. 获取锁
         LevelLock levelLock = dictRepository.buildLock("system:dict:type:update:" + param.getTypeId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根
             DictTypeAggregate aggregate = dictRepository.query(param.getTypeId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("DICT_TYPE_NOT_FOUND", "字典类型不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.DICT_TYPE_NOT_FOUND);
             }
 
             // 3. 执行业务逻辑（通过聚合根方法）
@@ -84,7 +85,7 @@ public class DictDomainServiceImpl implements DictDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("修改字典类型系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -95,13 +96,13 @@ public class DictDomainServiceImpl implements DictDomainService {
         // 1. 获取锁
         LevelLock levelLock = dictRepository.buildLock("system:dict:type:update:" + param.getTypeId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根，确认存在
             DictTypeAggregate aggregate = dictRepository.query(param.getTypeId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("DICT_TYPE_NOT_FOUND", "字典类型不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.DICT_TYPE_NOT_FOUND);
             }
 
             // 3. 逻辑删除类型及其下数据（仓储内失效缓存）
@@ -114,7 +115,7 @@ public class DictDomainServiceImpl implements DictDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("删除字典类型系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -126,20 +127,20 @@ public class DictDomainServiceImpl implements DictDomainService {
         LevelLock levelLock = dictRepository.buildLock(
                 "system:dict:data:create:" + param.getTypeKey() + ":" + param.getValue());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 归属类型存在性校验
             DictTypeAggregate type = dictRepository.queryTypeByKey(param.getTypeKey());
             if (type == null) {
-                return ResultDO.buildFailResult("DICT_TYPE_NOT_FOUND", "字典类型不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.DICT_TYPE_NOT_FOUND);
             }
 
             // 3. 同类型下字典值唯一性校验
             DictDataAggregate exist = dictRepository.queryDataByTypeKeyAndValue(
                     param.getTypeKey(), param.getValue());
             if (exist != null) {
-                return ResultDO.buildFailResult("DICT_VALUE_DUPLICATE", "同类型下字典值已存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.DICT_VALUE_DUPLICATE);
             }
 
             // 4. 构建聚合根并持久化（仓储回填ID并失效缓存）
@@ -152,7 +153,7 @@ public class DictDomainServiceImpl implements DictDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("创建字典数据系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -163,13 +164,13 @@ public class DictDomainServiceImpl implements DictDomainService {
         // 1. 获取锁
         LevelLock levelLock = dictRepository.buildLock("system:dict:data:update:" + param.getDataId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根
             DictDataAggregate aggregate = dictRepository.queryData(param.getDataId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("DICT_DATA_NOT_FOUND", "字典数据不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.DICT_DATA_NOT_FOUND);
             }
 
             // 3. 变更字典值时校验同类型下唯一性
@@ -178,7 +179,7 @@ public class DictDomainServiceImpl implements DictDomainService {
                     && !param.getValue().equals(aggregate.getDictDataEntity().getValue())) {
                 DictDataAggregate exist = dictRepository.queryDataByTypeKeyAndValue(typeKey, param.getValue());
                 if (exist != null) {
-                    return ResultDO.buildFailResult("DICT_VALUE_DUPLICATE", "同类型下字典值已存在");
+                    return ResultDO.buildFailResult(ErrorCodeEnum.DICT_VALUE_DUPLICATE);
                 }
             }
 
@@ -194,7 +195,7 @@ public class DictDomainServiceImpl implements DictDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("修改字典数据系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -205,13 +206,13 @@ public class DictDomainServiceImpl implements DictDomainService {
         // 1. 获取锁
         LevelLock levelLock = dictRepository.buildLock("system:dict:data:update:" + param.getDataId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根，确认存在
             DictDataAggregate aggregate = dictRepository.queryData(param.getDataId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("DICT_DATA_NOT_FOUND", "字典数据不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.DICT_DATA_NOT_FOUND);
             }
 
             // 3. 逻辑删除（仓储内失效缓存）
@@ -224,7 +225,7 @@ public class DictDomainServiceImpl implements DictDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("删除字典数据系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }

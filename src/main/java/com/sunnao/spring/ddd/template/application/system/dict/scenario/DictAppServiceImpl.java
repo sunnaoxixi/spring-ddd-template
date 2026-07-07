@@ -5,6 +5,7 @@ import com.sunnao.spring.ddd.template.client.system.dict.DictAppService;
 import com.sunnao.spring.ddd.template.client.system.dict.req.*;
 import com.sunnao.spring.ddd.template.client.system.dict.res.*;
 import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictDataAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictTypeAggregate;
@@ -46,7 +47,7 @@ public class DictAppServiceImpl implements DictAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("创建字典类型系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -72,7 +73,7 @@ public class DictAppServiceImpl implements DictAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("修改字典类型系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -98,7 +99,7 @@ public class DictAppServiceImpl implements DictAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("删除字典类型系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -124,7 +125,7 @@ public class DictAppServiceImpl implements DictAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("创建字典数据系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -150,7 +151,7 @@ public class DictAppServiceImpl implements DictAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("修改字典数据系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -176,7 +177,7 @@ public class DictAppServiceImpl implements DictAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("删除字典数据系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

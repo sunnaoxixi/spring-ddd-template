@@ -8,6 +8,7 @@ import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailRespon
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryRolePageResponseDTO;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.RoleQuery;
@@ -40,14 +41,14 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
             // 2. 查询本领域角色数据（含权限 key 集合）
             RoleAggregate aggregate = roleRepository.query(requestDTO.getRoleId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("ROLE_NOT_FOUND", "角色不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND);
             }
 
             // 3. 组装响应 DTO
             return ResultDO.buildSuccessResult(RoleAssembler.toGetRoleDetailResponseDTO(aggregate));
         } catch (Exception e) {
             log.error("获取角色详情失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -73,7 +74,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
                     RoleAssembler.toQueryRolePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询角色失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -86,7 +87,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
                     RoleAssembler.toQueryPermissionListResponseDTO(roleRepository.queryAllPermissions()));
         } catch (Exception e) {
             log.error("查询权限点列表失败", e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

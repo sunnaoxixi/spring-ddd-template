@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.file.model.aggregate;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.file.model.entity.FileEntity;
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.CreateFileParam;
 import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
@@ -33,19 +34,19 @@ public class FileAggregate extends BaseAggregate {
      */
     public static FileAggregate create(CreateFileParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "创建参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "创建参数不能为空");
         }
         if (StrUtil.isBlank(param.getOriginalName())) {
-            throw new AggregateException("PARAM_ERROR", "原始文件名不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "原始文件名不能为空");
         }
         if (StrUtil.isBlank(param.getPath())) {
-            throw new AggregateException("PARAM_ERROR", "存储路径不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "存储路径不能为空");
         }
         if (param.getSize() == null || param.getSize() <= 0) {
-            throw new AggregateException("PARAM_ERROR", "文件大小必须大于0");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "文件大小必须大于0");
         }
         if (param.getStorageType() == null) {
-            throw new AggregateException("PARAM_ERROR", "存储类型不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "存储类型不能为空");
         }
 
         FileEntity entity = new FileEntity();
@@ -55,7 +56,7 @@ public class FileAggregate extends BaseAggregate {
         entity.setContentType(param.getContentType());
         entity.setStorageType(FileStorageTypeEnum.getByCode(param.getStorageType()));
         if (entity.getStorageType() == null) {
-            throw new AggregateException("PARAM_ERROR", "存储类型不合法");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "存储类型不合法");
         }
         entity.setCreateBy(param.getOperatorId());
         entity.setUpdateBy(param.getOperatorId());

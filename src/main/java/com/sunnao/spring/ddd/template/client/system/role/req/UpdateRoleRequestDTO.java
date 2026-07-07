@@ -2,6 +2,7 @@ package com.sunnao.spring.ddd.template.client.system.role.req;
 
 import com.sunnao.spring.ddd.template.client.system.role.enums.RoleStatusEnum;
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,14 +44,14 @@ public class UpdateRoleRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (roleId == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色ID不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色ID不能为空");
         }
         boolean roleNameBlank = roleName == null || roleName.isBlank();
         if (roleNameBlank && status == null && remark == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色名称、状态、备注不能同时为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色名称、状态、备注不能同时为空");
         }
         if (status != null && RoleStatusEnum.getByCode(status) == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "状态取值不合法");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "状态取值不合法");
         }
         return ResultDO.buildSuccessResult();
     }

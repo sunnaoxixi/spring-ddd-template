@@ -5,6 +5,7 @@ import com.sunnao.spring.ddd.template.client.system.role.RoleAppService;
 import com.sunnao.spring.ddd.template.client.system.role.req.*;
 import com.sunnao.spring.ddd.template.client.system.role.res.*;
 import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.service.RoleDomainService;
@@ -45,7 +46,7 @@ public class RoleAppServiceImpl implements RoleAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("创建角色系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -71,7 +72,7 @@ public class RoleAppServiceImpl implements RoleAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("修改角色系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -97,7 +98,7 @@ public class RoleAppServiceImpl implements RoleAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("删除角色系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -123,7 +124,7 @@ public class RoleAppServiceImpl implements RoleAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("分配权限系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -149,7 +150,7 @@ public class RoleAppServiceImpl implements RoleAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("给用户授角色系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

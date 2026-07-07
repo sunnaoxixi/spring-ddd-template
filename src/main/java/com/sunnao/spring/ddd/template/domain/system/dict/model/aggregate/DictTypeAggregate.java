@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.entity.DictTypeEntity;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.CreateDictTypeParam;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictTypeParam;
@@ -38,16 +39,16 @@ public class DictTypeAggregate extends BaseAggregate {
      */
     public static DictTypeAggregate create(CreateDictTypeParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "创建参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "创建参数不能为空");
         }
         if (StrUtil.isBlank(param.getTypeKey())) {
-            throw new AggregateException("PARAM_ERROR", "字典类型键不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "字典类型键不能为空");
         }
         if (!TYPE_KEY_PATTERN.matcher(param.getTypeKey()).matches()) {
-            throw new AggregateException("PARAM_ERROR", "字典类型键须以小写字母开头，仅含小写字母/数字/下划线，长度2~64");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "字典类型键须以小写字母开头，仅含小写字母/数字/下划线，长度2~64");
         }
         if (StrUtil.isBlank(param.getTypeName())) {
-            throw new AggregateException("PARAM_ERROR", "字典类型名称不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "字典类型名称不能为空");
         }
 
         DictTypeEntity entity = new DictTypeEntity();
@@ -76,7 +77,7 @@ public class DictTypeAggregate extends BaseAggregate {
 
     private void requireEntity() throws AggregateException {
         if (this.dictTypeEntity == null) {
-            throw new AggregateException("DATA_ERROR", "字典类型实体不存在");
+            throw new AggregateException(ErrorCodeEnum.DATA_ERROR, "字典类型实体不存在");
         }
     }
 }

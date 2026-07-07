@@ -7,6 +7,7 @@ import com.sunnao.spring.ddd.template.common.exception.RepositoryException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.lock.LockFactory;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.RoleQuery;
@@ -64,7 +65,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return aggregate;
         } catch (Exception e) {
             log.error("查询角色失败, id: {}", id, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
         }
     }
 
@@ -75,7 +76,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return RoleConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询角色失败, query: {}", query, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
         }
     }
 
@@ -92,7 +93,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询角色失败, pageQuery: {}", pageQuery.getQuery(), e);
-            throw new RepositoryException("DB_QUERY_ERROR", "分页查询角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "分页查询角色数据异常", e);
         }
     }
 
@@ -101,7 +102,7 @@ public class RoleRepositoryImpl implements RoleRepository {
         try {
             RolePO po = RoleConverter.toPO(aggregate);
             if (po == null) {
-                throw new RepositoryException("DATA_ERROR", "角色数据为空，无法保存");
+                throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "角色数据为空，无法保存");
             }
 
             // 审计字段（createAt/updateAt/createBy/updateBy）由全局监听器自动填充
@@ -121,7 +122,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             throw e;
         } catch (Exception e) {
             log.error("保存角色失败, aggregate: {}", aggregate, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存角色数据异常", e);
         }
     }
 
@@ -133,7 +134,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return RoleConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("根据角色标识查询角色失败, roleKey: {}", roleKey, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
         }
     }
 
@@ -147,7 +148,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return RoleConverter.toAggregateList(roleMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("批量查询角色失败, roleIds: {}", roleIds, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
         }
     }
 
@@ -171,7 +172,7 @@ public class RoleRepositoryImpl implements RoleRepository {
                     QueryWrapper.create().eq(UserRolePO::getRoleId, roleId));
         } catch (Exception e) {
             log.error("删除角色失败, roleId: {}", roleId, e);
-            throw new RepositoryException("DB_DELETE_ERROR", "删除角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除角色数据异常", e);
         }
     }
 
@@ -182,7 +183,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return RoleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("查询全部权限点失败", e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询权限数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询权限数据异常", e);
         }
     }
 
@@ -196,7 +197,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return RoleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("批量查询权限点失败, permissionIds: {}", permissionIds, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询权限数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询权限数据异常", e);
         }
     }
 
@@ -221,7 +222,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             rolePermissionMapper.insertBatch(poList);
         } catch (Exception e) {
             log.error("保存角色权限关联失败, roleId: {}, permissionIds: {}", roleId, permissionIds, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存角色权限关联异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存角色权限关联异常", e);
         }
     }
 
@@ -246,7 +247,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             userRoleMapper.insertBatch(poList);
         } catch (Exception e) {
             log.error("保存用户角色关联失败, userId: {}, roleIds: {}", userId, roleIds, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存用户角色关联异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存用户角色关联异常", e);
         }
     }
 
@@ -257,7 +258,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return roles.stream().map(RolePO::getRoleKey).distinct().toList();
         } catch (Exception e) {
             log.error("查询用户角色标识失败, userId: {}", userId, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询用户角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户角色数据异常", e);
         }
     }
 
@@ -293,7 +294,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return result;
         } catch (Exception e) {
             log.error("批量查询用户角色标识失败, userIds: {}", userIds, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询用户角色数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户角色数据异常", e);
         }
     }
 
@@ -322,7 +323,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             return permissions.stream().map(PermissionPO::getPermKey).distinct().toList();
         } catch (Exception e) {
             log.error("查询用户权限标识失败, userId: {}", userId, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询用户权限数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户权限数据异常", e);
         }
     }
 

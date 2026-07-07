@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.adaptor.common;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleNotLogin(NotLoginException e) {
         log.warn("未登录访问被拦截, type: {}", e.getType());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ResultDO.buildFailResult("NOT_LOGIN", "未登录或登录已过期"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.NOT_LOGIN));
     }
 
     /**
@@ -41,7 +42,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleNotRole(NotRoleException e) {
         log.warn("角色鉴权未通过, role: {}", e.getRole());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ResultDO.buildFailResult("NO_PERMISSION", "无权限访问"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.NO_PERMISSION));
     }
 
     /**
@@ -51,7 +52,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleNotPermission(NotPermissionException e) {
         log.warn("权限鉴权未通过, permission: {}", e.getPermission());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ResultDO.buildFailResult("NO_PERMISSION", "无权限访问"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.NO_PERMISSION));
     }
 
     /**
@@ -61,7 +62,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleMessageNotReadable(HttpMessageNotReadableException e) {
         log.warn("请求体解析失败: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultDO.buildFailResult("BAD_REQUEST", "请求体格式不正确"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.BAD_REQUEST, "请求体格式不正确"));
     }
 
     /**
@@ -71,7 +72,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         log.warn("请求参数类型不匹配, name: {}, value: {}", e.getName(), e.getValue());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ResultDO.buildFailResult("BAD_REQUEST", "请求参数类型不正确"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.BAD_REQUEST, "请求参数类型不正确"));
     }
 
     /**
@@ -81,7 +82,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleNoResourceFound(NoResourceFoundException e) {
         log.warn("请求资源不存在, path: {}", e.getResourcePath());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ResultDO.buildFailResult("NOT_FOUND", "请求资源不存在"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.NOT_FOUND));
     }
 
     /**
@@ -91,6 +92,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResultDO<Void>> handleException(Exception e) {
         log.error("未预期的系统异常", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常，请稍后重试"));
+                .body(ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR, "系统异常，请稍后重试"));
     }
 }

@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.log.model.aggregate;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.log.event.OperLogEvent;
 import com.sunnao.spring.ddd.template.domain.system.log.model.entity.OperLogEntity;
 import lombok.Getter;
@@ -31,10 +32,10 @@ public class OperLogAggregate extends BaseAggregate {
      */
     public static OperLogAggregate create(OperLogEvent event) throws AggregateException {
         if (event == null) {
-            throw new AggregateException("PARAM_ERROR", "操作日志事件不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "操作日志事件不能为空");
         }
         if (StrUtil.isBlank(event.getModule()) || StrUtil.isBlank(event.getAction())) {
-            throw new AggregateException("PARAM_ERROR", "业务模块与操作动作不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "业务模块与操作动作不能为空");
         }
 
         OperLogEntity entity = new OperLogEntity();

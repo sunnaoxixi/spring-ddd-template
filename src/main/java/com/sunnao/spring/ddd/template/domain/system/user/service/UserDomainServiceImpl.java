@@ -5,6 +5,7 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
 import com.sunnao.spring.ddd.template.common.exception.BizException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
@@ -46,19 +47,19 @@ public class UserDomainServiceImpl implements UserDomainService {
         // 1. 获取锁（按邮箱防并发重复创建）
         LevelLock levelLock = userRepository.buildLock("system:user:create:" + param.getEmail());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 邮箱唯一性校验
             UserAggregate exist = userRepository.queryByEmail(param.getEmail());
             if (exist != null) {
-                return ResultDO.buildFailResult("EMAIL_DUPLICATE", "邮箱已被注册");
+                return ResultDO.buildFailResult(ErrorCodeEnum.EMAIL_DUPLICATE);
             }
 
             // 3. 解析角色（未指定时默认授予 user 角色）
             List<RoleAggregate> roles = resolveRoles(param.getRoleIds());
             if (roles.isEmpty()) {
-                return ResultDO.buildFailResult("ROLE_NOT_FOUND", "存在无效的角色ID");
+                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND, "存在无效的角色ID");
             }
 
             // 4. 密码加密后构建聚合根
@@ -82,7 +83,7 @@ public class UserDomainServiceImpl implements UserDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("创建用户系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -93,13 +94,13 @@ public class UserDomainServiceImpl implements UserDomainService {
         // 1. 获取锁
         LevelLock levelLock = userRepository.buildLock("system:user:update:" + param.getUserId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根
             UserAggregate aggregate = userRepository.query(param.getUserId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.USER_NOT_FOUND);
             }
 
             // 3. 执行业务逻辑（通过聚合根方法）
@@ -114,7 +115,7 @@ public class UserDomainServiceImpl implements UserDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("修改用户资料系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -125,13 +126,13 @@ public class UserDomainServiceImpl implements UserDomainService {
         // 1. 获取锁
         LevelLock levelLock = userRepository.buildLock("system:user:update:" + param.getUserId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根
             UserAggregate aggregate = userRepository.query(param.getUserId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.USER_NOT_FOUND);
             }
 
             // 3. 执行业务逻辑（通过聚合根方法）
@@ -146,7 +147,7 @@ public class UserDomainServiceImpl implements UserDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("变更用户状态系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -157,13 +158,13 @@ public class UserDomainServiceImpl implements UserDomainService {
         // 1. 获取锁
         LevelLock levelLock = userRepository.buildLock("system:user:update:" + param.getUserId());
         if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult("LOCK_FAIL", "获取锁失败，请稍后重试");
+            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
         }
         try {
             // 2. 加载聚合根，确认存在
             UserAggregate aggregate = userRepository.query(param.getUserId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.USER_NOT_FOUND);
             }
 
             // 3. 逻辑删除 + 清理用户角色关联
@@ -176,7 +177,7 @@ public class UserDomainServiceImpl implements UserDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("删除用户系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();
         }
@@ -190,7 +191,7 @@ public class UserDomainServiceImpl implements UserDomainService {
         if (CollUtil.isEmpty(roleIds)) {
             RoleAggregate defaultRole = roleRepository.queryByRoleKey("user");
             if (defaultRole == null) {
-                throw new BizException("ROLE_NOT_FOUND", "默认角色 user 不存在，请检查初始化数据");
+                throw new BizException(ErrorCodeEnum.ROLE_NOT_FOUND, "默认角色 user 不存在，请检查初始化数据");
             }
             return List.of(defaultRole);
         }

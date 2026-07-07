@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.role.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,13 +34,13 @@ public class AssignPermissionRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (roleId == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色ID不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色ID不能为空");
         }
         if (permissionIds == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "权限ID集合不能为空（清空权限请传空数组）");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "权限ID集合不能为空（清空权限请传空数组）");
         }
         if (permissionIds.stream().anyMatch(id -> id == null)) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "权限ID不能包含空值");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "权限ID不能包含空值");
         }
         return ResultDO.buildSuccessResult();
     }

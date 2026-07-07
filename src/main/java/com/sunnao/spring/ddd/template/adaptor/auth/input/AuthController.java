@@ -13,8 +13,8 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 认证 Controller（Input Adaptor�?
- * 职责：接�?HTTP 请求，转换参数后调用应用层服务，禁止编写业务逻辑
+ * 认证 Controller（Input Adaptor）
+ * 职责：接收 HTTP 请求，转换参数后调用应用层服务，禁止编写业务逻辑
  */
 @Tag(name = "认证", description = "登录 / 登出 / 当前用户信息")
 @RestController
@@ -30,7 +30,7 @@ public class AuthController {
     /**
      * 登录
      */
-    @Operation(summary = "登录", description = "邮箱 + 密码登录，返�?satoken")
+    @Operation(summary = "登录", description = "邮箱 + 密码登录，返回 satoken")
     @OperLog(module = "auth", action = "登录")
     @PostMapping("/login")
     public ResultDO<LoginResponseDTO> login(@RequestBody LoginRequestDTO requestDTO) {

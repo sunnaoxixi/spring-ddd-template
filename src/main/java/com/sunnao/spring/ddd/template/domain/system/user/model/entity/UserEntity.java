@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.user.model.entity;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseEntity;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UpdateUserParam;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
 import lombok.Getter;
@@ -58,10 +59,10 @@ public class UserEntity extends BaseEntity {
      */
     public void updateProfile(UpdateUserParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "修改参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "修改参数不能为空");
         }
         if (StrUtil.isBlank(param.getNickname()) && StrUtil.isBlank(param.getAvatar())) {
-            throw new AggregateException("PARAM_ERROR", "昵称与头像不能同时为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "昵称与头像不能同时为空");
         }
         if (StrUtil.isNotBlank(param.getNickname())) {
             this.nickname = param.getNickname();
@@ -80,7 +81,7 @@ public class UserEntity extends BaseEntity {
      */
     public void enable(Long operatorId) throws AggregateException {
         if (UserStatusEnum.ENABLED.equals(this.status)) {
-            throw new AggregateException("STATUS_INVALID", "用户已是启用状态");
+            throw new AggregateException(ErrorCodeEnum.STATUS_INVALID, "用户已是启用状态");
         }
         this.status = UserStatusEnum.ENABLED;
         this.setUpdateBy(operatorId);
@@ -94,7 +95,7 @@ public class UserEntity extends BaseEntity {
      */
     public void disable(Long operatorId) throws AggregateException {
         if (UserStatusEnum.DISABLED.equals(this.status)) {
-            throw new AggregateException("STATUS_INVALID", "用户已是禁用状态");
+            throw new AggregateException(ErrorCodeEnum.STATUS_INVALID, "用户已是禁用状态");
         }
         this.status = UserStatusEnum.DISABLED;
         this.setUpdateBy(operatorId);
@@ -109,7 +110,7 @@ public class UserEntity extends BaseEntity {
      */
     public void resetPassword(String encodedPassword, Long operatorId) throws AggregateException {
         if (StrUtil.isBlank(encodedPassword)) {
-            throw new AggregateException("PARAM_ERROR", "密码不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "密码不能为空");
         }
         this.password = encodedPassword;
         this.setUpdateBy(operatorId);

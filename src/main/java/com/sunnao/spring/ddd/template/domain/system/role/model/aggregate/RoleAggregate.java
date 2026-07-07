@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.role.model.aggregate;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.CreateRoleParam;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.UpdateRoleParam;
@@ -44,16 +45,16 @@ public class RoleAggregate extends BaseAggregate {
      */
     public static RoleAggregate create(CreateRoleParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "创建参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "创建参数不能为空");
         }
         if (StrUtil.isBlank(param.getRoleKey())) {
-            throw new AggregateException("PARAM_ERROR", "角色标识不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "角色标识不能为空");
         }
         if (!ROLE_KEY_PATTERN.matcher(param.getRoleKey()).matches()) {
-            throw new AggregateException("PARAM_ERROR", "角色标识须以小写字母开头，仅含小写字母/数字/下划线/中划线，长度2~64");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "角色标识须以小写字母开头，仅含小写字母/数字/下划线/中划线，长度2~64");
         }
         if (StrUtil.isBlank(param.getRoleName())) {
-            throw new AggregateException("PARAM_ERROR", "角色名称不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "角色名称不能为空");
         }
 
         RoleEntity entity = new RoleEntity();
@@ -88,13 +89,13 @@ public class RoleAggregate extends BaseAggregate {
     public void checkDeletable() throws AggregateException {
         requireEntity();
         if (this.roleEntity.isBuiltIn()) {
-            throw new AggregateException("ROLE_BUILT_IN", "内置角色不允许删除");
+            throw new AggregateException(ErrorCodeEnum.ROLE_BUILT_IN, "内置角色不允许删除");
         }
     }
 
     private void requireEntity() throws AggregateException {
         if (this.roleEntity == null) {
-            throw new AggregateException("DATA_ERROR", "角色实体不存在");
+            throw new AggregateException(ErrorCodeEnum.DATA_ERROR, "角色实体不存在");
         }
     }
 }

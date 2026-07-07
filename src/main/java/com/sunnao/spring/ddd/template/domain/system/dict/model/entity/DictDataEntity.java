@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.dict.model.entity;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseEntity;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictDataParam;
 import com.sunnao.spring.ddd.template.model.system.dict.DictStatusEnum;
 import lombok.Getter;
@@ -56,11 +57,11 @@ public class DictDataEntity extends BaseEntity {
      */
     public void update(UpdateDictDataParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "修改参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "修改参数不能为空");
         }
         if (StrUtil.isBlank(param.getLabel()) && StrUtil.isBlank(param.getValue())
                 && param.getSort() == null && param.getStatus() == null && param.getRemark() == null) {
-            throw new AggregateException("PARAM_ERROR", "修改内容不能全部为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "修改内容不能全部为空");
         }
         if (StrUtil.isNotBlank(param.getLabel())) {
             this.label = param.getLabel();

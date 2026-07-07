@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.client.system.role.req;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,13 +41,13 @@ public class CreateRoleRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (roleKey == null || roleKey.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色标识不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色标识不能为空");
         }
         if (!ROLE_KEY_PATTERN.matcher(roleKey).matches()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色标识须以小写字母开头，仅含小写字母/数字/下划线/中划线，长度2~64");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色标识须以小写字母开头，仅含小写字母/数字/下划线/中划线，长度2~64");
         }
         if (roleName == null || roleName.isBlank()) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "角色名称不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "角色名称不能为空");
         }
         return ResultDO.buildSuccessResult();
     }

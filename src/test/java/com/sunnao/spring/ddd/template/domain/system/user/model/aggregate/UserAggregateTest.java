@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.domain.system.user.model.aggregate;
 
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.ChangeUserStatusParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.CreateUserParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UpdateUserParam;
@@ -49,7 +50,7 @@ class UserAggregateTest {
 
         AggregateException e = assertThrows(AggregateException.class,
                 () -> UserAggregate.create(param, ENCODED_PASSWORD));
-        assertEquals("PARAM_ERROR", e.getCode());
+        assertEquals(ErrorCodeEnum.PARAM_ERROR.getCode(), e.getCode());
     }
 
     @Test
@@ -57,7 +58,7 @@ class UserAggregateTest {
     void createShouldRejectBlankPassword() {
         AggregateException e = assertThrows(AggregateException.class,
                 () -> UserAggregate.create(buildCreateParam(), " "));
-        assertEquals("PARAM_ERROR", e.getCode());
+        assertEquals(ErrorCodeEnum.PARAM_ERROR.getCode(), e.getCode());
     }
 
     @Test
@@ -86,7 +87,7 @@ class UserAggregateTest {
 
         AggregateException e = assertThrows(AggregateException.class,
                 () -> aggregate.updateProfile(param));
-        assertEquals("PARAM_ERROR", e.getCode());
+        assertEquals(ErrorCodeEnum.PARAM_ERROR.getCode(), e.getCode());
     }
 
     @Test
@@ -113,7 +114,7 @@ class UserAggregateTest {
 
         AggregateException e = assertThrows(AggregateException.class,
                 () -> aggregate.changeStatus(param));
-        assertEquals("STATUS_INVALID", e.getCode());
+        assertEquals(ErrorCodeEnum.STATUS_INVALID.getCode(), e.getCode());
     }
 
     @Test
@@ -134,6 +135,6 @@ class UserAggregateTest {
 
         AggregateException e = assertThrows(AggregateException.class,
                 () -> aggregate.resetPassword(" ", 3L));
-        assertEquals("PARAM_ERROR", e.getCode());
+        assertEquals(ErrorCodeEnum.PARAM_ERROR.getCode(), e.getCode());
     }
 }

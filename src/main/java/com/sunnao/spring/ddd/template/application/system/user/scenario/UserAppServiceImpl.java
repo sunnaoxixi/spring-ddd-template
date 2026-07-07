@@ -11,6 +11,7 @@ import com.sunnao.spring.ddd.template.client.system.user.res.CreateUserResponseD
 import com.sunnao.spring.ddd.template.client.system.user.res.DeleteUserResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.UpdateUserResponseDTO;
 import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.service.UserDomainService;
@@ -51,7 +52,7 @@ public class UserAppServiceImpl implements UserAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("创建用户系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -77,7 +78,7 @@ public class UserAppServiceImpl implements UserAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("修改用户资料系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -104,7 +105,7 @@ public class UserAppServiceImpl implements UserAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("变更用户状态系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -130,7 +131,7 @@ public class UserAppServiceImpl implements UserAppService {
             return ResultDO.buildSuccessResult(responseDTO);
         } catch (Exception e) {
             log.error("删除用户系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

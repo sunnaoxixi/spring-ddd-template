@@ -7,6 +7,7 @@ import com.sunnao.spring.ddd.template.client.system.user.req.QueryUserPageReques
 import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
@@ -47,7 +48,7 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
             // 2. 查询本领域用户数据
             UserAggregate aggregate = userRepository.query(requestDTO.getUserId());
             if (aggregate == null) {
-                return ResultDO.buildFailResult("USER_NOT_FOUND", "用户不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.USER_NOT_FOUND);
             }
 
             // 3. 填充角色标识（RBAC，取自 role 领域）后组装响应 DTO
@@ -56,7 +57,7 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
             return ResultDO.buildSuccessResult(UserAssembler.toGetUserDetailResponseDTO(aggregate));
         } catch (Exception e) {
             log.error("获取用户详情失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 
@@ -93,7 +94,7 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
                     UserAssembler.toQueryUserPageResponseDTO(page.getTotalElements(), aggregates));
         } catch (Exception e) {
             log.error("分页查询用户失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult("SYSTEM_ERROR", "系统异常");
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
 }

@@ -7,6 +7,7 @@ import com.sunnao.spring.ddd.template.common.exception.RepositoryException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.lock.LockFactory;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictDataAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate.DictTypeAggregate;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.DictTypeQuery;
@@ -67,7 +68,7 @@ public class DictRepositoryImpl implements DictRepository {
             return DictConverter.toTypeAggregate(po);
         } catch (Exception e) {
             log.error("查询字典类型失败, id: {}", id, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典类型数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典类型数据异常", e);
         }
     }
 
@@ -78,7 +79,7 @@ public class DictRepositoryImpl implements DictRepository {
             return DictConverter.toTypeAggregate(po);
         } catch (Exception e) {
             log.error("查询字典类型失败, query: {}", query, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典类型数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典类型数据异常", e);
         }
     }
 
@@ -95,7 +96,7 @@ public class DictRepositoryImpl implements DictRepository {
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询字典类型失败, pageQuery: {}", pageQuery.getQuery(), e);
-            throw new RepositoryException("DB_QUERY_ERROR", "分页查询字典类型数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "分页查询字典类型数据异常", e);
         }
     }
 
@@ -104,7 +105,7 @@ public class DictRepositoryImpl implements DictRepository {
         try {
             DictTypePO po = DictConverter.toTypePO(aggregate);
             if (po == null) {
-                throw new RepositoryException("DATA_ERROR", "字典类型数据为空，无法保存");
+                throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "字典类型数据为空，无法保存");
             }
 
             // 审计字段（createAt/updateAt/createBy/updateBy）由全局监听器自动填充
@@ -126,7 +127,7 @@ public class DictRepositoryImpl implements DictRepository {
             throw e;
         } catch (Exception e) {
             log.error("保存字典类型失败, aggregate: {}", aggregate, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存字典类型数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存字典类型数据异常", e);
         }
     }
 
@@ -138,7 +139,7 @@ public class DictRepositoryImpl implements DictRepository {
             return DictConverter.toTypeAggregate(po);
         } catch (Exception e) {
             log.error("根据类型键查询字典类型失败, typeKey: {}", typeKey, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典类型数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典类型数据异常", e);
         }
     }
 
@@ -162,7 +163,7 @@ public class DictRepositoryImpl implements DictRepository {
             evictCache(typeKey);
         } catch (Exception e) {
             log.error("删除字典类型失败, typeId: {}, typeKey: {}", typeId, typeKey, e);
-            throw new RepositoryException("DB_DELETE_ERROR", "删除字典类型数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除字典类型数据异常", e);
         }
     }
 
@@ -173,7 +174,7 @@ public class DictRepositoryImpl implements DictRepository {
             return DictConverter.toDataAggregate(po);
         } catch (Exception e) {
             log.error("查询字典数据失败, dataId: {}", dataId, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
         }
     }
 
@@ -187,7 +188,7 @@ public class DictRepositoryImpl implements DictRepository {
             return DictConverter.toDataAggregate(po);
         } catch (Exception e) {
             log.error("根据类型键与字典值查询字典数据失败, typeKey: {}, value: {}", typeKey, value, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
         }
     }
 
@@ -196,7 +197,7 @@ public class DictRepositoryImpl implements DictRepository {
         try {
             DictDataPO po = DictConverter.toDataPO(aggregate);
             if (po == null) {
-                throw new RepositoryException("DATA_ERROR", "字典数据为空，无法保存");
+                throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "字典数据为空，无法保存");
             }
 
             // 审计字段（createAt/updateAt/createBy/updateBy）由全局监听器自动填充
@@ -219,7 +220,7 @@ public class DictRepositoryImpl implements DictRepository {
             throw e;
         } catch (Exception e) {
             log.error("保存字典数据失败, aggregate: {}", aggregate, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存字典数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存字典数据异常", e);
         }
     }
 
@@ -239,7 +240,7 @@ public class DictRepositoryImpl implements DictRepository {
             evictCache(typeKey);
         } catch (Exception e) {
             log.error("删除字典数据失败, dataId: {}, typeKey: {}", dataId, typeKey, e);
-            throw new RepositoryException("DB_DELETE_ERROR", "删除字典数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除字典数据异常", e);
         }
     }
 
@@ -267,7 +268,7 @@ public class DictRepositoryImpl implements DictRepository {
             poList = dictDataMapper.selectListByQuery(wrapper);
         } catch (Exception e) {
             log.error("按类型键查询字典数据失败, typeKey: {}", typeKey, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
         }
 
         // 3. 写缓存（失败不影响主流程）
@@ -289,7 +290,7 @@ public class DictRepositoryImpl implements DictRepository {
             return DictConverter.toDataAggregateList(dictDataMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("按类型键查询全部字典数据失败, typeKey: {}", typeKey, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询字典数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
         }
     }
 

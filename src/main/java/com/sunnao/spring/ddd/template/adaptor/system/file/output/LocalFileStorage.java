@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.adaptor.system.file.output;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.application.system.file.FileStorage;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -46,10 +47,10 @@ public class LocalFileStorage implements FileStorage {
     public ResultDO<String> store(String originalName, byte[] content) {
         try {
             if (content == null || content.length == 0) {
-                return ResultDO.buildFailResult("FILE_EMPTY", "文件内容不能为空");
+                return ResultDO.buildFailResult(ErrorCodeEnum.FILE_EMPTY);
             }
             if (content.length > maxSize.toBytes()) {
-                return ResultDO.buildFailResult("FILE_TOO_LARGE",
+                return ResultDO.buildFailResult(ErrorCodeEnum.FILE_TOO_LARGE,
                         "文件大小超过上限（" + maxSize + "）");
             }
 
@@ -63,7 +64,7 @@ public class LocalFileStorage implements FileStorage {
             return ResultDO.buildSuccessResult(relativePath);
         } catch (Exception e) {
             log.error("存储文件失败, originalName: {}", originalName, e);
-            return ResultDO.buildFailResult("FILE_STORE_ERROR", "文件存储失败");
+            return ResultDO.buildFailResult(ErrorCodeEnum.FILE_STORE_ERROR);
         }
     }
 
@@ -72,15 +73,15 @@ public class LocalFileStorage implements FileStorage {
         try {
             Path target = resolveSafely(path);
             if (!Files.exists(target)) {
-                return ResultDO.buildFailResult("FILE_NOT_FOUND", "物理文件不存在");
+                return ResultDO.buildFailResult(ErrorCodeEnum.FILE_NOT_FOUND, "物理文件不存在");
             }
             return ResultDO.buildSuccessResult(Files.readAllBytes(target));
         } catch (IllegalArgumentException e) {
             log.warn("读取文件路径不合法, path: {}", path, e);
-            return ResultDO.buildFailResult("FILE_PATH_INVALID", "文件路径不合法");
+            return ResultDO.buildFailResult(ErrorCodeEnum.FILE_PATH_INVALID);
         } catch (Exception e) {
             log.error("读取文件失败, path: {}", path, e);
-            return ResultDO.buildFailResult("FILE_READ_ERROR", "文件读取失败");
+            return ResultDO.buildFailResult(ErrorCodeEnum.FILE_READ_ERROR);
         }
     }
 
@@ -92,10 +93,10 @@ public class LocalFileStorage implements FileStorage {
             return ResultDO.buildSuccessResult();
         } catch (IllegalArgumentException e) {
             log.warn("删除文件路径不合法, path: {}", path, e);
-            return ResultDO.buildFailResult("FILE_PATH_INVALID", "文件路径不合法");
+            return ResultDO.buildFailResult(ErrorCodeEnum.FILE_PATH_INVALID);
         } catch (Exception e) {
             log.error("删除文件失败, path: {}", path, e);
-            return ResultDO.buildFailResult("FILE_DELETE_ERROR", "文件删除失败");
+            return ResultDO.buildFailResult(ErrorCodeEnum.FILE_DELETE_ERROR);
         }
     }
 

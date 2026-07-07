@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.dict.model.aggregate;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.entity.DictDataEntity;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.CreateDictDataParam;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictDataParam;
@@ -34,16 +35,16 @@ public class DictDataAggregate extends BaseAggregate {
      */
     public static DictDataAggregate create(CreateDictDataParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "创建参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "创建参数不能为空");
         }
         if (StrUtil.isBlank(param.getTypeKey())) {
-            throw new AggregateException("PARAM_ERROR", "字典类型键不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "字典类型键不能为空");
         }
         if (StrUtil.isBlank(param.getLabel())) {
-            throw new AggregateException("PARAM_ERROR", "字典标签不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "字典标签不能为空");
         }
         if (StrUtil.isBlank(param.getValue())) {
-            throw new AggregateException("PARAM_ERROR", "字典值不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "字典值不能为空");
         }
 
         DictDataEntity entity = new DictDataEntity();
@@ -74,7 +75,7 @@ public class DictDataAggregate extends BaseAggregate {
 
     private void requireEntity() throws AggregateException {
         if (this.dictDataEntity == null) {
-            throw new AggregateException("DATA_ERROR", "字典数据实体不存在");
+            throw new AggregateException(ErrorCodeEnum.DATA_ERROR, "字典数据实体不存在");
         }
     }
 }

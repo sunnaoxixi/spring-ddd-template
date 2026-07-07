@@ -20,12 +20,12 @@ public class LoginResponseDTO extends BaseDto {
     private static final long serialVersionUID = 1L;
 
     /**
-     * token 名称（后续请求以此为请求头名称携�?token�?
+     * token 名称（后续请求以此为请求头名称携带 token）
      */
     private String tokenName;
 
     /**
-     * token �?
+     * token 值
      */
     private String tokenValue;
 
@@ -40,7 +40,7 @@ public class LoginResponseDTO extends BaseDto {
     private String nickname;
 
     /**
-     * 角色标识集合（如 ["admin","user"]�?
+     * 角色标识集合（如 ["admin","user"]）
      */
     private List<String> roles;
 }

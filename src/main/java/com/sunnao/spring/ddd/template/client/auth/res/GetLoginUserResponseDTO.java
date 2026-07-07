@@ -40,12 +40,12 @@ public class GetLoginUserResponseDTO extends BaseDto {
     private String avatar;
 
     /**
-     * 角色标识集合（如 ["admin","user"]�?
+     * 角色标识集合（如 ["admin","user"]）
      */
     private List<String> roles;
 
     /**
-     * 状态：1-启用�?-禁用
+     * 状态：1-启用，0-禁用
      */
     private Integer status;
 }

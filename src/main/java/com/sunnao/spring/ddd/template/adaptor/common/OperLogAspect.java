@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.adaptor.common;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.annotation.OperLog;
 import com.sunnao.spring.ddd.template.common.context.CurrentUserContext;
+import com.sunnao.spring.ddd.template.common.context.RequestContextUtils;
 import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
 import com.sunnao.spring.ddd.template.common.filter.TraceIdFilter;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
@@ -15,8 +16,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.StringJoiner;
@@ -81,12 +80,11 @@ public class OperLogAspect {
     private void publishEvent(ProceedingJoinPoint joinPoint, OperLog operLog,
                               String resultCode, long costMs) {
         String uri = null;
-        String ip = null;
-        HttpServletRequest request = currentRequest();
+        HttpServletRequest request = RequestContextUtils.currentRequest();
         if (request != null) {
             uri = request.getRequestURI();
-            ip = resolveClientIp(request);
         }
+        String ip = RequestContextUtils.getClientIp();
 
         domainEventPublisher.publish(new OperLogEvent(
                 MDC.get(TraceIdFilter.TRACE_ID),
@@ -129,22 +127,4 @@ public class OperLogAspect {
         return params.length() > PARAMS_MAX_LENGTH ? params.substring(0, PARAMS_MAX_LENGTH) : params;
     }
 
-    private HttpServletRequest currentRequest() {
-        if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
-            return attributes.getRequest();
-        }
-        return null;
-    }
-
-    /**
-     * 解析客户端IP：优先取 X-Forwarded-For 首个地址（经代理场景），否则取直连地址
-     */
-    private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (StrUtil.isNotBlank(forwarded) && !"unknown".equalsIgnoreCase(forwarded)) {
-            int commaIndex = forwarded.indexOf(',');
-            return commaIndex > 0 ? forwarded.substring(0, commaIndex).trim() : forwarded.trim();
-        }
-        return request.getRemoteAddr();
-    }
 }

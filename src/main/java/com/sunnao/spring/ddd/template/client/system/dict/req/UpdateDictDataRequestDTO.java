@@ -2,6 +2,7 @@ package com.sunnao.spring.ddd.template.client.system.dict.req;
 
 import com.sunnao.spring.ddd.template.client.system.dict.enums.DictStatusEnum;
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,15 +54,15 @@ public class UpdateDictDataRequestDTO extends BaseDto {
     @Override
     public ResultDO<Void> check() {
         if (dataId == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "字典数据ID不能为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "字典数据ID不能为空");
         }
         boolean labelBlank = label == null || label.isBlank();
         boolean valueBlank = value == null || value.isBlank();
         if (labelBlank && valueBlank && sort == null && status == null && remark == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "修改内容不能全部为空");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "修改内容不能全部为空");
         }
         if (status != null && DictStatusEnum.getByCode(status) == null) {
-            return ResultDO.buildFailResult("PARAM_ERROR", "状态取值不合法");
+            return ResultDO.buildFailResult(ErrorCodeEnum.PARAM_ERROR, "状态取值不合法");
         }
         return ResultDO.buildSuccessResult();
     }

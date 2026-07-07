@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.integration;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -123,7 +124,7 @@ class UserCrudIntegrationTest {
 
         JSONObject afterDeleteJson = JSONUtil.parseObj(afterDeleteBody);
         assertEquals(Boolean.FALSE, afterDeleteJson.getBool("success"));
-        assertEquals("USER_NOT_FOUND", afterDeleteJson.getStr("code"));
+        assertEquals(ErrorCodeEnum.USER_NOT_FOUND.getCode(), afterDeleteJson.getStr("code"));
     }
 
     @Test

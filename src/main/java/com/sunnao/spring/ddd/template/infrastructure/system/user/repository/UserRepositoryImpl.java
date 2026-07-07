@@ -6,6 +6,7 @@ import com.sunnao.spring.ddd.template.common.exception.RepositoryException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.lock.LockFactory;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UserQuery;
@@ -43,7 +44,7 @@ public class UserRepositoryImpl implements UserRepository {
             return UserConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询用户失败, id: {}", id, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询用户数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户数据异常", e);
         }
     }
 
@@ -54,7 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
             return UserConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询用户失败, query: {}", query, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询用户数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户数据异常", e);
         }
     }
 
@@ -71,7 +72,7 @@ public class UserRepositoryImpl implements UserRepository {
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询用户失败, pageQuery: {}", pageQuery.getQuery(), e);
-            throw new RepositoryException("DB_QUERY_ERROR", "分页查询用户数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "分页查询用户数据异常", e);
         }
     }
 
@@ -80,7 +81,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             UserPO po = UserConverter.toPO(aggregate);
             if (po == null) {
-                throw new RepositoryException("DATA_ERROR", "用户数据为空，无法保存");
+                throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "用户数据为空，无法保存");
             }
 
             // 审计字段（createAt/updateAt/createBy/updateBy）由全局监听器自动填充
@@ -101,7 +102,7 @@ public class UserRepositoryImpl implements UserRepository {
             throw e;
         } catch (Exception e) {
             log.error("保存用户失败, aggregate: {}", aggregate, e);
-            throw new RepositoryException("DB_SAVE_ERROR", "保存用户数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存用户数据异常", e);
         }
     }
 
@@ -113,7 +114,7 @@ public class UserRepositoryImpl implements UserRepository {
             return UserConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("根据邮箱查询用户失败, email: {}", email, e);
-            throw new RepositoryException("DB_QUERY_ERROR", "查询用户数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户数据异常", e);
         }
     }
 
@@ -130,7 +131,7 @@ public class UserRepositoryImpl implements UserRepository {
             userMapper.deleteById(userId);
         } catch (Exception e) {
             log.error("删除用户失败, userId: {}", userId, e);
-            throw new RepositoryException("DB_DELETE_ERROR", "删除用户数据异常", e);
+            throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除用户数据异常", e);
         }
     }
 

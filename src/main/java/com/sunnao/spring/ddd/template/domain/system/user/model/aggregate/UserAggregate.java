@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.user.model.aggregate;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.ChangeUserStatusParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.CreateUserParam;
@@ -36,16 +37,16 @@ public class UserAggregate extends BaseAggregate {
      */
     public static UserAggregate create(CreateUserParam param, String encodedPassword) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "创建参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "创建参数不能为空");
         }
         if (StrUtil.isBlank(param.getEmail())) {
-            throw new AggregateException("PARAM_ERROR", "邮箱不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "邮箱不能为空");
         }
         if (StrUtil.isBlank(param.getNickname())) {
-            throw new AggregateException("PARAM_ERROR", "昵称不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "昵称不能为空");
         }
         if (StrUtil.isBlank(encodedPassword)) {
-            throw new AggregateException("PARAM_ERROR", "密码不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "密码不能为空");
         }
 
         UserEntity entity = new UserEntity();
@@ -82,7 +83,7 @@ public class UserAggregate extends BaseAggregate {
     public void changeStatus(ChangeUserStatusParam param) throws AggregateException {
         requireEntity();
         if (param == null || param.getTargetStatus() == null) {
-            throw new AggregateException("PARAM_ERROR", "目标状态不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "目标状态不能为空");
         }
         if (UserStatusEnum.ENABLED.equals(param.getTargetStatus())) {
             this.userEntity.enable(param.getOperatorId());
@@ -105,7 +106,7 @@ public class UserAggregate extends BaseAggregate {
 
     private void requireEntity() throws AggregateException {
         if (this.userEntity == null) {
-            throw new AggregateException("DATA_ERROR", "用户实体不存在");
+            throw new AggregateException(ErrorCodeEnum.DATA_ERROR, "用户实体不存在");
         }
     }
 }

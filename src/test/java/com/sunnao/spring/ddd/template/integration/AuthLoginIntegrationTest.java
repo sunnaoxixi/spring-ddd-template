@@ -2,6 +2,7 @@ package com.sunnao.spring.ddd.template.integration;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -91,6 +92,6 @@ class AuthLoginIntegrationTest {
 
         JSONObject json = JSONUtil.parseObj(body);
         assertEquals(Boolean.FALSE, json.getBool("success"));
-        assertEquals("AUTH_FAIL", json.getStr("code"));
+        assertEquals(ErrorCodeEnum.AUTH_FAIL.getCode(), json.getStr("code"));
     }
 }

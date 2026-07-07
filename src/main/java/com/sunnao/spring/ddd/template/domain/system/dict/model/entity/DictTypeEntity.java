@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.dict.model.entity;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseEntity;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.UpdateDictTypeParam;
 import com.sunnao.spring.ddd.template.model.system.dict.DictStatusEnum;
 import lombok.Getter;
@@ -46,10 +47,10 @@ public class DictTypeEntity extends BaseEntity {
      */
     public void update(UpdateDictTypeParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "修改参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "修改参数不能为空");
         }
         if (StrUtil.isBlank(param.getTypeName()) && param.getStatus() == null && param.getRemark() == null) {
-            throw new AggregateException("PARAM_ERROR", "类型名称、状态、备注不能同时为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "类型名称、状态、备注不能同时为空");
         }
         if (StrUtil.isNotBlank(param.getTypeName())) {
             this.typeName = param.getTypeName();

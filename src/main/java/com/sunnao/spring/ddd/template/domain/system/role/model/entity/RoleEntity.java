@@ -3,6 +3,7 @@ package com.sunnao.spring.ddd.template.domain.system.role.model.entity;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.common.exception.AggregateException;
 import com.sunnao.spring.ddd.template.common.model.BaseEntity;
+import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.UpdateRoleParam;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
 import lombok.Getter;
@@ -60,13 +61,13 @@ public class RoleEntity extends BaseEntity {
      */
     public void update(UpdateRoleParam param) throws AggregateException {
         if (param == null) {
-            throw new AggregateException("PARAM_ERROR", "修改参数不能为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "修改参数不能为空");
         }
         if (StrUtil.isBlank(param.getRoleName()) && param.getStatus() == null && param.getRemark() == null) {
-            throw new AggregateException("PARAM_ERROR", "角色名称、状态、备注不能同时为空");
+            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "角色名称、状态、备注不能同时为空");
         }
         if (RoleStatusEnum.DISABLED.equals(param.getStatus()) && "admin".equals(this.roleKey)) {
-            throw new AggregateException("ROLE_BUILT_IN", "内置管理员角色不允许禁用");
+            throw new AggregateException(ErrorCodeEnum.ROLE_BUILT_IN, "内置管理员角色不允许禁用");
         }
         if (StrUtil.isNotBlank(param.getRoleName())) {
             this.roleName = param.getRoleName();
