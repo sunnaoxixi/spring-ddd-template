@@ -11,6 +11,7 @@ import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.RoleQuery;
+import com.sunnao.spring.ddd.template.domain.system.role.model.value.PermissionKeysValue;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.converter.RoleConverter;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.mapper.PermissionMapper;
@@ -360,14 +361,14 @@ public class RoleRepositoryImpl implements RoleRepository {
         List<RolePermissionPO> rolePermissions = rolePermissionMapper.selectListByQuery(
                 QueryWrapper.create().eq(RolePermissionPO::getRoleId, aggregate.getRoleEntity().getId()));
         if (rolePermissions.isEmpty()) {
-            aggregate.setPermKeys(Collections.emptyList());
+            aggregate.setPermissionKeys(PermissionKeysValue.empty());
             return;
         }
         List<Long> permissionIds = rolePermissions.stream()
                 .map(RolePermissionPO::getPermissionId).distinct().toList();
         List<PermissionPO> permissions = permissionMapper.selectListByQuery(
                 QueryWrapper.create().in(PermissionPO::getId, permissionIds));
-        aggregate.setPermKeys(permissions.stream().map(PermissionPO::getPermKey).toList());
+        aggregate.setPermissionKeys(PermissionKeysValue.of(permissions.stream().map(PermissionPO::getPermKey).toList()));
     }
 
     /**

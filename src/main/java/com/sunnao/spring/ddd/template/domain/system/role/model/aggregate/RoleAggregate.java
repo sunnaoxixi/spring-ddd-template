@@ -7,11 +7,11 @@ import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.CreateRoleParam;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.UpdateRoleParam;
+import com.sunnao.spring.ddd.template.domain.system.role.model.value.PermissionKeysValue;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -32,9 +32,9 @@ public class RoleAggregate extends BaseAggregate {
     private RoleEntity roleEntity;
 
     /**
-     * 权限 key 集合（仓储查询详情时填充，仅数据载体）
+     * 权限标识集合值对象
      */
-    private List<String> permKeys;
+    private PermissionKeysValue permissionKeys;
 
     /**
      * 创建角色聚合根

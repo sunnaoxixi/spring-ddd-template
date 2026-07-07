@@ -101,8 +101,8 @@ public interface RoleAssembler {
     default GetRoleDetailResponseDTO toGetRoleDetailResponseDTO(RoleAggregate aggregate) {
         GetRoleDetailResponseDTO responseDTO = new GetRoleDetailResponseDTO();
         responseDTO.setRole(toRoleDTO(aggregate));
-        responseDTO.setPermKeys(aggregate.getPermKeys() == null
-                ? Collections.emptyList() : aggregate.getPermKeys());
+        responseDTO.setPermKeys(aggregate.getPermissionKeys() == null
+                ? Collections.emptyList() : aggregate.getPermissionKeys().getKeys());
         return responseDTO;
     }
 
