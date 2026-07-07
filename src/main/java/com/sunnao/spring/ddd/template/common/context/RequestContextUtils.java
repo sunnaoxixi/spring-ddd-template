@@ -18,7 +18,21 @@ public final class RequestContextUtils {
      */
     private static final int USER_AGENT_MAX_LENGTH = 512;
 
+    /**
+     * 是否信任 X-Forwarded-For 头（由 SecurityConfigure 依据 app.security.trust-x-forwarded-for 注入，默认 false）。
+     * 该头可被客户端伪造，仅在前置可信反向代理会覆盖/剥离外部传入值时才应开启，
+     * 否则登录/操作日志中的 IP 可被任意伪造
+     */
+    private static volatile boolean trustXForwardedFor = false;
+
     private RequestContextUtils() {
+    }
+
+    /**
+     * 设置是否信任 X-Forwarded-For 头（仅供配置类启动时调用）
+     */
+    public static void setTrustXForwardedFor(boolean trust) {
+        trustXForwardedFor = trust;
     }
 
     /**
@@ -34,7 +48,7 @@ public final class RequestContextUtils {
     }
 
     /**
-     * 解析客户端IP：优先取 X-Forwarded-For 首个地址（经代理场景），否则取直连地址
+     * 解析客户端IP：开启信任代理头时优先取 X-Forwarded-For 首个地址（经可信代理场景），否则取直连地址
      *
      * @return 客户端IP，无请求上下文返回 null
      */
@@ -43,10 +57,12 @@ public final class RequestContextUtils {
         if (request == null) {
             return null;
         }
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (StrUtil.isNotBlank(forwarded) && !"unknown".equalsIgnoreCase(forwarded)) {
-            int commaIndex = forwarded.indexOf(',');
-            return commaIndex > 0 ? forwarded.substring(0, commaIndex).trim() : forwarded.trim();
+        if (trustXForwardedFor) {
+            String forwarded = request.getHeader("X-Forwarded-For");
+            if (StrUtil.isNotBlank(forwarded) && !"unknown".equalsIgnoreCase(forwarded)) {
+                int commaIndex = forwarded.indexOf(',');
+                return commaIndex > 0 ? forwarded.substring(0, commaIndex).trim() : forwarded.trim();
+            }
         }
         return request.getRemoteAddr();
     }

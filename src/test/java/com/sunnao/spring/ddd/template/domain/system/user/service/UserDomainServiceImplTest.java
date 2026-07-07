@@ -97,14 +97,14 @@ class UserDomainServiceImplTest {
             UserAggregate aggregate = invocation.getArgument(0);
             aggregate.getUserEntity().setId(100L);
             return null;
-        }).when(userRepository).save(any(UserAggregate.class));
+        }).when(userRepository).saveWithRoles(any(UserAggregate.class), anyList());
 
         ResultDO<UserAggregate> result = userDomainService.createUser(buildCreateParam());
 
         assertTrue(result.isSuccess());
         assertEquals(100L, result.getData().getUserEntity().getId());
         assertEquals(List.of("user"), result.getData().getUserEntity().getRoles());
-        verify(roleRepository).saveUserRoles(100L, List.of(2L));
+        verify(userRepository).saveWithRoles(any(UserAggregate.class), eq(List.of(2L)));
         verify(domainEventPublisher).publish(any(UserCreatedEvent.class));
         verify(levelLock).unlock();
     }
@@ -119,7 +119,7 @@ class UserDomainServiceImplTest {
 
         assertFalse(result.isSuccess());
         assertEquals(ErrorCodeEnum.EMAIL_DUPLICATE.getCode(), result.getCode());
-        verify(userRepository, never()).save(any(UserAggregate.class));
+        verify(userRepository, never()).saveWithRoles(any(UserAggregate.class), anyList());
         verify(levelLock).unlock();
     }
 
@@ -132,7 +132,7 @@ class UserDomainServiceImplTest {
 
         assertFalse(result.isSuccess());
         assertEquals(ErrorCodeEnum.LOCK_FAIL.getCode(), result.getCode());
-        verify(userRepository, never()).save(any(UserAggregate.class));
+        verify(userRepository, never()).saveWithRoles(any(UserAggregate.class), anyList());
     }
 
     @Test
@@ -148,7 +148,7 @@ class UserDomainServiceImplTest {
 
         assertFalse(result.isSuccess());
         assertEquals(ErrorCodeEnum.ROLE_NOT_FOUND.getCode(), result.getCode());
-        verify(userRepository, never()).save(any(UserAggregate.class));
+        verify(userRepository, never()).saveWithRoles(any(UserAggregate.class), anyList());
     }
 
     @Test
@@ -231,8 +231,7 @@ class UserDomainServiceImplTest {
         ResultDO<Void> result = userDomainService.deleteUser(param);
 
         assertTrue(result.isSuccess());
-        verify(userRepository).delete(9L, 1L);
-        verify(roleRepository).saveUserRoles(eq(9L), eq(List.of()));
+        verify(userRepository).deleteWithRoles(9L, 1L);
     }
 
     @Test

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -104,6 +105,7 @@ public class FileRepositoryImpl implements FileRepository {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long fileId, Long operatorId) throws RepositoryException {
         try {

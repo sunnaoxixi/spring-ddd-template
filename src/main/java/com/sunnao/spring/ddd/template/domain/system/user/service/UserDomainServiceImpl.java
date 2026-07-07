@@ -66,11 +66,10 @@ public class UserDomainServiceImpl implements UserDomainService {
             String encodedPassword = BCrypt.hashpw(param.getPassword());
             UserAggregate aggregate = UserAggregate.create(param, encodedPassword);
 
-            // 5. 持久化（仓储回填ID）+ 建立用户角色关联
-            userRepository.save(aggregate);
-            UserEntity entity = aggregate.getUserEntity();
-            roleRepository.saveUserRoles(entity.getId(),
+            // 5. 持久化 + 建立用户角色关联（同一事务，仓储回填ID）
+            userRepository.saveWithRoles(aggregate,
                     roles.stream().map(role -> role.getRoleEntity().getId()).toList());
+            UserEntity entity = aggregate.getUserEntity();
             entity.setRoles(roles.stream().map(role -> role.getRoleEntity().getRoleKey()).toList());
 
             // 6. 发布领域事件（异步消费，失败不影响主流程）
@@ -81,7 +80,7 @@ public class UserDomainServiceImpl implements UserDomainService {
         } catch (BizException e) {
             log.error("创建用户业务异常, param: {}", param, e);
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("创建用户系统异常, param: {}", param, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
@@ -113,7 +112,7 @@ public class UserDomainServiceImpl implements UserDomainService {
         } catch (BizException e) {
             log.error("修改用户资料业务异常, param: {}", param, e);
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("修改用户资料系统异常, param: {}", param, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
@@ -145,7 +144,7 @@ public class UserDomainServiceImpl implements UserDomainService {
         } catch (BizException e) {
             log.error("变更用户状态业务异常, param: {}", param, e);
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("变更用户状态系统异常, param: {}", param, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
@@ -167,15 +166,14 @@ public class UserDomainServiceImpl implements UserDomainService {
                 return ResultDO.buildFailResult(ErrorCodeEnum.USER_NOT_FOUND);
             }
 
-            // 3. 逻辑删除 + 清理用户角色关联
-            userRepository.delete(param.getUserId(), param.getOperatorId());
-            roleRepository.saveUserRoles(param.getUserId(), List.of());
+            // 3. 逻辑删除 + 清理用户角色关联（同一事务）
+            userRepository.deleteWithRoles(param.getUserId(), param.getOperatorId());
 
             return ResultDO.buildSuccessResult();
         } catch (BizException e) {
             log.error("删除用户业务异常, param: {}", param, e);
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("删除用户系统异常, param: {}", param, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {

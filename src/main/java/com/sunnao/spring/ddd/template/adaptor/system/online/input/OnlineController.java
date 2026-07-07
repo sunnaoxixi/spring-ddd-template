@@ -15,6 +15,7 @@ import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,14 +53,12 @@ public class OnlineController {
     }
 
     /**
-     * 按会话 token 踢下线
+     * 按会话 token 踢下线（token 走请求体，避免进入 URL/访问日志；DTO toString 已排除 token，不落操作日志）
      */
-    @Operation(summary = "按会话踢下线", description = "仅影响单个会话")
+    @Operation(summary = "按会话踢下线", description = "仅影响单个会话，token 通过请求体传递")
     @OperLog(module = "online", action = "按会话踢下线")
-    @DeleteMapping("/tokens/{tokenValue}")
-    public ResultDO<Void> kickByToken(@PathVariable("tokenValue") String tokenValue) {
-        KickOnlineUserByTokenRequestDTO requestDTO = new KickOnlineUserByTokenRequestDTO();
-        requestDTO.setTokenValue(tokenValue);
+    @DeleteMapping("/tokens")
+    public ResultDO<Void> kickByToken(@RequestBody KickOnlineUserByTokenRequestDTO requestDTO) {
         return onlineAppService.kickByToken(requestDTO);
     }
 

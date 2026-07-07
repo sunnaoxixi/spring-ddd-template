@@ -88,6 +88,11 @@ public enum ErrorCodeEnum {
     AUTH_FAIL("AUTH_FAIL", "邮箱或密码错误"),
 
     /**
+     * 登录失败次数过多，暂时锁定（防爆破）
+     */
+    AUTH_LOCKED("AUTH_LOCKED", "登录失败次数过多，请稍后重试"),
+
+    /**
      * 账号已被禁用
      */
     USER_DISABLED("USER_DISABLED", "账号已被禁用，请联系管理员"),

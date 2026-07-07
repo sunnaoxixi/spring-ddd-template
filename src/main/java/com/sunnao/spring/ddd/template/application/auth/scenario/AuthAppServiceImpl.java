@@ -12,6 +12,7 @@ import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
 import com.sunnao.spring.ddd.template.common.filter.TraceIdFilter;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
+import com.sunnao.spring.ddd.template.common.security.LoginAttemptLimiter;
 import com.sunnao.spring.ddd.template.domain.auth.service.AuthDomainService;
 import com.sunnao.spring.ddd.template.domain.system.log.event.LoginLogEvent;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
@@ -29,7 +30,8 @@ import java.time.LocalDateTime;
  * Sa-Token 调用收敛在应用层，领域层不感知会话技术细节。
  * <p>
  * 登录认证成功/失败均发布 LoginLogEvent 异步落库（参数校验失败不记录）；
- * 登录成功后向 Token-Session 写入 IP/User-Agent/登录时间等附加信息，供在线用户模块展示。
+ * 登录成功后向 Token-Session 写入 IP/User-Agent/登录时间等附加信息，供在线用户模块展示；
+ * 接入 LoginAttemptLimiter 防爆破：凭证失败计数，达限后窗口内拒绝登录，成功即清零。
  */
 @Slf4j
 @Service
@@ -49,6 +51,9 @@ public class AuthAppServiceImpl implements AuthAppService {
     @Resource
     private DomainEventPublisher domainEventPublisher;
 
+    @Resource
+    private LoginAttemptLimiter loginAttemptLimiter;
+
     @Override
     public ResultDO<LoginResponseDTO> login(LoginRequestDTO requestDTO) {
         try {
@@ -58,22 +63,35 @@ public class AuthAppServiceImpl implements AuthAppService {
                 return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
             }
 
-            // 2. 领域服务认证（凭证 + 账号状态），成功/失败均记录登录日志
+            // 2. 防爆破检查：窗口内凭证失败达限则拒绝登录（记录登录日志供审计）
+            String clientIp = RequestContextUtils.getClientIp();
+            if (loginAttemptLimiter.isBlocked(requestDTO.getEmail(), clientIp)) {
+                publishLoginLog(null, requestDTO.getEmail(), false,
+                        ErrorCodeEnum.AUTH_LOCKED.getCode(), ErrorCodeEnum.AUTH_LOCKED.getDefaultMsg());
+                return ResultDO.buildFailResult(ErrorCodeEnum.AUTH_LOCKED);
+            }
+
+            // 3. 领域服务认证（凭证 + 账号状态），成功/失败均记录登录日志
             ResultDO<UserAggregate> domainResult = authDomainService.authenticate(AuthAssembler.toLoginParam(requestDTO));
             if (!domainResult.isSuccess()) {
+                // 仅凭证错误计入失败次数（账号禁用等状态类失败不计）
+                if (ErrorCodeEnum.AUTH_FAIL.getCode().equals(domainResult.getCode())) {
+                    loginAttemptLimiter.recordFailure(requestDTO.getEmail(), clientIp);
+                }
                 publishLoginLog(null, requestDTO.getEmail(), false,
                         domainResult.getCode(), domainResult.getMsg());
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
+            loginAttemptLimiter.clear(requestDTO.getEmail(), clientIp);
 
-            // 3. 签发 token（Sa-Token 会话写入 Redis），并向 Token-Session 写入会话附加信息
+            // 4. 签发 token（Sa-Token 会话写入 Redis），并向 Token-Session 写入会话附加信息
             UserAggregate aggregate = domainResult.getData();
             Long userId = aggregate.getUserEntity().getId();
             StpUtil.login(userId);
             fillTokenSession(aggregate);
             publishLoginLog(userId, requestDTO.getEmail(), true, SUCCESS_CODE, null);
 
-            // 4. 填充角色标识（RBAC，取自 role 领域）后组装响应
+            // 5. 填充角色标识（RBAC，取自 role 领域）后组装响应
             aggregate.getUserEntity().setRoles(roleRepository.queryRoleKeysByUserId(userId));
             return ResultDO.buildSuccessResult(AuthAssembler.toLoginResponseDTO(
                     aggregate, StpUtil.getTokenName(), StpUtil.getTokenValue()));

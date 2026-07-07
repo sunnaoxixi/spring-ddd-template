@@ -1,6 +1,6 @@
 package com.sunnao.spring.ddd.template.adaptor.system.log.input;
 
-import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.sunnao.spring.ddd.template.client.system.log.LogQueryAppService;
 import com.sunnao.spring.ddd.template.client.system.log.req.QueryLoginLogPageRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.log.req.QueryOperLogPageRequestDTO;
@@ -22,10 +22,11 @@ import java.time.LocalDateTime;
  * 系统日志 Controller（Input Adaptor）
  * 职责：接收 HTTP 请求，转换参数后调用应用层服务，禁止编写业务逻辑
  * <p>
- * 日志仅管理员可查询；操作日志由 @OperLog 切面、登录日志由登录流程事件异步写入，不提供写接口。
+ * 按权限点鉴权（Sa-Token）：查询需 system:log:read；
+ * 操作日志由 @OperLog 切面、登录日志由登录流程事件异步写入，不提供写接口。
  */
-@Tag(name = "系统日志", description = "操作日志 / 登录日志分页查询（仅管理员）")
-@SaCheckRole("admin")
+@Tag(name = "系统日志", description = "操作日志 / 登录日志分页查询（需 system:log:read 权限）")
+@SaCheckPermission("system:log:read")
 @RestController
 @RequestMapping("/api/system/logs")
 public class LogController {

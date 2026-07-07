@@ -10,6 +10,7 @@ import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.UserQuery;
+import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.domain.system.user.repository.UserRepository;
 import com.sunnao.spring.ddd.template.infrastructure.system.user.converter.UserConverter;
 import com.sunnao.spring.ddd.template.infrastructure.system.user.mysql.mapper.UserMapper;
@@ -20,12 +21,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * 用户仓储实现类
- * 职责：聚合根的持久化与查询，PO 与聚合根的纯技术转换，无业务逻辑
+ * 职责：聚合根的持久化与查询，PO 与聚合根的纯技术转换，无业务逻辑；
+ * 用户与角色关联的组合写入（saveWithRoles / deleteWithRoles）委托 RoleRepository 并保证同一事务
  */
 @Slf4j
 @Component
@@ -33,6 +37,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private RoleRepository roleRepository;
 
     @Resource
     private LockFactory lockFactory;
@@ -106,6 +113,14 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void saveWithRoles(UserAggregate aggregate, List<Long> roleIds) throws RepositoryException {
+        // 保存用户与覆盖角色关联在同一事务内，任一失败整体回滚（saveUserRoles 为 REQUIRED 传播，加入当前事务）
+        save(aggregate);
+        roleRepository.saveUserRoles(aggregate.getUserEntity().getId(), roleIds);
+    }
+
     @Override
     public UserAggregate queryByEmail(String email) throws RepositoryException {
         try {
@@ -118,6 +133,7 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long userId, Long operatorId) throws RepositoryException {
         try {
@@ -133,6 +149,14 @@ public class UserRepositoryImpl implements UserRepository {
             log.error("删除用户失败, userId: {}", userId, e);
             throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除用户数据异常", e);
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteWithRoles(Long userId, Long operatorId) throws RepositoryException {
+        // 逻辑删除用户与清理角色关联在同一事务内，任一失败整体回滚
+        delete(userId, operatorId);
+        roleRepository.saveUserRoles(userId, Collections.emptyList());
     }
 
     @Override

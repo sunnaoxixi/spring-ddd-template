@@ -26,8 +26,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -159,8 +162,8 @@ public class DictRepositoryImpl implements DictRepository {
             // 3. 逻辑删除该类型下所有字典数据
             dictDataMapper.deleteByQuery(QueryWrapper.create().eq(DictDataPO::getTypeKey, typeKey));
 
-            // 4. 失效缓存
-            evictCache(typeKey);
+            // 4. 事务提交后失效缓存（避免提交前并发读回填旧数据）
+            evictCacheAfterCommit(typeKey);
         } catch (Exception e) {
             log.error("删除字典类型失败, typeId: {}, typeKey: {}", typeId, typeKey, e);
             throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除字典类型数据异常", e);
@@ -224,6 +227,7 @@ public class DictRepositoryImpl implements DictRepository {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteData(Long dataId, String typeKey, Long operatorId) throws RepositoryException {
         try {
@@ -236,8 +240,8 @@ public class DictRepositoryImpl implements DictRepository {
             // 2. 逻辑删除（deleted 置为 1）
             dictDataMapper.deleteById(dataId);
 
-            // 3. 失效缓存
-            evictCache(typeKey);
+            // 3. 事务提交后失效缓存（避免提交前并发读回填旧数据）
+            evictCacheAfterCommit(typeKey);
         } catch (Exception e) {
             log.error("删除字典数据失败, dataId: {}, typeKey: {}", dataId, typeKey, e);
             throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除字典数据异常", e);
@@ -257,15 +261,22 @@ public class DictRepositoryImpl implements DictRepository {
             log.warn("读取字典缓存失败，降级直查数据库, typeKey: {}", typeKey, e);
         }
 
-        // 2. 回源数据库（仅启用状态，按 sort 升序）
+        // 2. 回源数据库（类型必须启用，数据仅启用状态，按 sort 升序；类型不存在或已禁用时读侧视为无数据）
         List<DictDataPO> poList;
         try {
-            QueryWrapper wrapper = QueryWrapper.create()
-                    .eq(DictDataPO::getTypeKey, typeKey)
-                    .eq(DictDataPO::getStatus, DictStatusEnum.ENABLED.getCode())
-                    .orderBy(DictDataPO::getSort, true)
-                    .orderBy(DictDataPO::getId, true);
-            poList = dictDataMapper.selectListByQuery(wrapper);
+            DictTypePO typePO = dictTypeMapper.selectOneByQuery(QueryWrapper.create()
+                    .eq(DictTypePO::getTypeKey, typeKey)
+                    .eq(DictTypePO::getStatus, DictStatusEnum.ENABLED.getCode()));
+            if (typePO == null) {
+                poList = Collections.emptyList();
+            } else {
+                QueryWrapper wrapper = QueryWrapper.create()
+                        .eq(DictDataPO::getTypeKey, typeKey)
+                        .eq(DictDataPO::getStatus, DictStatusEnum.ENABLED.getCode())
+                        .orderBy(DictDataPO::getSort, true)
+                        .orderBy(DictDataPO::getId, true);
+                poList = dictDataMapper.selectListByQuery(wrapper);
+            }
         } catch (Exception e) {
             log.error("按类型键查询字典数据失败, typeKey: {}", typeKey, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
@@ -297,6 +308,23 @@ public class DictRepositoryImpl implements DictRepository {
     @Override
     public LevelLock buildLock(String lockKey) {
         return lockFactory.buildLock(lockKey);
+    }
+
+    /**
+     * 在当前事务提交后失效缓存；无活动事务时立即失效。
+     * 若在事务提交前失效，并发读可能在“失效 → 提交”窗口内回源旧数据并重新写入缓存
+     */
+    private void evictCacheAfterCommit(String typeKey) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    evictCache(typeKey);
+                }
+            });
+            return;
+        }
+        evictCache(typeKey);
     }
 
     /**

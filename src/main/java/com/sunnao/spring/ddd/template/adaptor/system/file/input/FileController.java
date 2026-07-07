@@ -1,6 +1,6 @@
 package com.sunnao.spring.ddd.template.adaptor.system.file.input;
 
-import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.sunnao.spring.ddd.template.client.system.file.FileAppService;
 import com.sunnao.spring.ddd.template.client.system.file.FileQueryAppService;
 import com.sunnao.spring.ddd.template.client.system.file.req.DeleteFileRequestDTO;
@@ -28,10 +28,10 @@ import java.nio.charset.StandardCharsets;
  * 文件管理 Controller（Input Adaptor）
  * 职责：接收 HTTP 请求，MultipartFile 在本层转换为 DTO 后调用应用层服务，禁止编写业务逻辑
  * <p>
- * 上传/下载/分页查询登录可用；删除仅管理员。
+ * 按权限点鉴权（Sa-Token）：下载/分页查询需 system:file:read，上传/删除需 system:file:write。
  */
 @Slf4j
-@Tag(name = "文件管理", description = "上传/下载/分页查询（登录用户），删除（仅管理员）")
+@Tag(name = "文件管理", description = "下载/分页查询（需 system:file:read 权限），上传/删除（需 system:file:write 权限）")
 @RestController
 @RequestMapping("/api/system/files")
 public class FileController {
@@ -47,6 +47,7 @@ public class FileController {
      */
     @Operation(summary = "上传文件", description = "multipart/form-data，字段名 file")
     @OperLog(module = "file", action = "上传文件")
+    @SaCheckPermission("system:file:write")
     @PostMapping
     public ResultDO<UploadFileResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         // MultipartFile 不越过 adaptor 层，此处转换为自包含 DTO
@@ -66,13 +67,14 @@ public class FileController {
      * 下载文件
      */
     @Operation(summary = "下载文件", description = "返回文件二进制流")
+    @SaCheckPermission("system:file:read")
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") Long id) {
         DownloadFileRequestDTO requestDTO = new DownloadFileRequestDTO();
         requestDTO.setFileId(id);
         ResultDO<DownloadFileResponseDTO> result = fileQueryAppService.downloadFile(requestDTO);
         if (!result.isSuccess()) {
-            HttpStatus status = "FILE_NOT_FOUND".equals(result.getCode())
+            HttpStatus status = ErrorCodeEnum.FILE_NOT_FOUND.getCode().equals(result.getCode())
                     ? HttpStatus.NOT_FOUND : HttpStatus.INTERNAL_SERVER_ERROR;
             return ResponseEntity.status(status).build();
         }
@@ -94,11 +96,11 @@ public class FileController {
     }
 
     /**
-     * 删除文件（逻辑删除元数据 + 清理物理文件，仅管理员）
+     * 删除文件（逻辑删除元数据 + 清理物理文件）
      */
-    @Operation(summary = "删除文件", description = "逻辑删除元数据并清理物理文件（仅管理员）")
+    @Operation(summary = "删除文件", description = "逻辑删除元数据并清理物理文件")
     @OperLog(module = "file", action = "删除文件")
-    @SaCheckRole("admin")
+    @SaCheckPermission("system:file:write")
     @DeleteMapping("/{id}")
     public ResultDO<DeleteFileResponseDTO> deleteFile(@PathVariable("id") Long id) {
         DeleteFileRequestDTO requestDTO = new DeleteFileRequestDTO();
@@ -110,6 +112,7 @@ public class FileController {
      * 分页查询文件列表
      */
     @Operation(summary = "分页查询文件列表")
+    @SaCheckPermission("system:file:read")
     @GetMapping("/page")
     public ResultDO<QueryFilePageResponseDTO> queryFilePage(
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
