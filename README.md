@@ -46,6 +46,20 @@ adaptor(input) → application → domain → repository 接口（infrastructure
 
 ## 快速开始
 
+### 一键改包（基于模板创建新项目）
+
+```bash
+# 交互模式
+./rename-project.sh
+
+# 或直接传参：<new-groupId> <new-artifactId> [new-package]
+./rename-project.sh com.acme order-center
+# 包名默认 = groupId + artifactId 横线转点（com.acme.order.center），也可第三个参数显式指定
+```
+
+脚本会自动替换 `pom.xml` 坐标、Java 包名与源码目录、启动类名、`spring.application.name`、数据库名（`application-*.yaml` /
+`docker-compose.yaml`）及 README 中的引用（Windows 可在 Git Bash 中运行）。
+
 ```bash
 # 1. 启动本地依赖（PostgreSQL 17 + Redis 7）
 docker compose up -d
