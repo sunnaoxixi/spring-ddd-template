@@ -42,7 +42,7 @@ public class FileAppServiceImpl implements FileAppService {
 
             // 2. 存储物理文件（outAdaptor，路径由存储实现生成）
             ResultDO<String> storeResult = fileStorage.store(
-                    requestDTO.getOriginalName(), requestDTO.getContent());
+                    requestDTO.getOriginalName(), requestDTO.getContentType(), requestDTO.getContent());
             if (!storeResult.isSuccess()) {
                 return ResultDO.buildFailResult(storeResult.getCode(), storeResult.getMsg());
             }

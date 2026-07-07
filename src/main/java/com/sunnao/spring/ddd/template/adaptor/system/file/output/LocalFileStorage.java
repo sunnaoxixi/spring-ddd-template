@@ -1,21 +1,18 @@
 package com.sunnao.spring.ddd.template.adaptor.system.file.output;
 
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.application.system.file.FileStorage;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * 本地磁盘文件存储实现（Output Adaptor）
@@ -23,13 +20,12 @@ import java.time.format.DateTimeFormatter;
  * 实现 application 层定义的 FileStorage 接口（依赖倒置）。
  * 存储根目录与单文件大小上限走配置（app.file.local.base-path / app.file.max-size）；
  * 存储路径格式：yyyy/MM/dd/{uuid}.{ext}，日期分目录避免单目录文件过多。
- * OSS 等云存储可另行实现 FileStorage 并通过 @ConditionalOnProperty 等方式切换。
+ * 通过 app.file.storage-type 切换存储实现：local-本实现（默认）｜s3-S3FileStorage。
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "app.file.storage-type", havingValue = "local", matchIfMissing = true)
 public class LocalFileStorage implements FileStorage {
-
-    private static final DateTimeFormatter DATE_DIR_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     /**
      * 存储根目录
@@ -44,7 +40,7 @@ public class LocalFileStorage implements FileStorage {
     private DataSize maxSize;
 
     @Override
-    public ResultDO<String> store(String originalName, byte[] content) {
+    public ResultDO<String> store(String originalName, String contentType, byte[] content) {
         try {
             if (content == null || content.length == 0) {
                 return ResultDO.buildFailResult(ErrorCodeEnum.FILE_EMPTY);
@@ -54,9 +50,8 @@ public class LocalFileStorage implements FileStorage {
                         "文件大小超过上限（" + maxSize + "）");
             }
 
-            // 生成相对路径：yyyy/MM/dd/{uuid}.{ext}
-            String relativePath = LocalDate.now().format(DATE_DIR_FORMATTER)
-                    + "/" + IdUtil.fastSimpleUUID() + extractExtension(originalName);
+            // 生成相对路径：yyyy/MM/dd/{uuid}.{ext}（contentType 本地存储不使用）
+            String relativePath = StoragePathGenerator.generate(originalName);
 
             Path target = resolveSafely(relativePath);
             Files.createDirectories(target.getParent());
@@ -115,21 +110,5 @@ public class LocalFileStorage implements FileStorage {
             throw new IllegalArgumentException("路径逃逸出存储根目录: " + relativePath);
         }
         return target;
-    }
-
-    /**
-     * 提取文件扩展名（含点，无扩展名返回空串）
-     */
-    private String extractExtension(String originalName) {
-        if (StrUtil.isBlank(originalName)) {
-            return "";
-        }
-        int dotIndex = originalName.lastIndexOf('.');
-        if (dotIndex < 0 || dotIndex == originalName.length() - 1) {
-            return "";
-        }
-        String ext = originalName.substring(dotIndex);
-        // 扩展名仅保留常规字符，防止注入特殊路径字符
-        return ext.matches("\\.[A-Za-z0-9]{1,10}") ? ext.toLowerCase() : "";
     }
 }

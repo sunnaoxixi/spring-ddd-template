@@ -76,9 +76,31 @@ docker compose up -d
 | 角色 role（RBAC） | `/api/system/roles` | 角色 CRUD、分配权限、给用户授角色（仅 admin）；`StpInterfaceImpl` 从 `sys_role` / `sys_permission` 及关联表读取角色与权限点 |
 | 字典 dict       | `/api/system/dicts` | 类型/数据 CRUD（admin）；按 typeKey 查启用数据走 Redis 缓存（登录可用），写操作自动失效缓存                                  |
 | 操作日志 log      | `/api/system/logs`  | `@OperLog(module, action)` 注解 + 切面采集，异步落库；分页查询（仅 admin）                                      |
-| 文件 file       | `/api/system/files` | multipart 上传 / 下载 / 分页查询（登录可用），删除仅 admin；`FileStorage` 抽象 + 本地磁盘实现，OSS 可扩展                   |
+| 文件 file       | `/api/system/files` | multipart 上传 / 下载 / 分页查询（登录可用），删除仅 admin；`FileStorage` 抽象 + 本地磁盘 / S3 对象存储双实现（见下方文件存储说明）       |
 
 数据库迁移脚本：`src/main/resources/db/migration/`（V1 用户、V2 RBAC、V3 操作日志、V4 字典、V5 文件）。
+
+### 文件存储
+
+`app.file.storage-type` 切换存储实现（均实现 application 层 `FileStorage` 接口，`@ConditionalOnProperty` 条件装配）：
+
+| 实现                 | 配置值    | 说明                                                                         |
+|--------------------|--------|----------------------------------------------------------------------------|
+| `LocalFileStorage` | `local`（默认） | 本地磁盘，根目录 `app.file.local.base-path`                                        |
+| `S3FileStorage`    | `s3`   | AWS SDK v2 通用 S3 协议客户端，兼容阿里云 OSS、腾讯云 COS、MinIO、七牛云 Kodo 等对象存储 |
+
+S3 连接配置走环境变量（`app.file.s3.*`，密钥不落盘）：
+
+| 环境变量                  | 说明                            | 阿里云 OSS 示例                              | 腾讯云 COS 示例                                | MinIO 示例               |
+|-----------------------|-------------------------------|----------------------------------------|------------------------------------------|------------------------|
+| `S3_ENDPOINT`         | 服务端点                          | `https://oss-cn-hangzhou.aliyuncs.com` | `https://cos.ap-shanghai.myqcloud.com`   | `http://127.0.0.1:9000` |
+| `S3_REGION`           | 区域（无区域概念的服务商保持默认 `us-east-1`） | `oss-cn-hangzhou`                      | `ap-shanghai`                             | `us-east-1`            |
+| `S3_ACCESS_KEY`       | 密钥 ID                         | AccessKeyId                            | SecretId                                  | Access Key             |
+| `S3_SECRET_KEY`       | 密钥 Secret                     | AccessKeySecret                        | SecretKey                                 | Secret Key             |
+| `S3_BUCKET`           | 存储桶（需预先创建）                    | —                                      | —                                         | —                      |
+| `S3_PATH_STYLE_ACCESS` | 路径风格访问                        | `false`（虚拟主机风格）                        | `false`（虚拟主机风格）                          | `true`                 |
+
+上传时存储类型随元数据落库（`sys_file.storage_type`）；切换存储实现后，存量文件的下载/删除需保证原存储仍可访问（或自行迁移物理文件）。
 
 ## 横切能力
 

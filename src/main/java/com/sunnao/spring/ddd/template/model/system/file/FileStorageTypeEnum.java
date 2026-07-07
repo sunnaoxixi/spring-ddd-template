@@ -13,6 +13,11 @@ public enum FileStorageTypeEnum {
      * 本地磁盘存储
      */
     LOCAL("local", "本地磁盘"),
+
+    /**
+     * S3 兼容对象存储（阿里云 OSS、腾讯云 COS、MinIO 等）
+     */
+    S3("s3", "S3 对象存储"),
     ;
 
     /**

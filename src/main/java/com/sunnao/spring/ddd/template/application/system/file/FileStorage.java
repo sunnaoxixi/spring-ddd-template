@@ -15,10 +15,11 @@ public interface FileStorage {
      * 存储文件
      *
      * @param originalName 原始文件名（用于提取扩展名，存储路径由实现生成保证唯一）
+     * @param contentType  文件 MIME 类型（可为空；对象存储实现写入对象元数据，本地实现忽略）
      * @param content      文件内容
-     * @return 存储路径（相对存储根目录）
+     * @return 存储路径（相对存储根目录 / 对象 key）
      */
-    ResultDO<String> store(String originalName, byte[] content);
+    ResultDO<String> store(String originalName, String contentType, byte[] content);
 
     /**
      * 读取文件内容

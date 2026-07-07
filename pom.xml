@@ -22,6 +22,7 @@
         <mybatis-flex.version>1.11.8</mybatis-flex.version>
         <sa-token.version>1.45.0</sa-token.version>
         <springdoc.version>3.0.3</springdoc.version>
+        <aws-sdk.version>2.31.63</aws-sdk.version>
     </properties>
 
     <dependencies>
@@ -121,6 +122,20 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
+        </dependency>
+
+        <!-- AWS SDK v2 S3：通用 S3 协议客户端，兼容阿里云 OSS、腾讯云 COS、MinIO 等对象存储（S3FileStorage 使用） -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>${aws-sdk.version}</version>
+            <exclusions>
+                <!-- 仅使用同步客户端（Apache HttpClient），排除异步 Netty 传输层 -->
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Flyway 数据库迁移（版本由 Spring Boot 父 POM 管理），脚本位于 db/migration -->
