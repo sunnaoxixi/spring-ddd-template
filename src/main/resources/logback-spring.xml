@@ -8,11 +8,14 @@
     <!-- 统一 pattern：含 %X{traceId}（由 TraceIdFilter 写入 MDC，异步线程经 AsyncConfig 透传） -->
     <property name="LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-}] %logger{50} - %msg%n"/>
+    <!-- 控制台彩色 pattern -->
+    <property name="CONSOLE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%thread]) %highlight(%-5level) %cyan([%X{traceId:-}]) %logger{50} - %msg%n"/>
 
-    <!-- 控制台输出 -->
+    <!-- 控制台输出（带颜色） -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>${CONSOLE_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
