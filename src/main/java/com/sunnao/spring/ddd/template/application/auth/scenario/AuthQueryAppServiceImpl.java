@@ -25,6 +25,9 @@ public class AuthQueryAppServiceImpl implements AuthQueryAppService {
     private UserRepository userRepository;
 
     @Resource
+    private AuthAssembler authAssembler;
+
+    @Resource
     private RoleRepository roleRepository;
 
     @Override
@@ -44,7 +47,7 @@ public class AuthQueryAppServiceImpl implements AuthQueryAppService {
 
             // 3. 填充角色标识（RBAC，取自 role 领域）后组装响应 DTO
             aggregate.getUserEntity().setRoles(roleRepository.queryRoleKeysByUserId(userId));
-            return ResultDO.buildSuccessResult(AuthAssembler.toGetLoginUserResponseDTO(aggregate));
+            return ResultDO.buildSuccessResult(authAssembler.toGetLoginUserResponseDTO(aggregate));
         } catch (Exception e) {
             log.error("获取当前登录用户信息失败", e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);

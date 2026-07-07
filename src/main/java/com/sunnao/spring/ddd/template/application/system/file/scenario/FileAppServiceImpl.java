@@ -29,6 +29,9 @@ public class FileAppServiceImpl implements FileAppService {
     private FileDomainService fileDomainService;
 
     @Resource
+    private FileAssembler fileAssembler;
+
+    @Resource
     private FileStorage fileStorage;
 
     @Override
@@ -50,7 +53,7 @@ public class FileAppServiceImpl implements FileAppService {
 
             // 3. 调用领域服务登记元数据（操作人取自当前登录用户）
             ResultDO<FileAggregate> domainResult = fileDomainService.createFile(
-                    FileAssembler.toCreateParam(requestDTO, path,
+                    fileAssembler.toCreateParam(requestDTO, path,
                             fileStorage.getStorageType(), CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 // 元数据登记失败，回滚物理文件（尽力而为，失败仅记录日志）
@@ -60,7 +63,7 @@ public class FileAppServiceImpl implements FileAppService {
 
             // 4. 组装响应
             return ResultDO.buildSuccessResult(
-                    FileAssembler.toUploadFileResponseDTO(domainResult.getData()));
+                    fileAssembler.toUploadFileResponseDTO(domainResult.getData()));
         } catch (Exception e) {
             log.error("上传文件系统异常, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -78,7 +81,7 @@ public class FileAppServiceImpl implements FileAppService {
 
             // 2. 调用领域服务逻辑删除元数据（操作人取自当前登录用户）
             ResultDO<FileAggregate> domainResult = fileDomainService.deleteFile(
-                    FileAssembler.toDeleteParam(requestDTO, CurrentUserContext.getUserId()));
+                    fileAssembler.toDeleteParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }

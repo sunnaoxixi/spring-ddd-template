@@ -10,9 +10,6 @@ import cn.dev33.satoken.stp.StpUtil;
  */
 public final class CurrentUserContext {
 
-    private CurrentUserContext() {
-    }
-
     /**
      * 获取当前登录用户ID
      *

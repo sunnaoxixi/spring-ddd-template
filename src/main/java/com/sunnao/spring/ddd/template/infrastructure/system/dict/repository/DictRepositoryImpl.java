@@ -56,6 +56,9 @@ public class DictRepositoryImpl implements DictRepository {
     private DictTypeMapper dictTypeMapper;
 
     @Resource
+    private DictConverter dictConverter;
+
+    @Resource
     private DictDataMapper dictDataMapper;
 
     @Resource
@@ -68,7 +71,7 @@ public class DictRepositoryImpl implements DictRepository {
     public DictTypeAggregate query(Long id) throws RepositoryException {
         try {
             DictTypePO po = dictTypeMapper.selectOneById(id);
-            return DictConverter.toTypeAggregate(po);
+            return dictConverter.toTypeAggregate(po);
         } catch (Exception e) {
             log.error("查询字典类型失败, id: {}", id, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典类型数据异常", e);
@@ -79,7 +82,7 @@ public class DictRepositoryImpl implements DictRepository {
     public DictTypeAggregate query(DictTypeQuery query) throws RepositoryException {
         try {
             DictTypePO po = dictTypeMapper.selectOneByQuery(buildTypeWrapper(query));
-            return DictConverter.toTypeAggregate(po);
+            return dictConverter.toTypeAggregate(po);
         } catch (Exception e) {
             log.error("查询字典类型失败, query: {}", query, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典类型数据异常", e);
@@ -95,7 +98,7 @@ public class DictRepositoryImpl implements DictRepository {
             com.mybatisflex.core.paginate.Page<DictTypePO> poPage = dictTypeMapper.paginate(
                     pageNumber, pageSize, buildTypeWrapper(pageQuery.getQuery()));
 
-            List<DictTypeAggregate> aggregates = DictConverter.toTypeAggregateList(poPage.getRecords());
+            List<DictTypeAggregate> aggregates = dictConverter.toTypeAggregateList(poPage.getRecords());
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询字典类型失败, pageQuery: {}", pageQuery.getQuery(), e);
@@ -106,7 +109,7 @@ public class DictRepositoryImpl implements DictRepository {
     @Override
     public void save(DictTypeAggregate aggregate) throws RepositoryException {
         try {
-            DictTypePO po = DictConverter.toTypePO(aggregate);
+            DictTypePO po = dictConverter.toTypePO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "字典类型数据为空，无法保存");
             }
@@ -139,7 +142,7 @@ public class DictRepositoryImpl implements DictRepository {
         try {
             QueryWrapper wrapper = QueryWrapper.create().eq(DictTypePO::getTypeKey, typeKey);
             DictTypePO po = dictTypeMapper.selectOneByQuery(wrapper);
-            return DictConverter.toTypeAggregate(po);
+            return dictConverter.toTypeAggregate(po);
         } catch (Exception e) {
             log.error("根据类型键查询字典类型失败, typeKey: {}", typeKey, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典类型数据异常", e);
@@ -174,7 +177,7 @@ public class DictRepositoryImpl implements DictRepository {
     public DictDataAggregate queryData(Long dataId) throws RepositoryException {
         try {
             DictDataPO po = dictDataMapper.selectOneById(dataId);
-            return DictConverter.toDataAggregate(po);
+            return dictConverter.toDataAggregate(po);
         } catch (Exception e) {
             log.error("查询字典数据失败, dataId: {}", dataId, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
@@ -188,7 +191,7 @@ public class DictRepositoryImpl implements DictRepository {
                     .eq(DictDataPO::getTypeKey, typeKey)
                     .eq(DictDataPO::getDictValue, value);
             DictDataPO po = dictDataMapper.selectOneByQuery(wrapper);
-            return DictConverter.toDataAggregate(po);
+            return dictConverter.toDataAggregate(po);
         } catch (Exception e) {
             log.error("根据类型键与字典值查询字典数据失败, typeKey: {}, value: {}", typeKey, value, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);
@@ -198,7 +201,7 @@ public class DictRepositoryImpl implements DictRepository {
     @Override
     public void saveData(DictDataAggregate aggregate) throws RepositoryException {
         try {
-            DictDataPO po = DictConverter.toDataPO(aggregate);
+            DictDataPO po = dictConverter.toDataPO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "字典数据为空，无法保存");
             }
@@ -255,7 +258,7 @@ public class DictRepositoryImpl implements DictRepository {
         try {
             String cached = stringRedisTemplate.opsForValue().get(cacheKey);
             if (StrUtil.isNotBlank(cached)) {
-                return DictConverter.toDataAggregateList(JSONUtil.toList(cached, DictDataPO.class));
+                return dictConverter.toDataAggregateList(JSONUtil.toList(cached, DictDataPO.class));
             }
         } catch (Exception e) {
             log.warn("读取字典缓存失败，降级直查数据库, typeKey: {}", typeKey, e);
@@ -288,7 +291,7 @@ public class DictRepositoryImpl implements DictRepository {
         } catch (Exception e) {
             log.warn("写入字典缓存失败, typeKey: {}", typeKey, e);
         }
-        return DictConverter.toDataAggregateList(poList);
+        return dictConverter.toDataAggregateList(poList);
     }
 
     @Override
@@ -298,7 +301,7 @@ public class DictRepositoryImpl implements DictRepository {
                     .eq(DictDataPO::getTypeKey, typeKey)
                     .orderBy(DictDataPO::getSort, true)
                     .orderBy(DictDataPO::getId, true);
-            return DictConverter.toDataAggregateList(dictDataMapper.selectListByQuery(wrapper));
+            return dictConverter.toDataAggregateList(dictDataMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("按类型键查询全部字典数据失败, typeKey: {}", typeKey, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询字典数据异常", e);

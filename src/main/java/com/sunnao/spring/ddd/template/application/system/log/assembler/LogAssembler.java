@@ -12,6 +12,7 @@ import com.sunnao.spring.ddd.template.domain.system.log.model.entity.LoginLogEnt
 import com.sunnao.spring.ddd.template.domain.system.log.model.entity.OperLogEntity;
 import com.sunnao.spring.ddd.template.domain.system.log.model.param.LoginLogQuery;
 import com.sunnao.spring.ddd.template.domain.system.log.model.param.OperLogQuery;
+import org.mapstruct.Mapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,27 +21,18 @@ import java.util.List;
  * 操作日志转换器
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
  */
-public class LogAssembler {
-
-    private LogAssembler() {
-    }
+@Mapper(componentModel = "spring")
+public interface LogAssembler {
 
     /**
      * 分页查询 RequestDTO 转领域查询条件
      */
-    public static OperLogQuery toOperLogQuery(QueryOperLogPageRequestDTO requestDTO) {
-        OperLogQuery query = new OperLogQuery();
-        query.setModule(requestDTO.getModule());
-        query.setOperatorId(requestDTO.getOperatorId());
-        query.setStartTime(requestDTO.getStartTime());
-        query.setEndTime(requestDTO.getEndTime());
-        return query;
-    }
+    OperLogQuery toOperLogQuery(QueryOperLogPageRequestDTO requestDTO);
 
     /**
      * 聚合根转 OperLogDTO
      */
-    public static OperLogDTO toOperLogDTO(OperLogAggregate aggregate) {
+    default OperLogDTO toOperLogDTO(OperLogAggregate aggregate) {
         if (aggregate == null || aggregate.getOperLogEntity() == null) {
             return null;
         }
@@ -63,35 +55,27 @@ public class LogAssembler {
     /**
      * 聚合根列表转分页 ResponseDTO
      */
-    public static QueryOperLogPageResponseDTO toQueryOperLogPageResponseDTO(long total,
-                                                                            List<OperLogAggregate> aggregates) {
+    default QueryOperLogPageResponseDTO toQueryOperLogPageResponseDTO(long total,
+                                                                      List<OperLogAggregate> aggregates) {
         QueryOperLogPageResponseDTO responseDTO = new QueryOperLogPageResponseDTO();
         responseDTO.setTotal(total);
         if (aggregates == null || aggregates.isEmpty()) {
             responseDTO.setLogs(Collections.emptyList());
             return responseDTO;
         }
-        responseDTO.setLogs(aggregates.stream().map(LogAssembler::toOperLogDTO).toList());
+        responseDTO.setLogs(aggregates.stream().map(this::toOperLogDTO).toList());
         return responseDTO;
     }
 
     /**
      * 分页查询登录日志 RequestDTO 转领域查询条件
      */
-    public static LoginLogQuery toLoginLogQuery(QueryLoginLogPageRequestDTO requestDTO) {
-        LoginLogQuery query = new LoginLogQuery();
-        query.setEmail(requestDTO.getEmail());
-        query.setUserId(requestDTO.getUserId());
-        query.setSuccess(requestDTO.getSuccess());
-        query.setStartTime(requestDTO.getStartTime());
-        query.setEndTime(requestDTO.getEndTime());
-        return query;
-    }
+    LoginLogQuery toLoginLogQuery(QueryLoginLogPageRequestDTO requestDTO);
 
     /**
      * 聚合根转 LoginLogDTO
      */
-    public static LoginLogDTO toLoginLogDTO(LoginLogAggregate aggregate) {
+    default LoginLogDTO toLoginLogDTO(LoginLogAggregate aggregate) {
         if (aggregate == null || aggregate.getLoginLogEntity() == null) {
             return null;
         }
@@ -113,15 +97,15 @@ public class LogAssembler {
     /**
      * 登录日志聚合根列表转分页 ResponseDTO
      */
-    public static QueryLoginLogPageResponseDTO toQueryLoginLogPageResponseDTO(long total,
-                                                                              List<LoginLogAggregate> aggregates) {
+    default QueryLoginLogPageResponseDTO toQueryLoginLogPageResponseDTO(long total,
+                                                                        List<LoginLogAggregate> aggregates) {
         QueryLoginLogPageResponseDTO responseDTO = new QueryLoginLogPageResponseDTO();
         responseDTO.setTotal(total);
         if (aggregates == null || aggregates.isEmpty()) {
             responseDTO.setLogs(Collections.emptyList());
             return responseDTO;
         }
-        responseDTO.setLogs(aggregates.stream().map(LogAssembler::toLoginLogDTO).toList());
+        responseDTO.setLogs(aggregates.stream().map(this::toLoginLogDTO).toList());
         return responseDTO;
     }
 }

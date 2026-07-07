@@ -31,10 +31,13 @@ public class LoginLogRepositoryImpl implements LoginLogRepository {
     @Resource
     private LoginLogMapper loginLogMapper;
 
+    @Resource
+    private LoginLogConverter loginLogConverter;
+
     @Override
     public void save(LoginLogAggregate aggregate) throws RepositoryException {
         try {
-            LoginLogPO po = LoginLogConverter.toPO(aggregate);
+            LoginLogPO po = loginLogConverter.toPO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "登录日志数据为空，无法保存");
             }
@@ -57,7 +60,7 @@ public class LoginLogRepositoryImpl implements LoginLogRepository {
             com.mybatisflex.core.paginate.Page<LoginLogPO> poPage = loginLogMapper.paginate(
                     pageNumber, pageSize, buildWrapper(pageQuery.getQuery()));
 
-            List<LoginLogAggregate> aggregates = LoginLogConverter.toAggregateList(poPage.getRecords());
+            List<LoginLogAggregate> aggregates = loginLogConverter.toAggregateList(poPage.getRecords());
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询登录日志失败, pageQuery: {}", pageQuery.getQuery(), e);

@@ -46,6 +46,9 @@ public class AuthAppServiceImpl implements AuthAppService {
     private AuthDomainService authDomainService;
 
     @Resource
+    private AuthAssembler authAssembler;
+
+    @Resource
     private RoleRepository roleRepository;
 
     @Resource
@@ -72,7 +75,7 @@ public class AuthAppServiceImpl implements AuthAppService {
             }
 
             // 3. 领域服务认证（凭证 + 账号状态），成功/失败均记录登录日志
-            ResultDO<UserAggregate> domainResult = authDomainService.authenticate(AuthAssembler.toLoginParam(requestDTO));
+            ResultDO<UserAggregate> domainResult = authDomainService.authenticate(authAssembler.toLoginParam(requestDTO));
             if (!domainResult.isSuccess()) {
                 // 仅凭证错误计入失败次数（账号禁用等状态类失败不计）
                 if (ErrorCodeEnum.AUTH_FAIL.getCode().equals(domainResult.getCode())) {
@@ -93,7 +96,7 @@ public class AuthAppServiceImpl implements AuthAppService {
 
             // 5. 填充角色标识（RBAC，取自 role 领域）后组装响应
             aggregate.getUserEntity().setRoles(roleRepository.queryRoleKeysByUserId(userId));
-            return ResultDO.buildSuccessResult(AuthAssembler.toLoginResponseDTO(
+            return ResultDO.buildSuccessResult(authAssembler.toLoginResponseDTO(
                     aggregate, StpUtil.getTokenName(), StpUtil.getTokenValue()));
         } catch (Exception e) {
             log.error("登录系统异常, requestDTO: {}", requestDTO, e);

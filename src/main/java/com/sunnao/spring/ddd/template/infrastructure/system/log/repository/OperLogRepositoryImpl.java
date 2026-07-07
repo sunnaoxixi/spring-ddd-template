@@ -31,10 +31,13 @@ public class OperLogRepositoryImpl implements OperLogRepository {
     @Resource
     private OperLogMapper operLogMapper;
 
+    @Resource
+    private OperLogConverter operLogConverter;
+
     @Override
     public void save(OperLogAggregate aggregate) throws RepositoryException {
         try {
-            OperLogPO po = OperLogConverter.toPO(aggregate);
+            OperLogPO po = operLogConverter.toPO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "操作日志数据为空，无法保存");
             }
@@ -57,7 +60,7 @@ public class OperLogRepositoryImpl implements OperLogRepository {
             com.mybatisflex.core.paginate.Page<OperLogPO> poPage = operLogMapper.paginate(
                     pageNumber, pageSize, buildWrapper(pageQuery.getQuery()));
 
-            List<OperLogAggregate> aggregates = OperLogConverter.toAggregateList(poPage.getRecords());
+            List<OperLogAggregate> aggregates = operLogConverter.toAggregateList(poPage.getRecords());
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询操作日志失败, pageQuery: {}", pageQuery.getQuery(), e);

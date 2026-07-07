@@ -2,6 +2,7 @@ package com.sunnao.spring.ddd.template.common.context;
 
 import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Setter;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -22,17 +23,13 @@ public final class RequestContextUtils {
      * 是否信任 X-Forwarded-For 头（由 SecurityConfigure 依据 app.security.trust-x-forwarded-for 注入，默认 false）。
      * 该头可被客户端伪造，仅在前置可信反向代理会覆盖/剥离外部传入值时才应开启，
      * 否则登录/操作日志中的 IP 可被任意伪造
+     * -- SETTER --
+     * 设置是否信任 X-Forwarded-For 头（仅供配置类启动时调用）
      */
+    @Setter
     private static volatile boolean trustXForwardedFor = false;
 
     private RequestContextUtils() {
-    }
-
-    /**
-     * 设置是否信任 X-Forwarded-For 头（仅供配置类启动时调用）
-     */
-    public static void setTrustXForwardedFor(boolean trust) {
-        trustXForwardedFor = trust;
     }
 
     /**
@@ -81,7 +78,6 @@ public final class RequestContextUtils {
         if (StrUtil.isBlank(userAgent)) {
             return null;
         }
-        return userAgent.length() > USER_AGENT_MAX_LENGTH
-                ? userAgent.substring(0, USER_AGENT_MAX_LENGTH) : userAgent;
+        return userAgent.length() > USER_AGENT_MAX_LENGTH ? userAgent.substring(0, USER_AGENT_MAX_LENGTH) : userAgent;
     }
 }

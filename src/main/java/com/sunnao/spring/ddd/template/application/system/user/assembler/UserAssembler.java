@@ -8,6 +8,10 @@ import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAgg
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
 import com.sunnao.spring.ddd.template.domain.system.user.model.param.*;
 import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,41 +20,25 @@ import java.util.List;
  * 用户转换器
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
  */
-public class UserAssembler {
-
-    private UserAssembler() {
-    }
+@Mapper(componentModel = "spring")
+public interface UserAssembler {
 
     /**
      * 创建用户 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static CreateUserParam toCreateParam(CreateUserRequestDTO requestDTO, Long operatorId) {
-        CreateUserParam param = new CreateUserParam();
-        param.setEmail(requestDTO.getEmail());
-        param.setNickname(requestDTO.getNickname());
-        param.setPassword(requestDTO.getPassword());
-        param.setAvatar(requestDTO.getAvatar());
-        param.setRoleIds(requestDTO.getRoleIds());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    CreateUserParam toCreateParam(CreateUserRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 修改用户资料 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static UpdateUserParam toUpdateParam(UpdateUserRequestDTO requestDTO, Long operatorId) {
-        UpdateUserParam param = new UpdateUserParam();
-        param.setUserId(requestDTO.getUserId());
-        param.setNickname(requestDTO.getNickname());
-        param.setAvatar(requestDTO.getAvatar());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    UpdateUserParam toUpdateParam(UpdateUserRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 变更用户状态 RequestDTO 转领域 Param（client 状态码 → model 枚举，操作人由应用层从当前用户上下文获取）
      */
-    public static ChangeUserStatusParam toChangeStatusParam(ChangeUserStatusRequestDTO requestDTO, Long operatorId) {
+    default ChangeUserStatusParam toChangeStatusParam(ChangeUserStatusRequestDTO requestDTO, Long operatorId) {
         ChangeUserStatusParam param = new ChangeUserStatusParam();
         param.setUserId(requestDTO.getUserId());
         param.setTargetStatus(UserStatusEnum.getByCode(requestDTO.getStatus()));
@@ -61,17 +49,13 @@ public class UserAssembler {
     /**
      * 删除用户 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static DeleteUserParam toDeleteParam(DeleteUserRequestDTO requestDTO, Long operatorId) {
-        DeleteUserParam param = new DeleteUserParam();
-        param.setUserId(requestDTO.getUserId());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    DeleteUserParam toDeleteParam(DeleteUserRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 分页查询 RequestDTO 转领域查询条件
      */
-    public static UserQuery toUserQuery(QueryUserPageRequestDTO requestDTO) {
+    default UserQuery toUserQuery(QueryUserPageRequestDTO requestDTO) {
         UserQuery query = new UserQuery();
         query.setEmail(requestDTO.getEmail());
         query.setNickname(requestDTO.getNickname());
@@ -82,7 +66,7 @@ public class UserAssembler {
     /**
      * 聚合根转 UserDTO（不含密码，model 枚举 → client 状态码）
      */
-    public static UserDTO toUserDTO(UserAggregate aggregate) {
+    default UserDTO toUserDTO(UserAggregate aggregate) {
         if (aggregate == null || aggregate.getUserEntity() == null) {
             return null;
         }
@@ -104,7 +88,7 @@ public class UserAssembler {
     /**
      * 聚合根转用户详情 ResponseDTO
      */
-    public static GetUserDetailResponseDTO toGetUserDetailResponseDTO(UserAggregate aggregate) {
+    default GetUserDetailResponseDTO toGetUserDetailResponseDTO(UserAggregate aggregate) {
         GetUserDetailResponseDTO responseDTO = new GetUserDetailResponseDTO();
         responseDTO.setUser(toUserDTO(aggregate));
         return responseDTO;
@@ -113,14 +97,26 @@ public class UserAssembler {
     /**
      * 聚合根列表转分页 ResponseDTO
      */
-    public static QueryUserPageResponseDTO toQueryUserPageResponseDTO(long total, List<UserAggregate> aggregates) {
+    default QueryUserPageResponseDTO toQueryUserPageResponseDTO(long total, List<UserAggregate> aggregates) {
         QueryUserPageResponseDTO responseDTO = new QueryUserPageResponseDTO();
         responseDTO.setTotal(total);
         if (aggregates == null || aggregates.isEmpty()) {
             responseDTO.setUsers(Collections.emptyList());
             return responseDTO;
         }
-        responseDTO.setUsers(aggregates.stream().map(UserAssembler::toUserDTO).toList());
+        responseDTO.setUsers(aggregates.stream().map(this::toUserDTO).toList());
         return responseDTO;
+    }
+
+    // ========== 枚举转换辅助方法 ==========
+
+    @Named("intToUserStatus")
+    default UserStatusEnum intToUserStatus(Integer code) {
+        return UserStatusEnum.getByCode(code);
+    }
+
+    @Named("userStatusToInt")
+    default Integer userStatusToInt(UserStatusEnum status) {
+        return status == null ? null : status.getCode();
     }
 }

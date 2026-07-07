@@ -24,6 +24,9 @@ public class RoleAppServiceImpl implements RoleAppService {
     @Resource
     private RoleDomainService roleDomainService;
 
+    @Resource
+    private RoleAssembler roleAssembler;
+
     @Override
     public ResultDO<CreateRoleResponseDTO> createRole(CreateRoleRequestDTO requestDTO) {
         try {
@@ -35,7 +38,7 @@ public class RoleAppServiceImpl implements RoleAppService {
 
             // 2. 调用领域服务创建角色（操作人取自当前登录用户）
             ResultDO<RoleAggregate> domainResult = roleDomainService.createRole(
-                    RoleAssembler.toCreateParam(requestDTO, CurrentUserContext.getUserId()));
+                    roleAssembler.toCreateParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -61,7 +64,7 @@ public class RoleAppServiceImpl implements RoleAppService {
 
             // 2. 调用领域服务修改角色（操作人取自当前登录用户）
             ResultDO<Void> domainResult = roleDomainService.updateRole(
-                    RoleAssembler.toUpdateParam(requestDTO, CurrentUserContext.getUserId()));
+                    roleAssembler.toUpdateParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -87,7 +90,7 @@ public class RoleAppServiceImpl implements RoleAppService {
 
             // 2. 调用领域服务删除角色（操作人取自当前登录用户）
             ResultDO<Void> domainResult = roleDomainService.deleteRole(
-                    RoleAssembler.toDeleteParam(requestDTO, CurrentUserContext.getUserId()));
+                    roleAssembler.toDeleteParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -113,7 +116,7 @@ public class RoleAppServiceImpl implements RoleAppService {
 
             // 2. 调用领域服务分配权限（操作人取自当前登录用户）
             ResultDO<Void> domainResult = roleDomainService.assignPermissions(
-                    RoleAssembler.toAssignPermissionParam(requestDTO, CurrentUserContext.getUserId()));
+                    roleAssembler.toAssignPermissionParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -139,7 +142,7 @@ public class RoleAppServiceImpl implements RoleAppService {
 
             // 2. 调用领域服务给用户授角色（操作人取自当前登录用户）
             ResultDO<Void> domainResult = roleDomainService.assignUserRoles(
-                    RoleAssembler.toAssignUserRoleParam(requestDTO, CurrentUserContext.getUserId()));
+                    roleAssembler.toAssignUserRoleParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }

@@ -32,6 +32,9 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
     @Resource
     private DictRepository dictRepository;
 
+    @Resource
+    private DictAssembler dictAssembler;
+
     @Override
     public ResultDO<QueryDictTypePageResponseDTO> queryDictTypePage(QueryDictTypePageRequestDTO requestDTO) {
         try {
@@ -42,7 +45,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
             }
 
             // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
-            PageQuery<DictTypeQuery> pageQuery = PageQuery.build(DictAssembler.toDictTypeQuery(requestDTO));
+            PageQuery<DictTypeQuery> pageQuery = PageQuery.build(dictAssembler.toDictTypeQuery(requestDTO));
             pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
             pageQuery.setPageSize(requestDTO.getPageSize());
 
@@ -51,7 +54,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
 
             // 4. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    DictAssembler.toQueryDictTypePageResponseDTO(page.getTotalElements(), page.getContent()));
+                    dictAssembler.toQueryDictTypePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询字典类型失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -73,7 +76,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
 
             // 3. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    DictAssembler.toQueryDictDataListResponseDTO(requestDTO.getTypeKey(), aggregates));
+                    dictAssembler.toQueryDictDataListResponseDTO(requestDTO.getTypeKey(), aggregates));
         } catch (Exception e) {
             log.error("按类型键查询字典数据失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -95,7 +98,7 @@ public class DictQueryAppServiceImpl implements DictQueryAppService {
 
             // 3. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    DictAssembler.toQueryDictDataListResponseDTO(requestDTO.getTypeKey(), aggregates));
+                    dictAssembler.toQueryDictDataListResponseDTO(requestDTO.getTypeKey(), aggregates));
         } catch (Exception e) {
             log.error("按类型键查询全部字典数据失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);

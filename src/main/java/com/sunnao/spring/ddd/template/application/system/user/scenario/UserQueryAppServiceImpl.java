@@ -34,6 +34,9 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
     private UserRepository userRepository;
 
     @Resource
+    private UserAssembler userAssembler;
+
+    @Resource
     private RoleRepository roleRepository;
 
     @Override
@@ -54,7 +57,7 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
             // 3. 填充角色标识（RBAC，取自 role 领域）后组装响应 DTO
             aggregate.getUserEntity().setRoles(
                     roleRepository.queryRoleKeysByUserId(requestDTO.getUserId()));
-            return ResultDO.buildSuccessResult(UserAssembler.toGetUserDetailResponseDTO(aggregate));
+            return ResultDO.buildSuccessResult(userAssembler.toGetUserDetailResponseDTO(aggregate));
         } catch (Exception e) {
             log.error("获取用户详情失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -71,7 +74,7 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
             }
 
             // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
-            PageQuery<UserQuery> pageQuery = PageQuery.build(UserAssembler.toUserQuery(requestDTO));
+            PageQuery<UserQuery> pageQuery = PageQuery.build(userAssembler.toUserQuery(requestDTO));
             pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
             pageQuery.setPageSize(requestDTO.getPageSize());
 
@@ -91,7 +94,7 @@ public class UserQueryAppServiceImpl implements UserQueryAppService {
 
             // 5. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    UserAssembler.toQueryUserPageResponseDTO(page.getTotalElements(), aggregates));
+                    userAssembler.toQueryUserPageResponseDTO(page.getTotalElements(), aggregates));
         } catch (Exception e) {
             log.error("分页查询用户失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);

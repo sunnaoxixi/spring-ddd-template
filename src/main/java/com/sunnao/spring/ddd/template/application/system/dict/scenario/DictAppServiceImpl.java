@@ -25,6 +25,9 @@ public class DictAppServiceImpl implements DictAppService {
     @Resource
     private DictDomainService dictDomainService;
 
+    @Resource
+    private DictAssembler dictAssembler;
+
     @Override
     public ResultDO<CreateDictTypeResponseDTO> createDictType(CreateDictTypeRequestDTO requestDTO) {
         try {
@@ -36,7 +39,7 @@ public class DictAppServiceImpl implements DictAppService {
 
             // 2. 调用领域服务创建字典类型（操作人取自当前登录用户）
             ResultDO<DictTypeAggregate> domainResult = dictDomainService.createDictType(
-                    DictAssembler.toCreateTypeParam(requestDTO, CurrentUserContext.getUserId()));
+                    dictAssembler.toCreateTypeParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -62,7 +65,7 @@ public class DictAppServiceImpl implements DictAppService {
 
             // 2. 调用领域服务修改字典类型（操作人取自当前登录用户）
             ResultDO<Void> domainResult = dictDomainService.updateDictType(
-                    DictAssembler.toUpdateTypeParam(requestDTO, CurrentUserContext.getUserId()));
+                    dictAssembler.toUpdateTypeParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -88,7 +91,7 @@ public class DictAppServiceImpl implements DictAppService {
 
             // 2. 调用领域服务删除字典类型（操作人取自当前登录用户）
             ResultDO<Void> domainResult = dictDomainService.deleteDictType(
-                    DictAssembler.toDeleteTypeParam(requestDTO, CurrentUserContext.getUserId()));
+                    dictAssembler.toDeleteTypeParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -114,7 +117,7 @@ public class DictAppServiceImpl implements DictAppService {
 
             // 2. 调用领域服务创建字典数据（操作人取自当前登录用户）
             ResultDO<DictDataAggregate> domainResult = dictDomainService.createDictData(
-                    DictAssembler.toCreateDataParam(requestDTO, CurrentUserContext.getUserId()));
+                    dictAssembler.toCreateDataParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -140,7 +143,7 @@ public class DictAppServiceImpl implements DictAppService {
 
             // 2. 调用领域服务修改字典数据（操作人取自当前登录用户）
             ResultDO<Void> domainResult = dictDomainService.updateDictData(
-                    DictAssembler.toUpdateDataParam(requestDTO, CurrentUserContext.getUserId()));
+                    dictAssembler.toUpdateDataParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }
@@ -166,7 +169,7 @@ public class DictAppServiceImpl implements DictAppService {
 
             // 2. 调用领域服务删除字典数据（操作人取自当前登录用户）
             ResultDO<Void> domainResult = dictDomainService.deleteDictData(
-                    DictAssembler.toDeleteDataParam(requestDTO, CurrentUserContext.getUserId()));
+                    dictAssembler.toDeleteDataParam(requestDTO, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
             }

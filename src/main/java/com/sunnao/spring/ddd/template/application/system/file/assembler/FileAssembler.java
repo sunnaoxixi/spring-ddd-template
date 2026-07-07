@@ -12,6 +12,7 @@ import com.sunnao.spring.ddd.template.domain.system.file.model.entity.FileEntity
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.CreateFileParam;
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.DeleteFileParam;
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.FileQuery;
+import org.mapstruct.Mapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,16 +21,14 @@ import java.util.List;
  * 文件转换器
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
  */
-public class FileAssembler {
-
-    private FileAssembler() {
-    }
+@Mapper(componentModel = "spring")
+public interface FileAssembler {
 
     /**
      * 上传 RequestDTO + 存储结果转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static CreateFileParam toCreateParam(UploadFileRequestDTO requestDTO, String path,
-                                                String storageType, Long operatorId) {
+    default CreateFileParam toCreateParam(UploadFileRequestDTO requestDTO, String path,
+                                          String storageType, Long operatorId) {
         CreateFileParam param = new CreateFileParam();
         param.setOriginalName(requestDTO.getOriginalName());
         param.setPath(path);
@@ -43,7 +42,7 @@ public class FileAssembler {
     /**
      * 删除文件 RequestDTO 转领域 Param
      */
-    public static DeleteFileParam toDeleteParam(DeleteFileRequestDTO requestDTO, Long operatorId) {
+    default DeleteFileParam toDeleteParam(DeleteFileRequestDTO requestDTO, Long operatorId) {
         DeleteFileParam param = new DeleteFileParam();
         param.setFileId(requestDTO.getFileId());
         param.setOperatorId(operatorId);
@@ -53,7 +52,7 @@ public class FileAssembler {
     /**
      * 分页查询 RequestDTO 转领域查询条件
      */
-    public static FileQuery toFileQuery(QueryFilePageRequestDTO requestDTO) {
+    default FileQuery toFileQuery(QueryFilePageRequestDTO requestDTO) {
         FileQuery query = new FileQuery();
         query.setOriginalName(requestDTO.getOriginalName());
         query.setUploadBy(requestDTO.getUploadBy());
@@ -63,7 +62,7 @@ public class FileAssembler {
     /**
      * 聚合根转上传 ResponseDTO
      */
-    public static UploadFileResponseDTO toUploadFileResponseDTO(FileAggregate aggregate) {
+    default UploadFileResponseDTO toUploadFileResponseDTO(FileAggregate aggregate) {
         FileEntity entity = aggregate.getFileEntity();
         UploadFileResponseDTO responseDTO = new UploadFileResponseDTO();
         responseDTO.setFileId(entity.getId());
@@ -75,7 +74,7 @@ public class FileAssembler {
     /**
      * 聚合根 + 物理内容转下载 ResponseDTO
      */
-    public static DownloadFileResponseDTO toDownloadFileResponseDTO(FileAggregate aggregate, byte[] content) {
+    default DownloadFileResponseDTO toDownloadFileResponseDTO(FileAggregate aggregate, byte[] content) {
         FileEntity entity = aggregate.getFileEntity();
         DownloadFileResponseDTO responseDTO = new DownloadFileResponseDTO();
         responseDTO.setFileId(entity.getId());
@@ -89,7 +88,7 @@ public class FileAssembler {
     /**
      * 聚合根转 FileDTO（不含物理内容与存储路径）
      */
-    public static FileDTO toFileDTO(FileAggregate aggregate) {
+    default FileDTO toFileDTO(FileAggregate aggregate) {
         if (aggregate == null || aggregate.getFileEntity() == null) {
             return null;
         }
@@ -110,14 +109,14 @@ public class FileAssembler {
     /**
      * 聚合根列表转分页 ResponseDTO
      */
-    public static QueryFilePageResponseDTO toQueryFilePageResponseDTO(long total, List<FileAggregate> aggregates) {
+    default QueryFilePageResponseDTO toQueryFilePageResponseDTO(long total, List<FileAggregate> aggregates) {
         QueryFilePageResponseDTO responseDTO = new QueryFilePageResponseDTO();
         responseDTO.setTotal(total);
         if (aggregates == null || aggregates.isEmpty()) {
             responseDTO.setFiles(Collections.emptyList());
             return responseDTO;
         }
-        responseDTO.setFiles(aggregates.stream().map(FileAssembler::toFileDTO).toList());
+        responseDTO.setFiles(aggregates.stream().map(this::toFileDTO).toList());
         return responseDTO;
     }
 }

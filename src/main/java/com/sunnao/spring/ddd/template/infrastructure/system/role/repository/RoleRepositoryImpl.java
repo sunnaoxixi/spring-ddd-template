@@ -45,6 +45,9 @@ public class RoleRepositoryImpl implements RoleRepository {
     private RoleMapper roleMapper;
 
     @Resource
+    private RoleConverter roleConverter;
+
+    @Resource
     private PermissionMapper permissionMapper;
 
     @Resource
@@ -60,7 +63,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     public RoleAggregate query(Long id) throws RepositoryException {
         try {
             RolePO po = roleMapper.selectOneById(id);
-            RoleAggregate aggregate = RoleConverter.toAggregate(po);
+            RoleAggregate aggregate = roleConverter.toAggregate(po);
             fillPermKeys(aggregate);
             return aggregate;
         } catch (Exception e) {
@@ -73,7 +76,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     public RoleAggregate query(RoleQuery query) throws RepositoryException {
         try {
             RolePO po = roleMapper.selectOneByQuery(buildWrapper(query));
-            return RoleConverter.toAggregate(po);
+            return roleConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询角色失败, query: {}", query, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
@@ -89,7 +92,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             com.mybatisflex.core.paginate.Page<RolePO> poPage = roleMapper.paginate(
                     pageNumber, pageSize, buildWrapper(pageQuery.getQuery()));
 
-            List<RoleAggregate> aggregates = RoleConverter.toAggregateList(poPage.getRecords());
+            List<RoleAggregate> aggregates = roleConverter.toAggregateList(poPage.getRecords());
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询角色失败, pageQuery: {}", pageQuery.getQuery(), e);
@@ -100,7 +103,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     @Override
     public void save(RoleAggregate aggregate) throws RepositoryException {
         try {
-            RolePO po = RoleConverter.toPO(aggregate);
+            RolePO po = roleConverter.toPO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "角色数据为空，无法保存");
             }
@@ -131,7 +134,7 @@ public class RoleRepositoryImpl implements RoleRepository {
         try {
             QueryWrapper wrapper = QueryWrapper.create().eq(RolePO::getRoleKey, roleKey);
             RolePO po = roleMapper.selectOneByQuery(wrapper);
-            return RoleConverter.toAggregate(po);
+            return roleConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("根据角色标识查询角色失败, roleKey: {}", roleKey, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
@@ -145,7 +148,7 @@ public class RoleRepositoryImpl implements RoleRepository {
                 return Collections.emptyList();
             }
             QueryWrapper wrapper = QueryWrapper.create().in(RolePO::getId, roleIds);
-            return RoleConverter.toAggregateList(roleMapper.selectListByQuery(wrapper));
+            return roleConverter.toAggregateList(roleMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("批量查询角色失败, roleIds: {}", roleIds, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
@@ -180,7 +183,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     public List<PermissionEntity> queryAllPermissions() throws RepositoryException {
         try {
             QueryWrapper wrapper = QueryWrapper.create().orderBy(PermissionPO::getId, true);
-            return RoleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
+            return roleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("查询全部权限点失败", e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询权限数据异常", e);
@@ -194,7 +197,7 @@ public class RoleRepositoryImpl implements RoleRepository {
                 return Collections.emptyList();
             }
             QueryWrapper wrapper = QueryWrapper.create().in(PermissionPO::getId, permissionIds);
-            return RoleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
+            return roleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
         } catch (Exception e) {
             log.error("批量查询权限点失败, permissionIds: {}", permissionIds, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询权限数据异常", e);

@@ -32,6 +32,9 @@ public class LogQueryAppServiceImpl implements LogQueryAppService {
     private OperLogRepository operLogRepository;
 
     @Resource
+    private LogAssembler logAssembler;
+
+    @Resource
     private LoginLogRepository loginLogRepository;
 
     @Override
@@ -44,7 +47,7 @@ public class LogQueryAppServiceImpl implements LogQueryAppService {
             }
 
             // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
-            PageQuery<OperLogQuery> pageQuery = PageQuery.build(LogAssembler.toOperLogQuery(requestDTO));
+            PageQuery<OperLogQuery> pageQuery = PageQuery.build(logAssembler.toOperLogQuery(requestDTO));
             pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
             pageQuery.setPageSize(requestDTO.getPageSize());
 
@@ -53,7 +56,7 @@ public class LogQueryAppServiceImpl implements LogQueryAppService {
 
             // 4. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    LogAssembler.toQueryOperLogPageResponseDTO(page.getTotalElements(), page.getContent()));
+                    logAssembler.toQueryOperLogPageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询操作日志失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -70,7 +73,7 @@ public class LogQueryAppServiceImpl implements LogQueryAppService {
             }
 
             // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
-            PageQuery<LoginLogQuery> pageQuery = PageQuery.build(LogAssembler.toLoginLogQuery(requestDTO));
+            PageQuery<LoginLogQuery> pageQuery = PageQuery.build(logAssembler.toLoginLogQuery(requestDTO));
             pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
             pageQuery.setPageSize(requestDTO.getPageSize());
 
@@ -79,7 +82,7 @@ public class LogQueryAppServiceImpl implements LogQueryAppService {
 
             // 4. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    LogAssembler.toQueryLoginLogPageResponseDTO(page.getTotalElements(), page.getContent()));
+                    logAssembler.toQueryLoginLogPageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询登录日志失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);

@@ -11,6 +11,10 @@ import com.sunnao.spring.ddd.template.domain.system.dict.model.entity.DictDataEn
 import com.sunnao.spring.ddd.template.domain.system.dict.model.entity.DictTypeEntity;
 import com.sunnao.spring.ddd.template.domain.system.dict.model.param.*;
 import com.sunnao.spring.ddd.template.model.system.dict.DictStatusEnum;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,27 +23,19 @@ import java.util.List;
  * 字典转换器
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
  */
-public class DictAssembler {
-
-    private DictAssembler() {
-    }
+@Mapper(componentModel = "spring")
+public interface DictAssembler {
 
     /**
      * 创建字典类型 RequestDTO 转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    public static CreateDictTypeParam toCreateTypeParam(CreateDictTypeRequestDTO requestDTO, Long operatorId) {
-        CreateDictTypeParam param = new CreateDictTypeParam();
-        param.setTypeKey(requestDTO.getTypeKey());
-        param.setTypeName(requestDTO.getTypeName());
-        param.setRemark(requestDTO.getRemark());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    CreateDictTypeParam toCreateTypeParam(CreateDictTypeRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 修改字典类型 RequestDTO 转领域 Param（client 状态码 → model 枚举）
      */
-    public static UpdateDictTypeParam toUpdateTypeParam(UpdateDictTypeRequestDTO requestDTO, Long operatorId) {
+    default UpdateDictTypeParam toUpdateTypeParam(UpdateDictTypeRequestDTO requestDTO, Long operatorId) {
         UpdateDictTypeParam param = new UpdateDictTypeParam();
         param.setTypeId(requestDTO.getTypeId());
         param.setTypeName(requestDTO.getTypeName());
@@ -52,31 +48,19 @@ public class DictAssembler {
     /**
      * 删除字典类型 RequestDTO 转领域 Param
      */
-    public static DeleteDictTypeParam toDeleteTypeParam(DeleteDictTypeRequestDTO requestDTO, Long operatorId) {
-        DeleteDictTypeParam param = new DeleteDictTypeParam();
-        param.setTypeId(requestDTO.getTypeId());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    DeleteDictTypeParam toDeleteTypeParam(DeleteDictTypeRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 创建字典数据 RequestDTO 转领域 Param
      */
-    public static CreateDictDataParam toCreateDataParam(CreateDictDataRequestDTO requestDTO, Long operatorId) {
-        CreateDictDataParam param = new CreateDictDataParam();
-        param.setTypeKey(requestDTO.getTypeKey());
-        param.setLabel(requestDTO.getLabel());
-        param.setValue(requestDTO.getValue());
-        param.setSort(requestDTO.getSort());
-        param.setRemark(requestDTO.getRemark());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    CreateDictDataParam toCreateDataParam(CreateDictDataRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 修改字典数据 RequestDTO 转领域 Param（client 状态码 → model 枚举）
      */
-    public static UpdateDictDataParam toUpdateDataParam(UpdateDictDataRequestDTO requestDTO, Long operatorId) {
+    default UpdateDictDataParam toUpdateDataParam(UpdateDictDataRequestDTO requestDTO, Long operatorId) {
         UpdateDictDataParam param = new UpdateDictDataParam();
         param.setDataId(requestDTO.getDataId());
         param.setLabel(requestDTO.getLabel());
@@ -91,17 +75,13 @@ public class DictAssembler {
     /**
      * 删除字典数据 RequestDTO 转领域 Param
      */
-    public static DeleteDictDataParam toDeleteDataParam(DeleteDictDataRequestDTO requestDTO, Long operatorId) {
-        DeleteDictDataParam param = new DeleteDictDataParam();
-        param.setDataId(requestDTO.getDataId());
-        param.setOperatorId(operatorId);
-        return param;
-    }
+    @Mapping(target = "operatorId", expression = "java(operatorId)")
+    DeleteDictDataParam toDeleteDataParam(DeleteDictDataRequestDTO requestDTO, @Context Long operatorId);
 
     /**
      * 分页查询 RequestDTO 转领域查询条件
      */
-    public static DictTypeQuery toDictTypeQuery(QueryDictTypePageRequestDTO requestDTO) {
+    default DictTypeQuery toDictTypeQuery(QueryDictTypePageRequestDTO requestDTO) {
         DictTypeQuery query = new DictTypeQuery();
         query.setTypeKey(requestDTO.getTypeKey());
         query.setTypeName(requestDTO.getTypeName());
@@ -112,7 +92,7 @@ public class DictAssembler {
     /**
      * 字典类型聚合根转 DictTypeDTO（model 枚举 → client 状态码）
      */
-    public static DictTypeDTO toDictTypeDTO(DictTypeAggregate aggregate) {
+    default DictTypeDTO toDictTypeDTO(DictTypeAggregate aggregate) {
         if (aggregate == null || aggregate.getDictTypeEntity() == null) {
             return null;
         }
@@ -133,7 +113,7 @@ public class DictAssembler {
     /**
      * 字典数据聚合根转 DictDataDTO（model 枚举 → client 状态码）
      */
-    public static DictDataDTO toDictDataDTO(DictDataAggregate aggregate) {
+    default DictDataDTO toDictDataDTO(DictDataAggregate aggregate) {
         if (aggregate == null || aggregate.getDictDataEntity() == null) {
             return null;
         }
@@ -156,30 +136,42 @@ public class DictAssembler {
     /**
      * 字典类型聚合根列表转分页 ResponseDTO
      */
-    public static QueryDictTypePageResponseDTO toQueryDictTypePageResponseDTO(long total,
-                                                                              List<DictTypeAggregate> aggregates) {
+    default QueryDictTypePageResponseDTO toQueryDictTypePageResponseDTO(long total,
+                                                                        List<DictTypeAggregate> aggregates) {
         QueryDictTypePageResponseDTO responseDTO = new QueryDictTypePageResponseDTO();
         responseDTO.setTotal(total);
         if (aggregates == null || aggregates.isEmpty()) {
             responseDTO.setTypes(Collections.emptyList());
             return responseDTO;
         }
-        responseDTO.setTypes(aggregates.stream().map(DictAssembler::toDictTypeDTO).toList());
+        responseDTO.setTypes(aggregates.stream().map(this::toDictTypeDTO).toList());
         return responseDTO;
     }
 
     /**
      * 字典数据聚合根列表转列表 ResponseDTO
      */
-    public static QueryDictDataListResponseDTO toQueryDictDataListResponseDTO(String typeKey,
-                                                                              List<DictDataAggregate> aggregates) {
+    default QueryDictDataListResponseDTO toQueryDictDataListResponseDTO(String typeKey,
+                                                                        List<DictDataAggregate> aggregates) {
         QueryDictDataListResponseDTO responseDTO = new QueryDictDataListResponseDTO();
         responseDTO.setTypeKey(typeKey);
         if (aggregates == null || aggregates.isEmpty()) {
             responseDTO.setDataList(Collections.emptyList());
             return responseDTO;
         }
-        responseDTO.setDataList(aggregates.stream().map(DictAssembler::toDictDataDTO).toList());
+        responseDTO.setDataList(aggregates.stream().map(this::toDictDataDTO).toList());
         return responseDTO;
+    }
+
+    // ========== 枚举转换辅助方法 ==========
+
+    @Named("intToDictStatus")
+    default DictStatusEnum intToDictStatus(Integer code) {
+        return DictStatusEnum.getByCode(code);
+    }
+
+    @Named("dictStatusToInt")
+    default Integer dictStatusToInt(DictStatusEnum status) {
+        return status == null ? null : status.getCode();
     }
 }

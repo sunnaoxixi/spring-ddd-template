@@ -32,6 +32,4 @@ public final class LoginSessionKeys {
      */
     public static final String LOGIN_TIME = "loginTime";
 
-    private LoginSessionKeys() {
-    }
 }

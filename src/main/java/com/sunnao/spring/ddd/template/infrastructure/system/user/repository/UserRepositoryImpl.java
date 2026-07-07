@@ -39,6 +39,9 @@ public class UserRepositoryImpl implements UserRepository {
     private UserMapper userMapper;
 
     @Resource
+    private UserConverter userConverter;
+
+    @Resource
     private RoleRepository roleRepository;
 
     @Resource
@@ -48,7 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
     public UserAggregate query(Long id) throws RepositoryException {
         try {
             UserPO po = userMapper.selectOneById(id);
-            return UserConverter.toAggregate(po);
+            return userConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询用户失败, id: {}", id, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户数据异常", e);
@@ -59,7 +62,7 @@ public class UserRepositoryImpl implements UserRepository {
     public UserAggregate query(UserQuery query) throws RepositoryException {
         try {
             UserPO po = userMapper.selectOneByQuery(buildWrapper(query));
-            return UserConverter.toAggregate(po);
+            return userConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询用户失败, query: {}", query, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户数据异常", e);
@@ -75,7 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
             com.mybatisflex.core.paginate.Page<UserPO> poPage = userMapper.paginate(
                     pageNumber, pageSize, buildWrapper(pageQuery.getQuery()));
 
-            List<UserAggregate> aggregates = UserConverter.toAggregateList(poPage.getRecords());
+            List<UserAggregate> aggregates = userConverter.toAggregateList(poPage.getRecords());
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询用户失败, pageQuery: {}", pageQuery.getQuery(), e);
@@ -86,7 +89,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void save(UserAggregate aggregate) throws RepositoryException {
         try {
-            UserPO po = UserConverter.toPO(aggregate);
+            UserPO po = userConverter.toPO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "用户数据为空，无法保存");
             }
@@ -126,7 +129,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             QueryWrapper wrapper = QueryWrapper.create().eq(UserPO::getEmail, email);
             UserPO po = userMapper.selectOneByQuery(wrapper);
-            return UserConverter.toAggregate(po);
+            return userConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("根据邮箱查询用户失败, email: {}", email, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户数据异常", e);

@@ -6,6 +6,9 @@ import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.PermissionPO;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.RolePO;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,95 +17,84 @@ import java.util.List;
  * 角色数据转换器
  * 职责：聚合根（内部 RoleEntity）/ 权限实体与 PO 之间的纯技术转换，无业务逻辑
  */
-public class RoleConverter {
+@Mapper(componentModel = "spring")
+public interface RoleConverter {
 
-    private RoleConverter() {
-    }
+    /**
+     * PO 转换为 RoleEntity（枚举转换：数据库 Integer → 领域枚举）
+     */
+    @Mapping(target = "status", source = "status", qualifiedByName = "intToRoleStatus")
+    RoleEntity toEntity(RolePO po);
+
+    /**
+     * RoleEntity 转换为 PO（枚举转换：领域枚举 → 数据库 Integer）
+     */
+    @Mapping(target = "status", source = "status", qualifiedByName = "roleStatusToInt")
+    @Mapping(target = "deleted", ignore = true)
+    RolePO toRolePO(RoleEntity entity);
+
+    /**
+     * 权限 PO 转换为权限实体
+     */
+    PermissionEntity toPermissionEntity(PermissionPO po);
 
     /**
      * PO 转换为聚合根（内部构建 RoleEntity，权限 key 集合由仓储按需填充）
      */
-    public static RoleAggregate toAggregate(RolePO po) {
+    default RoleAggregate toAggregate(RolePO po) {
         if (po == null) {
             return null;
         }
-        RoleEntity entity = new RoleEntity();
-        entity.setId(po.getId());
-        entity.setRoleKey(po.getRoleKey());
-        entity.setRoleName(po.getRoleName());
-        // 枚举转换：数据库 Integer → 领域枚举
-        entity.setStatus(RoleStatusEnum.getByCode(po.getStatus()));
-        entity.setRemark(po.getRemark());
-        entity.setCreateAt(po.getCreateAt());
-        entity.setUpdateAt(po.getUpdateAt());
-        entity.setCreateBy(po.getCreateBy());
-        entity.setUpdateBy(po.getUpdateBy());
-
         RoleAggregate aggregate = new RoleAggregate();
-        aggregate.setRoleEntity(entity);
+        aggregate.setRoleEntity(toEntity(po));
         return aggregate;
     }
 
     /**
      * 聚合根转换为 PO（拆解内部 RoleEntity）
      */
-    public static RolePO toPO(RoleAggregate aggregate) {
+    default RolePO toPO(RoleAggregate aggregate) {
         if (aggregate == null || aggregate.getRoleEntity() == null) {
             return null;
         }
-        RoleEntity entity = aggregate.getRoleEntity();
-        RolePO po = new RolePO();
-        po.setId(entity.getId());
-        po.setRoleKey(entity.getRoleKey());
-        po.setRoleName(entity.getRoleName());
-        // 枚举转换：领域枚举 → 数据库 Integer
-        if (entity.getStatus() != null) {
-            po.setStatus(entity.getStatus().getCode());
-        }
-        po.setRemark(entity.getRemark());
-        po.setCreateAt(entity.getCreateAt());
-        po.setUpdateAt(entity.getUpdateAt());
-        po.setCreateBy(entity.getCreateBy());
-        po.setUpdateBy(entity.getUpdateBy());
-        return po;
+        return toRolePO(aggregate.getRoleEntity());
     }
 
     /**
      * PO 列表转换为聚合根列表
      */
-    public static List<RoleAggregate> toAggregateList(List<RolePO> poList) {
+    default List<RoleAggregate> toAggregateList(List<RolePO> poList) {
         if (poList == null || poList.isEmpty()) {
             return Collections.emptyList();
         }
-        return poList.stream().map(RoleConverter::toAggregate).toList();
-    }
-
-    /**
-     * 权限 PO 转换为权限实体
-     */
-    public static PermissionEntity toPermissionEntity(PermissionPO po) {
-        if (po == null) {
-            return null;
-        }
-        PermissionEntity entity = new PermissionEntity();
-        entity.setId(po.getId());
-        entity.setPermKey(po.getPermKey());
-        entity.setPermName(po.getPermName());
-        entity.setRemark(po.getRemark());
-        entity.setCreateAt(po.getCreateAt());
-        entity.setUpdateAt(po.getUpdateAt());
-        entity.setCreateBy(po.getCreateBy());
-        entity.setUpdateBy(po.getUpdateBy());
-        return entity;
+        return poList.stream().map(this::toAggregate).toList();
     }
 
     /**
      * 权限 PO 列表转换为权限实体列表
      */
-    public static List<PermissionEntity> toPermissionEntityList(List<PermissionPO> poList) {
+    default List<PermissionEntity> toPermissionEntityList(List<PermissionPO> poList) {
         if (poList == null || poList.isEmpty()) {
             return Collections.emptyList();
         }
-        return poList.stream().map(RoleConverter::toPermissionEntity).toList();
+        return poList.stream().map(this::toPermissionEntity).toList();
+    }
+
+    // ========== 枚举转换辅助方法 ==========
+
+    /**
+     * 数据库 Integer → 领域枚举
+     */
+    @Named("intToRoleStatus")
+    default RoleStatusEnum intToRoleStatus(Integer code) {
+        return RoleStatusEnum.getByCode(code);
+    }
+
+    /**
+     * 领域枚举 → 数据库 Integer
+     */
+    @Named("roleStatusToInt")
+    default Integer roleStatusToInt(RoleStatusEnum status) {
+        return status == null ? null : status.getCode();
     }
 }

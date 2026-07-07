@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.common.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.MDC;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,7 @@ public class AsyncConfig implements AsyncConfigurer {
     static class MdcTaskDecorator implements TaskDecorator {
 
         @Override
+        @NullMarked
         public Runnable decorate(Runnable runnable) {
             Map<String, String> contextMap = MDC.getCopyOfContextMap();
             return () -> {

@@ -30,6 +30,9 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
     private FileRepository fileRepository;
 
     @Resource
+    private FileAssembler fileAssembler;
+
+    @Resource
     private FileStorage fileStorage;
 
     @Override
@@ -55,7 +58,7 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
 
             // 4. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    FileAssembler.toDownloadFileResponseDTO(aggregate, readResult.getData()));
+                    fileAssembler.toDownloadFileResponseDTO(aggregate, readResult.getData()));
         } catch (Exception e) {
             log.error("下载文件失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -72,7 +75,7 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
             }
 
             // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
-            PageQuery<FileQuery> pageQuery = PageQuery.build(FileAssembler.toFileQuery(requestDTO));
+            PageQuery<FileQuery> pageQuery = PageQuery.build(fileAssembler.toFileQuery(requestDTO));
             pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
             pageQuery.setPageSize(requestDTO.getPageSize());
 
@@ -81,7 +84,7 @@ public class FileQueryAppServiceImpl implements FileQueryAppService {
 
             // 4. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    FileAssembler.toQueryFilePageResponseDTO(page.getTotalElements(), page.getContent()));
+                    fileAssembler.toQueryFilePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询文件失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);

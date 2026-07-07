@@ -29,6 +29,9 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
     @Resource
     private RoleRepository roleRepository;
 
+    @Resource
+    private RoleAssembler roleAssembler;
+
     @Override
     public ResultDO<GetRoleDetailResponseDTO> getRoleDetail(GetRoleDetailRequestDTO requestDTO) {
         try {
@@ -45,7 +48,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
             }
 
             // 3. 组装响应 DTO
-            return ResultDO.buildSuccessResult(RoleAssembler.toGetRoleDetailResponseDTO(aggregate));
+            return ResultDO.buildSuccessResult(roleAssembler.toGetRoleDetailResponseDTO(aggregate));
         } catch (Exception e) {
             log.error("获取角色详情失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -62,7 +65,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
             }
 
             // 2. 组装分页查询条件（pageNum 从1开始 → startIndex）
-            PageQuery<RoleQuery> pageQuery = PageQuery.build(RoleAssembler.toRoleQuery(requestDTO));
+            PageQuery<RoleQuery> pageQuery = PageQuery.build(roleAssembler.toRoleQuery(requestDTO));
             pageQuery.setStartIndex((requestDTO.getPageNum() - 1) * requestDTO.getPageSize());
             pageQuery.setPageSize(requestDTO.getPageSize());
 
@@ -71,7 +74,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
 
             // 4. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    RoleAssembler.toQueryRolePageResponseDTO(page.getTotalElements(), page.getContent()));
+                    roleAssembler.toQueryRolePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询角色失败, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
@@ -84,7 +87,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
             // 1. 查询全部权限点
             // 2. 组装响应 DTO
             return ResultDO.buildSuccessResult(
-                    RoleAssembler.toQueryPermissionListResponseDTO(roleRepository.queryAllPermissions()));
+                    roleAssembler.toQueryPermissionListResponseDTO(roleRepository.queryAllPermissions()));
         } catch (Exception e) {
             log.error("查询权限点列表失败", e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);

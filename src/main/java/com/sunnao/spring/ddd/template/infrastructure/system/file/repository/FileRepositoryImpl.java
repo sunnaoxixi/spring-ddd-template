@@ -35,13 +35,16 @@ public class FileRepositoryImpl implements FileRepository {
     private FileMapper fileMapper;
 
     @Resource
+    private FileConverter fileConverter;
+
+    @Resource
     private LockFactory lockFactory;
 
     @Override
     public FileAggregate query(Long id) throws RepositoryException {
         try {
             FilePO po = fileMapper.selectOneById(id);
-            return FileConverter.toAggregate(po);
+            return fileConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询文件失败, id: {}", id, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询文件数据异常", e);
@@ -52,7 +55,7 @@ public class FileRepositoryImpl implements FileRepository {
     public FileAggregate query(FileQuery query) throws RepositoryException {
         try {
             FilePO po = fileMapper.selectOneByQuery(buildWrapper(query));
-            return FileConverter.toAggregate(po);
+            return fileConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询文件失败, query: {}", query, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询文件数据异常", e);
@@ -68,7 +71,7 @@ public class FileRepositoryImpl implements FileRepository {
             com.mybatisflex.core.paginate.Page<FilePO> poPage = fileMapper.paginate(
                     pageNumber, pageSize, buildWrapper(pageQuery.getQuery()));
 
-            List<FileAggregate> aggregates = FileConverter.toAggregateList(poPage.getRecords());
+            List<FileAggregate> aggregates = fileConverter.toAggregateList(poPage.getRecords());
             return new PageImpl<>(aggregates, PageRequest.of(pageNumber - 1, pageSize), poPage.getTotalRow());
         } catch (Exception e) {
             log.error("分页查询文件失败, pageQuery: {}", pageQuery.getQuery(), e);
@@ -79,7 +82,7 @@ public class FileRepositoryImpl implements FileRepository {
     @Override
     public void save(FileAggregate aggregate) throws RepositoryException {
         try {
-            FilePO po = FileConverter.toPO(aggregate);
+            FilePO po = fileConverter.toPO(aggregate);
             if (po == null) {
                 throw new RepositoryException(ErrorCodeEnum.DATA_ERROR, "文件数据为空，无法保存");
             }

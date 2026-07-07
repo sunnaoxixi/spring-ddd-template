@@ -6,6 +6,9 @@ import com.sunnao.spring.ddd.template.client.auth.res.LoginResponseDTO;
 import com.sunnao.spring.ddd.template.domain.auth.model.param.LoginParam;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
 import com.sunnao.spring.ddd.template.domain.system.user.model.entity.UserEntity;
+import com.sunnao.spring.ddd.template.model.system.user.UserStatusEnum;
+import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 
 import java.util.Collections;
 
@@ -13,25 +16,18 @@ import java.util.Collections;
  * 认证转换器
  * 负责 RequestDTO/ResponseDTO 与领域对象之间的转换
  */
-public class AuthAssembler {
-
-    private AuthAssembler() {
-    }
+@Mapper(componentModel = "spring")
+public interface AuthAssembler {
 
     /**
      * 登录 RequestDTO 转领域 Param
      */
-    public static LoginParam toLoginParam(LoginRequestDTO requestDTO) {
-        LoginParam param = new LoginParam();
-        param.setEmail(requestDTO.getEmail());
-        param.setPassword(requestDTO.getPassword());
-        return param;
-    }
+    LoginParam toLoginParam(LoginRequestDTO requestDTO);
 
     /**
      * 聚合根 + token 信息转登录 ResponseDTO（model 枚举 → client 角色码）
      */
-    public static LoginResponseDTO toLoginResponseDTO(UserAggregate aggregate, String tokenName, String tokenValue) {
+    default LoginResponseDTO toLoginResponseDTO(UserAggregate aggregate, String tokenName, String tokenValue) {
         UserEntity entity = aggregate.getUserEntity();
         LoginResponseDTO responseDTO = new LoginResponseDTO();
         responseDTO.setTokenName(tokenName);
@@ -45,7 +41,7 @@ public class AuthAssembler {
     /**
      * 聚合根转当前登录用户信息 ResponseDTO（不含密码）
      */
-    public static GetLoginUserResponseDTO toGetLoginUserResponseDTO(UserAggregate aggregate) {
+    default GetLoginUserResponseDTO toGetLoginUserResponseDTO(UserAggregate aggregate) {
         if (aggregate == null || aggregate.getUserEntity() == null) {
             return null;
         }
@@ -60,5 +56,12 @@ public class AuthAssembler {
             responseDTO.setStatus(entity.getStatus().getCode());
         }
         return responseDTO;
+    }
+
+    // ========== 枚举转换辅助方法 ==========
+
+    @Named("userStatusToInt")
+    default Integer userStatusToInt(UserStatusEnum status) {
+        return status == null ? null : status.getCode();
     }
 }
