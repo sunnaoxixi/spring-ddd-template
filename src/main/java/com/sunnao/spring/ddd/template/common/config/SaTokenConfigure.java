@@ -21,7 +21,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SaInterceptor(handle ->
                         SaRouter.match("/api/**")
-                                .notMatch("/api/auth/login", "/api/auth/register")
+                                .notMatch("/api/auth/**")
                                 .notMatch("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                                 .check(r -> StpUtil.checkLogin())))
                 .addPathPatterns("/**")

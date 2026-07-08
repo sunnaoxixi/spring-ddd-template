@@ -139,9 +139,10 @@
         </dependency>
 
         <!-- Flyway 数据库迁移（版本由 Spring Boot 父 POM 管理），脚本位于 db/migration -->
+        <!-- Spring Boot 4.x 的 Flyway 自动装配拆分到独立模块，仅引 flyway-core 不会执行迁移 -->
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>

@@ -5,7 +5,7 @@ spring:
     # 导入项目根目录的 .env（KEY=VALUE 与 properties 格式兼容），文件不存在时跳过
     import: optional:file:.env[.properties]
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:spring_ddd_template}
@@ -17,6 +17,8 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       database: ${REDIS_DATABASE:0}
+      ssl:
+        enabled: ${REDIS_SSL:false}
       lettuce:
         pool:
           max-active: 16
