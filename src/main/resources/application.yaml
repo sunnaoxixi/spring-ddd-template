@@ -1,6 +1,9 @@
 spring:
   application:
     name: spring-ddd-template
+  config:
+    # 导入项目根目录的 .env（KEY=VALUE 与 properties 格式兼容），文件不存在时跳过
+    import: optional:file:.env[.properties]
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:prod}
   datasource:
