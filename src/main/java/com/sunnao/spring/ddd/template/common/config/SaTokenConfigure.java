@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * Sa-Token 路由拦截配置
  * <p>
- * 除登录接口外，/api/** 全部要求登录态；
+ * 除登录/注册接口外，/api/** 全部要求登录态；
  * 注解鉴权（@SaCheckRole 等）由 SaInterceptor 一并启用；
  * OpenAPI 文档路径（/v3/api-docs/**、/swagger-ui/**）放行。
  */
@@ -21,7 +21,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SaInterceptor(handle ->
                         SaRouter.match("/api/**")
-                                .notMatch("/api/auth/login")
+                                .notMatch("/api/auth/login", "/api/auth/register")
                                 .notMatch("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                                 .check(r -> StpUtil.checkLogin())))
                 .addPathPatterns("/**")

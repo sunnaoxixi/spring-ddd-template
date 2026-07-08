@@ -1,7 +1,9 @@
 package com.sunnao.spring.ddd.template.client.auth;
 
 import com.sunnao.spring.ddd.template.client.auth.req.LoginRequestDTO;
+import com.sunnao.spring.ddd.template.client.auth.req.RegisterRequestDTO;
 import com.sunnao.spring.ddd.template.client.auth.res.LoginResponseDTO;
+import com.sunnao.spring.ddd.template.client.auth.res.RegisterResponseDTO;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.common.service.ApplicationCmdService;
 
@@ -18,6 +20,14 @@ public interface AuthAppService extends ApplicationCmdService {
      * @return token 与用户基础信息
      */
     ResultDO<LoginResponseDTO> login(LoginRequestDTO requestDTO);
+
+    /**
+     * 注册：创建用户并自动登录签发 token
+     *
+     * @param requestDTO 注册参数
+     * @return token 与用户基础信息
+     */
+    ResultDO<RegisterResponseDTO> register(RegisterRequestDTO requestDTO);
 
     /**
      * 登出：注销当前会话

@@ -3,8 +3,10 @@ package com.sunnao.spring.ddd.template.adaptor.auth.input;
 import com.sunnao.spring.ddd.template.client.auth.AuthAppService;
 import com.sunnao.spring.ddd.template.client.auth.AuthQueryAppService;
 import com.sunnao.spring.ddd.template.client.auth.req.LoginRequestDTO;
+import com.sunnao.spring.ddd.template.client.auth.req.RegisterRequestDTO;
 import com.sunnao.spring.ddd.template.client.auth.res.GetLoginUserResponseDTO;
 import com.sunnao.spring.ddd.template.client.auth.res.LoginResponseDTO;
+import com.sunnao.spring.ddd.template.client.auth.res.RegisterResponseDTO;
 import com.sunnao.spring.ddd.template.common.annotation.OperLog;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +37,16 @@ public class AuthController {
     @PostMapping("/login")
     public ResultDO<LoginResponseDTO> login(@RequestBody LoginRequestDTO requestDTO) {
         return authAppService.login(requestDTO);
+    }
+
+    /**
+     * 注册
+     */
+    @Operation(summary = "注册", description = "邮箱 + 昵称 + 密码注册，注册成功后自动登录并返回 satoken")
+    @OperLog(module = "auth", action = "注册")
+    @PostMapping("/register")
+    public ResultDO<RegisterResponseDTO> register(@RequestBody RegisterRequestDTO requestDTO) {
+        return authAppService.register(requestDTO);
     }
 
     /**

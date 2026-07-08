@@ -5,7 +5,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.sunnao.spring.ddd.template.application.auth.assembler.AuthAssembler;
 import com.sunnao.spring.ddd.template.client.auth.AuthAppService;
 import com.sunnao.spring.ddd.template.client.auth.req.LoginRequestDTO;
+import com.sunnao.spring.ddd.template.client.auth.req.RegisterRequestDTO;
 import com.sunnao.spring.ddd.template.client.auth.res.LoginResponseDTO;
+import com.sunnao.spring.ddd.template.client.auth.res.RegisterResponseDTO;
 import com.sunnao.spring.ddd.template.common.context.LoginSessionKeys;
 import com.sunnao.spring.ddd.template.common.context.RequestContextUtils;
 import com.sunnao.spring.ddd.template.common.event.DomainEventPublisher;
@@ -17,6 +19,7 @@ import com.sunnao.spring.ddd.template.domain.auth.service.AuthDomainService;
 import com.sunnao.spring.ddd.template.domain.system.log.event.LoginLogEvent;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.domain.system.user.model.aggregate.UserAggregate;
+import com.sunnao.spring.ddd.template.domain.system.user.service.UserDomainService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -44,6 +47,9 @@ public class AuthAppServiceImpl implements AuthAppService {
 
     @Resource
     private AuthDomainService authDomainService;
+
+    @Resource
+    private UserDomainService userDomainService;
 
     @Resource
     private AuthAssembler authAssembler;
@@ -102,6 +108,38 @@ public class AuthAppServiceImpl implements AuthAppService {
             log.error("登录系统异常, requestDTO: {}", requestDTO, e);
             publishLoginLog(null, requestDTO.getEmail(), false,
                     ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getDefaultMsg());
+            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
+        }
+    }
+
+    @Override
+    public ResultDO<RegisterResponseDTO> register(RegisterRequestDTO requestDTO) {
+        try {
+            // 1. 参数自校验（含两次密码一致性校验）
+            ResultDO<Void> checkResult = requestDTO.check();
+            if (!checkResult.isSuccess()) {
+                return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
+            }
+
+            // 2. 调用用户领域服务创建用户（自助注册：无操作人，默认授予 user 角色）
+            //    邮箱唯一性、分布式锁防并发、密码加密、用户创建事件均由领域服务保证
+            ResultDO<UserAggregate> domainResult = userDomainService.createUser(
+                    authAssembler.toCreateUserParam(requestDTO));
+            if (!domainResult.isSuccess()) {
+                return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
+            }
+
+            // 3. 注册成功后自动登录：签发 token 并写入会话附加信息
+            UserAggregate aggregate = domainResult.getData();
+            Long userId = aggregate.getUserEntity().getId();
+            StpUtil.login(userId);
+            fillTokenSession(aggregate);
+
+            // 4. 组装响应（角色标识由 createUser 已填充）
+            return ResultDO.buildSuccessResult(authAssembler.toRegisterResponseDTO(
+                    aggregate, StpUtil.getTokenName(), StpUtil.getTokenValue()));
+        } catch (Exception e) {
+            log.error("注册系统异常, requestDTO: {}", requestDTO, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }
