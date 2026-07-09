@@ -1,6 +1,6 @@
 # Docker Compose 生产部署指南
 
-本文档用于将 `spring-ddd-template` 部署到云服务器，并用 Docker Compose 统一管理 Nginx、Spring Boot 应用、PostgreSQL 和 Redis。
+本文档用于将 `spring-ddd-template` 后端部署到云服务器，并用 Docker Compose 统一管理 Spring Boot 应用、PostgreSQL 和 Redis。
 
 ## 架构
 
@@ -8,8 +8,9 @@
 Internet
   |
   v
-Nginx :80
+Frontend / Gateway Nginx :80/443
   |
+  | optional proxy /api/ to backend
   v
 Spring Boot app :8080
   |                |
@@ -17,7 +18,7 @@ Spring Boot app :8080
 PostgreSQL :5432  Redis :6379
 ```
 
-生产 Compose 只对公网暴露 Nginx 的 `80` 端口。应用、PostgreSQL、Redis 只在 Compose 内部网络访问。
+生产 Compose 只暴露后端应用的 `8080` 端口。前端页面或统一网关继续占用 `80/443`，可按需把 `/api/` 反向代理到 `http://127.0.0.1:8080`。PostgreSQL 和 Redis 只在 Compose 内部网络访问，不映射到宿主机端口。
 
 ## 文件说明
 
@@ -26,8 +27,7 @@ PostgreSQL :5432  Redis :6379
 | `Dockerfile` | 构建 Spring Boot 应用镜像，使用 Java 25。 |
 | `.dockerignore` | 排除本地构建产物、日志、IDE 文件和真实环境变量。 |
 | `.env.prod.example` | 生产环境变量模板，不包含真实密钥。 |
-| `docker-compose.prod.yaml` | 生产 Compose 栈：Nginx、应用、PostgreSQL、Redis。 |
-| `deploy/nginx/default.conf` | Nginx 反向代理配置。 |
+| `docker-compose.prod.yaml` | 后端生产 Compose 栈：应用、PostgreSQL、Redis。 |
 
 如果需要使用 GitHub Actions 自动部署，参考 [GitHub Actions CI/CD 部署教程](./github-actions-cicd.md)。
 
@@ -38,9 +38,9 @@ PostgreSQL :5432  Redis :6379
 | 端口 | 用途 | 是否建议公网开放 |
 | --- | --- | --- |
 | `22` | SSH | 按需开放，建议限制来源 IP。 |
-| `80` | Nginx HTTP | 开放。 |
-| `443` | HTTPS | 配置 HTTPS 后开放。 |
-| `8080` | Spring Boot | 不开放。 |
+| `80` | 前端或统一网关 HTTP | 由前端服务决定。 |
+| `443` | 前端或统一网关 HTTPS | 由前端服务决定。 |
+| `8080` | Spring Boot 后端 API | 如需公网直连后端则开放；若只允许前端 Nginx 反代，可在防火墙限制来源。 |
 | `5432` | PostgreSQL | 不开放。 |
 | `6379` | Redis | 不开放。 |
 
@@ -89,15 +89,28 @@ docker compose --env-file .env.prod -f docker-compose.prod.yaml logs -f app
 
 ## 验证部署
 
-通过 Nginx 访问登录接口：
+直连后端 `8080` 访问登录接口：
 
 ```bash
-curl -X POST http://<server-ip>/api/auth/login \
+curl -X POST http://<server-ip>:8080/api/auth/login \
   -H 'Content-Type: application/json' \
   -d '{"email":"admin@example.com","password":"admin123456"}'
 ```
 
-返回 token 表示 Nginx、应用、PostgreSQL、Redis 基本链路可用。首次登录后请立即修改默认管理员密码。
+返回 token 表示应用、PostgreSQL、Redis 基本链路可用。首次登录后请立即修改默认管理员密码。
+
+如果前端 Nginx 需要同域转发 API，可以在前端 Nginx 配置中加入类似片段：
+
+```nginx
+location /api/ {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
 
 ## 日常运维
 
@@ -157,20 +170,22 @@ docker run --rm \
   alpine tar czf /backup/app-files.tar.gz -C /data .
 ```
 
-## HTTPS
+## 前端网关和 HTTPS
 
-当前 Compose 默认只配置 HTTP `80`，适合先跑通部署。生产 HTTPS 有两种常见做法：
+后端 Compose 不管理 `80/443`。生产 HTTPS 应由前端项目、统一 Nginx、云负载均衡或 CDN 承担。
 
-1. 使用云厂商负载均衡、CDN 或网关托管证书，回源到服务器 `80`。
-2. 在本机扩展 Nginx 配置，挂载证书目录并开放 `443`。
+常见方式：
 
-如果采用本机 Nginx 证书方式，需要增加 `443:443` 端口映射，并在 `deploy/nginx/default.conf` 中增加 `listen 443 ssl;`、证书路径和 HTTP 到 HTTPS 跳转规则。
+1. 前端 Nginx 监听 `80/443`，页面请求 `/api/` 时反代到 `127.0.0.1:8080`。
+2. 云厂商负载均衡、CDN 或网关托管证书，再按路径或域名转发到前端和后端。
+3. 后端单独使用 `api.example.com:443` 时，应由外层网关转发到后端 `8080`，而不是让后端 Compose 直接管理证书。
 
 ## 安全注意事项
 
 - 不要提交 `.env.prod`，仓库只保留 `.env.prod.example`。
 - 数据库和 Redis 不要映射公网端口。
+- 如果 `8080` 不需要公网直连，建议在云服务器安全组或系统防火墙中限制来源。
 - `DB_PASSWORD` 和 `REDIS_PASSWORD` 必须使用强密码。
 - 首次部署后立即修改默认管理员密码。
 - 定期备份 PostgreSQL 数据卷和 `app-files` 文件卷。
-- 如果应用需要识别真实客户端 IP，确认 Nginx 是唯一可信入口后，再评估是否开启 `app.security.trust-x-forwarded-for`。
+- 如果应用需要识别真实客户端 IP，确认前端 Nginx 或网关是唯一可信入口后，再评估是否开启 `app.security.trust-x-forwarded-for`。

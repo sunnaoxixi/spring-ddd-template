@@ -4,7 +4,7 @@
 
 ## 推荐流程
 
-推荐使用 GitHub Actions 负责 CI 校验和远程触发部署，云服务器继续使用本仓库已有的 `docker-compose.prod.yaml` 管理 Nginx、Spring Boot、PostgreSQL 和 Redis。
+推荐使用 GitHub Actions 负责 CI 校验和远程触发部署，云服务器继续使用本仓库已有的 `docker-compose.prod.yaml` 管理后端 Spring Boot、PostgreSQL 和 Redis。
 
 ```text
 push main
@@ -20,7 +20,7 @@ Cloud Server
   | git pull --ff-only
   | docker compose up -d --build
   v
-Nginx + App + PostgreSQL + Redis
+Backend App :8080 + PostgreSQL + Redis
 ```
 
 这种方式的优点是部署逻辑和手动部署保持一致，不需要先接入 Docker Hub、GHCR 或私有镜像仓库。
@@ -55,7 +55,6 @@ docker compose --env-file .env.prod -f docker-compose.prod.yaml up -d --build
 .env.prod
 docker-compose.prod.yaml
 Dockerfile
-deploy/nginx/default.conf
 ```
 
 `.env.prod` 只保存在服务器上，不提交到 GitHub。
