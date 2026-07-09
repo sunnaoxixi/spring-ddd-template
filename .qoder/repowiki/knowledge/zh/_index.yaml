@@ -1,0 +1,188 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: main
+nodes_managed: true
+exported_at: "2026-07-08T09:13:01Z"
+modules:
+    "":
+        dir_name: spring-ddd-template
+        title: spring-ddd-template
+        scope: []
+        source_files: []
+        children:
+            - 2bba7894-0a76-48e8-8623-cc1b34b4c17e
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a
+            - 879711ad-dc97-4021-bf1e-a7a876e4fedb
+        depends_on: []
+        related_to: []
+    2bba7894-0a76-48e8-8623-cc1b34b4c17e:
+        dir_name: 系统用户领域（System User）
+        title: 系统用户领域（System User）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/user/
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/user/
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/user/
+        source_files: []
+        children:
+            - 2bba7894-0a76-48e8-8623-cc1b34b4c17e/7eb99462-0f4f-4fee-8ca9-26f9eae48224
+            - 2bba7894-0a76-48e8-8623-cc1b34b4c17e/86975583-c9cb-4d70-9947-72ee29f85736
+        depends_on: []
+        related_to: []
+    2bba7894-0a76-48e8-8623-cc1b34b4c17e/7eb99462-0f4f-4fee-8ca9-26f9eae48224:
+        dir_name: 用户客户端应用服务接口（User Client API）
+        title: 用户客户端应用服务接口（User Client API）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/user/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    2bba7894-0a76-48e8-8623-cc1b34b4c17e/86975583-c9cb-4d70-9947-72ee29f85736:
+        dir_name: 用户应用服务（User Application Layer）
+        title: 用户应用服务（User Application Layer）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/user/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a:
+        dir_name: Spring Boot DDD 项目脚手架（聚合根）
+        title: Spring Boot DDD 项目脚手架（聚合根）
+        scope:
+            - README.md
+            - pom.xml
+            - mvnw.cmd
+            - docker-compose.yaml
+            - rename-project.sh
+            - .gitignore
+            - .gitattributes
+            - .env.example
+            - mvnw
+        source_files: []
+        children:
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/3e75676b-c14d-4040-b6fa-e839e75f8519
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/41fbc165-8fe0-457d-9f57-44077685b676
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/68402bb2-489a-4774-b422-c73339ade960
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/a056b299-7601-48fb-ab05-e834c7d96089
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/cf791897-2b61-40aa-88f9-b0da4df6356e
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/3e75676b-c14d-4040-b6fa-e839e75f8519:
+        dir_name: 认证领域应用层与 HTTP 适配层
+        title: 认证领域应用层与 HTTP 适配层
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/auth/
+            - src/main/java/com/sunnao/spring/ddd/template/application/auth/
+            - src/main/java/com/sunnao/spring/ddd/template/client/auth/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/41fbc165-8fe0-457d-9f57-44077685b676:
+        dir_name: 系统字典应用层与输入适配器
+        title: 系统字典应用层与输入适配器
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/dict/
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/dict/
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/dict/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/68402bb2-489a-4774-b422-c73339ade960:
+        dir_name: 在线用户会话管理（踢人_分页）
+        title: 在线用户会话管理（踢人/分页）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/online/
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/online/
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/online/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/a056b299-7601-48fb-ab05-e834c7d96089:
+        dir_name: 系统日志查询与异步写入（操作日志_登录日志）
+        title: 系统日志查询与异步写入（操作日志/登录日志）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/log/
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/log/
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/log/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/cf791897-2b61-40aa-88f9-b0da4df6356e:
+        dir_name: 通用技术基类与内部共享模型
+        title: 通用技术基类与内部共享模型
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/common/
+            - src/main/java/com/sunnao/spring/ddd/template/model/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e:
+        dir_name: 系统文件服务（DDD 分层适配）
+        title: 系统文件服务（DDD 分层适配）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/file/
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/file/
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/file/
+        source_files: []
+        children:
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e/165a46a3-bbcb-491f-bcf8-480a31436da8
+            - 7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e/6929892c-8ab1-4af9-b5b7-09dfd8bdbf34
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e/165a46a3-bbcb-491f-bcf8-480a31436da8:
+        dir_name: 文件服务客户端应用接口（File Client App Service）
+        title: 文件服务客户端应用接口（File Client App Service）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/file/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e/6929892c-8ab1-4af9-b5b7-09dfd8bdbf34:
+        dir_name: 文件应用服务（上传_下载_分页查询）
+        title: 文件应用服务（上传/下载/分页查询）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/file/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    879711ad-dc97-4021-bf1e-a7a876e4fedb:
+        dir_name: 角色应用服务（系统域）
+        title: 角色应用服务（系统域）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/role/
+        source_files: []
+        children:
+            - 879711ad-dc97-4021-bf1e-a7a876e4fedb/d47f108d-c380-4f6c-9e6f-e76b1cf6bf97
+        depends_on: []
+        related_to: []
+    879711ad-dc97-4021-bf1e-a7a876e4fedb/d47f108d-c380-4f6c-9e6f-e76b1cf6bf97:
+        dir_name: 系统角色子域（Role Subdomain）
+        title: 系统角色子域（Role Subdomain）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/role/
+            - src/main/java/com/sunnao/spring/ddd/template/application/system/role/
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/role/
+        source_files: []
+        children:
+            - 879711ad-dc97-4021-bf1e-a7a876e4fedb/d47f108d-c380-4f6c-9e6f-e76b1cf6bf97/544b4e23-a333-436f-8296-2d8a380b3f8f
+        depends_on: []
+        related_to: []
+    879711ad-dc97-4021-bf1e-a7a876e4fedb/d47f108d-c380-4f6c-9e6f-e76b1cf6bf97/544b4e23-a333-436f-8296-2d8a380b3f8f:
+        dir_name: 系统角色客户端应用服务（DTO 与接口层）
+        title: 系统角色客户端应用服务（DTO 与接口层）
+        scope:
+            - src/main/java/com/sunnao/spring/ddd/template/client/system/role/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

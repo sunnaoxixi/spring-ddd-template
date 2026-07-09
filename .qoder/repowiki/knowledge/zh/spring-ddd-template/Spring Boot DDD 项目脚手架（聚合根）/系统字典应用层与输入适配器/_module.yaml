@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: 7c24cf18-1710-4d63-802f-28a8b7dd214a/41fbc165-8fe0-457d-9f57-44077685b676
+title: 系统字典应用层与输入适配器
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/dict/
+    - src/main/java/com/sunnao/spring/ddd/template/application/system/dict/
+    - src/main/java/com/sunnao/spring/ddd/template/client/system/dict/
+source_files: []
+depends_on: []
+related_to: []

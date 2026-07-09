@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: 879711ad-dc97-4021-bf1e-a7a876e4fedb
+title: 角色应用服务（系统域）
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/application/system/role/
+source_files: []
+depends_on: []
+related_to: []

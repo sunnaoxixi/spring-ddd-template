@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: 2bba7894-0a76-48e8-8623-cc1b34b4c17e/7eb99462-0f4f-4fee-8ca9-26f9eae48224
+title: 用户客户端应用服务接口（User Client API）
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/client/system/user/
+source_files: []
+depends_on: []
+related_to: []

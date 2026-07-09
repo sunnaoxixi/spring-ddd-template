@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: 7c24cf18-1710-4d63-802f-28a8b7dd214a/db80e09e-da92-447b-8f52-9e6b8befff9e
+title: 系统文件服务（DDD 分层适配）
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/file/
+    - src/main/java/com/sunnao/spring/ddd/template/application/system/file/
+    - src/main/java/com/sunnao/spring/ddd/template/client/system/file/
+source_files: []
+depends_on: []
+related_to: []

@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: 2bba7894-0a76-48e8-8623-cc1b34b4c17e
+title: 系统用户领域（System User）
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/user/
+    - src/main/java/com/sunnao/spring/ddd/template/application/system/user/
+    - src/main/java/com/sunnao/spring/ddd/template/client/system/user/
+source_files: []
+depends_on: []
+related_to: []

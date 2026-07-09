@@ -1,0 +1,16 @@
+schema_version: 1
+module_path: 7c24cf18-1710-4d63-802f-28a8b7dd214a
+title: Spring Boot DDD 项目脚手架（聚合根）
+scope:
+    - README.md
+    - pom.xml
+    - mvnw.cmd
+    - docker-compose.yaml
+    - rename-project.sh
+    - .gitignore
+    - .gitattributes
+    - .env.example
+    - mvnw
+source_files: []
+depends_on: []
+related_to: []

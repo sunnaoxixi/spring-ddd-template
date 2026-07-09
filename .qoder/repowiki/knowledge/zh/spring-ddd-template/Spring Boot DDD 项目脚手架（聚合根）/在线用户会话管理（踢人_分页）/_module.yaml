@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: 7c24cf18-1710-4d63-802f-28a8b7dd214a/68402bb2-489a-4774-b422-c73339ade960
+title: 在线用户会话管理（踢人/分页）
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/online/
+    - src/main/java/com/sunnao/spring/ddd/template/application/system/online/
+    - src/main/java/com/sunnao/spring/ddd/template/client/system/online/
+source_files: []
+depends_on: []
+related_to: []

@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: 879711ad-dc97-4021-bf1e-a7a876e4fedb/d47f108d-c380-4f6c-9e6f-e76b1cf6bf97
+title: 系统角色子域（Role Subdomain）
+scope:
+    - src/main/java/com/sunnao/spring/ddd/template/adaptor/system/role/
+    - src/main/java/com/sunnao/spring/ddd/template/application/system/role/
+    - src/main/java/com/sunnao/spring/ddd/template/client/system/role/
+source_files: []
+depends_on: []
+related_to: []
