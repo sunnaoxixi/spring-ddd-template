@@ -3,11 +3,12 @@ FROM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
 
 COPY .mvn .mvn
+COPY maven maven
 COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw -B -DskipTests dependency:go-offline
+RUN chmod +x mvnw && ./mvnw -B -s maven/settings-docker.xml -DskipTests dependency:go-offline
 
 COPY src src
-RUN ./mvnw -B -DskipTests package
+RUN ./mvnw -B -s maven/settings-docker.xml -DskipTests package
 
 FROM eclipse-temurin:25-jre
 

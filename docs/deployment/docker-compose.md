@@ -27,6 +27,7 @@ PostgreSQL :5432  Redis :6379
 | `Dockerfile` | 构建 Spring Boot 应用镜像，使用 Java 25。 |
 | `.dockerignore` | 排除本地构建产物、日志、IDE 文件和真实环境变量。 |
 | `.env.prod.example` | 生产环境变量模板，不包含真实密钥。 |
+| `maven/settings-docker.xml` | Docker 构建使用的 Maven 配置，默认将 Maven Central 切到腾讯云镜像。 |
 | `docker-compose.prod.yaml` | 后端生产 Compose 栈：应用、PostgreSQL、Redis。 |
 
 如果需要使用 GitHub Actions 自动部署，参考 [GitHub Actions CI/CD 部署教程](./github-actions-cicd.md)。
@@ -73,6 +74,8 @@ REDIS_PASSWORD=replace-with-a-strong-redis-password
 docker compose --env-file .env.prod -f docker-compose.prod.yaml up -d --build
 ```
 
+Docker 构建阶段会使用 `maven/settings-docker.xml`，从腾讯云 Maven 镜像下载依赖，减少服务器从 Maven Central 下载依赖过慢的问题。
+
 查看状态：
 
 ```bash
@@ -86,6 +89,31 @@ docker compose --env-file .env.prod -f docker-compose.prod.yaml logs -f app
 ```
 
 应用首次启动时会通过 Flyway 自动执行 `src/main/resources/db/migration/` 下的数据库迁移。
+
+## Maven 依赖下载加速
+
+生产镜像构建默认执行：
+
+```bash
+./mvnw -B -s maven/settings-docker.xml -DskipTests package
+```
+
+`maven/settings-docker.xml` 中配置了腾讯云 Maven 镜像：
+
+```xml
+<mirror>
+  <id>tencent</id>
+  <mirrorOf>central</mirrorOf>
+  <name>Tencent Maven Mirror</name>
+  <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+</mirror>
+```
+
+这只影响 Docker 镜像构建，不会修改服务器或开发机的全局 Maven 配置。如果本地也想临时使用同一镜像，可以手动执行：
+
+```bash
+./mvnw -B -s maven/settings-docker.xml -DskipTests package
+```
 
 ## 验证部署
 

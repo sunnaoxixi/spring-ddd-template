@@ -25,6 +25,8 @@ Backend App :8080 + PostgreSQL + Redis
 
 这种方式的优点是部署逻辑和手动部署保持一致，不需要先接入 Docker Hub、GHCR 或私有镜像仓库。
 
+服务器执行 `docker compose up -d --build` 时，Dockerfile 会使用 `maven/settings-docker.xml`，从腾讯云 Maven 镜像下载依赖。
+
 ## 方案对比
 
 | 方案 | 说明 | 适用场景 |
