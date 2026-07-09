@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: 7c24cf18-1710-4d63-802f-28a8b7dd214a
-title: Spring Boot DDD 项目脚手架（聚合根）
+title: DDD 脚手架聚合根（Spring Boot 4 + MyBatis-Flex）
 scope:
     - README.md
     - pom.xml

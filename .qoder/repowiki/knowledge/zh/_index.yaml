@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: main
 nodes_managed: true
-exported_at: "2026-07-08T09:13:01Z"
+exported_at: "2026-07-09T03:08:20Z"
 modules:
     "":
-        dir_name: spring-ddd-template
-        title: spring-ddd-template
+        dir_name: Spring Boot 4 + MyBatis-Flex DDD 脚手架（系统域）
+        title: Spring Boot 4 + MyBatis-Flex DDD 脚手架（系统域）
         scope: []
         source_files: []
         children:
@@ -48,8 +48,8 @@ modules:
         depends_on: []
         related_to: []
     7c24cf18-1710-4d63-802f-28a8b7dd214a:
-        dir_name: Spring Boot DDD 项目脚手架（聚合根）
-        title: Spring Boot DDD 项目脚手架（聚合根）
+        dir_name: DDD 脚手架聚合根（Spring Boot 4 + MyBatis-Flex）
+        title: DDD 脚手架聚合根（Spring Boot 4 + MyBatis-Flex）
         scope:
             - README.md
             - pom.xml

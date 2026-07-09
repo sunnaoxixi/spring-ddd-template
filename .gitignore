@@ -34,5 +34,8 @@ build/
 
 ### Env ###
 .env
+.env.*
+!.env.example
+!.env.prod.example
 
 logs/

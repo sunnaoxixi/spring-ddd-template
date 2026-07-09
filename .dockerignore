@@ -1,0 +1,12 @@
+.git
+.idea
+.qoder
+.vscode
+target
+logs
+data
+*.log
+.env
+.env.*
+!.env.example
+!.env.prod.example
