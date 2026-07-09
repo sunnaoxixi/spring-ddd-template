@@ -29,6 +29,8 @@ PostgreSQL :5432  Redis :6379
 | `docker-compose.prod.yaml` | 生产 Compose 栈：Nginx、应用、PostgreSQL、Redis。 |
 | `deploy/nginx/default.conf` | Nginx 反向代理配置。 |
 
+如果需要使用 GitHub Actions 自动部署，参考 [GitHub Actions CI/CD 部署教程](./github-actions-cicd.md)。
+
 ## 服务器准备
 
 安装 Docker 和 Docker Compose 插件，并开放云服务器安全组：
