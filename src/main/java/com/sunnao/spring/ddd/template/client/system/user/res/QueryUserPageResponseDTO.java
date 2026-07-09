@@ -1,6 +1,5 @@
 package com.sunnao.spring.ddd.template.client.system.user.res;
 
-import com.sunnao.spring.ddd.template.client.system.user.model.UserDTO;
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package com.sunnao.spring.ddd.template.client.system.online.model;
+package com.sunnao.spring.ddd.template.client.system.online.res;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import lombok.Getter;

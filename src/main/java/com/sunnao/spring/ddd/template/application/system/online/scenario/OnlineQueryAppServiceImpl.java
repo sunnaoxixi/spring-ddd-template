@@ -5,7 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.client.system.online.OnlineQueryAppService;
-import com.sunnao.spring.ddd.template.client.system.online.model.OnlineUserDTO;
+import com.sunnao.spring.ddd.template.client.system.online.res.OnlineUserDTO;
 import com.sunnao.spring.ddd.template.client.system.online.req.QueryOnlineUserPageRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.online.res.QueryOnlineUserPageResponseDTO;
 import com.sunnao.spring.ddd.template.common.context.LoginSessionKeys;

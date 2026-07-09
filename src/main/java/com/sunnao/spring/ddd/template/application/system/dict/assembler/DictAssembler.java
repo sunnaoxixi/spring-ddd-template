@@ -1,7 +1,7 @@
 package com.sunnao.spring.ddd.template.application.system.dict.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.dict.model.DictDataDTO;
-import com.sunnao.spring.ddd.template.client.system.dict.model.DictTypeDTO;
+import com.sunnao.spring.ddd.template.client.system.dict.res.DictDataDTO;
+import com.sunnao.spring.ddd.template.client.system.dict.res.DictTypeDTO;
 import com.sunnao.spring.ddd.template.client.system.dict.req.*;
 import com.sunnao.spring.ddd.template.client.system.dict.res.QueryDictDataListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.dict.res.QueryDictTypePageResponseDTO;

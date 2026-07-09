@@ -1,6 +1,6 @@
 package com.sunnao.spring.ddd.template.application.system.user.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.user.model.UserDTO;
+import com.sunnao.spring.ddd.template.client.system.user.res.UserDTO;
 import com.sunnao.spring.ddd.template.client.system.user.req.*;
 import com.sunnao.spring.ddd.template.client.system.user.res.GetUserDetailResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.user.res.QueryUserPageResponseDTO;

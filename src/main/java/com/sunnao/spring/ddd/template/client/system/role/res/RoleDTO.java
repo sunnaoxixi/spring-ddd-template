@@ -1,4 +1,4 @@
-package com.sunnao.spring.ddd.template.client.system.role.model;
+package com.sunnao.spring.ddd.template.client.system.role.res;
 
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.sunnao.spring.ddd.template.application.system.role.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.role.model.PermissionDTO;
-import com.sunnao.spring.ddd.template.client.system.role.model.RoleDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.PermissionDTO;
+import com.sunnao.spring.ddd.template.client.system.role.res.RoleDTO;
 import com.sunnao.spring.ddd.template.client.system.role.req.*;
 import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;

@@ -1,6 +1,6 @@
 package com.sunnao.spring.ddd.template.application.system.file.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.file.model.FileDTO;
+import com.sunnao.spring.ddd.template.client.system.file.res.FileDTO;
 import com.sunnao.spring.ddd.template.client.system.file.req.DeleteFileRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.file.req.QueryFilePageRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.file.req.UploadFileRequestDTO;

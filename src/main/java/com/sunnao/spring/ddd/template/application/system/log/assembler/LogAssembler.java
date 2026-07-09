@@ -1,7 +1,7 @@
 package com.sunnao.spring.ddd.template.application.system.log.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.log.model.LoginLogDTO;
-import com.sunnao.spring.ddd.template.client.system.log.model.OperLogDTO;
+import com.sunnao.spring.ddd.template.client.system.log.res.LoginLogDTO;
+import com.sunnao.spring.ddd.template.client.system.log.res.OperLogDTO;
 import com.sunnao.spring.ddd.template.client.system.log.req.QueryLoginLogPageRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.log.req.QueryOperLogPageRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.log.res.QueryLoginLogPageResponseDTO;

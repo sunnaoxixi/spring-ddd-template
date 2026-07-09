@@ -1,6 +1,5 @@
 package com.sunnao.spring.ddd.template.client.system.dict.res;
 
-import com.sunnao.spring.ddd.template.client.system.dict.model.DictDataDTO;
 import com.sunnao.spring.ddd.template.common.model.BaseDto;
 import lombok.Getter;
 import lombok.Setter;
