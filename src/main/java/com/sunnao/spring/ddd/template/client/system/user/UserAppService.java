@@ -12,8 +12,7 @@ import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.common.service.ApplicationCmdService;
 
 /**
- * 用户应用服务接口（写模式）
- * 职责：定义用户相关的写操作接口
+ * 用户应用服务写接口
  */
 public interface UserAppService extends ApplicationCmdService {
 
