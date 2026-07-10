@@ -109,7 +109,7 @@ public enum ErrorCodeEnum {
      */
     EMAIL_DUPLICATE("EMAIL_DUPLICATE", "邮箱已被注册"),
 
-    // ==================== 角色权限 ====================
+    // ==================== 角色 ====================
 
     /**
      * 角色不存在
@@ -125,11 +125,6 @@ public enum ErrorCodeEnum {
      * 内置角色不允许该操作
      */
     ROLE_BUILT_IN("ROLE_BUILT_IN", "内置角色不允许该操作"),
-
-    /**
-     * 权限不存在
-     */
-    PERMISSION_NOT_FOUND("PERMISSION_NOT_FOUND", "权限不存在"),
 
     // ==================== 字典 ====================
 

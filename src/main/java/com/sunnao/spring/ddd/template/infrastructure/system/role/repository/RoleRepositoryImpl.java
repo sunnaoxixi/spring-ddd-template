@@ -9,18 +9,12 @@ import com.sunnao.spring.ddd.template.common.lock.LockFactory;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
-import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.RoleQuery;
-import com.sunnao.spring.ddd.template.domain.system.role.model.value.PermissionKeysValue;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.converter.RoleConverter;
-import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.mapper.PermissionMapper;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.mapper.RoleMapper;
-import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.mapper.RolePermissionMapper;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.mapper.UserRoleMapper;
-import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.PermissionPO;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.RolePO;
-import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.RolePermissionPO;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.UserRolePO;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
 import jakarta.annotation.Resource;
@@ -36,7 +30,7 @@ import java.util.*;
 
 /**
  * 角色仓储实现类
- * 职责：聚合根的持久化与查询，角色-权限/用户-角色关联维护，PO 与聚合根的纯技术转换，无业务逻辑
+ * 职责：聚合根的持久化与查询、用户-角色关联维护，PO 与聚合根的纯技术转换，无业务逻辑
  */
 @Slf4j
 @Component
@@ -49,12 +43,6 @@ public class RoleRepositoryImpl implements RoleRepository {
     private RoleConverter roleConverter;
 
     @Resource
-    private PermissionMapper permissionMapper;
-
-    @Resource
-    private RolePermissionMapper rolePermissionMapper;
-
-    @Resource
     private UserRoleMapper userRoleMapper;
 
     @Resource
@@ -64,9 +52,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     public RoleAggregate query(Long id) throws RepositoryException {
         try {
             RolePO po = roleMapper.selectOneById(id);
-            RoleAggregate aggregate = roleConverter.toAggregate(po);
-            fillPermKeys(aggregate);
-            return aggregate;
+            return roleConverter.toAggregate(po);
         } catch (Exception e) {
             log.error("查询角色失败, id: {}", id, e);
             throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询角色数据异常", e);
@@ -169,64 +155,12 @@ public class RoleRepositoryImpl implements RoleRepository {
             // 2. 逻辑删除角色（deleted 置为 1）
             roleMapper.deleteById(roleId);
 
-            // 3. 清理角色-权限、用户-角色关联（硬删除）
-            rolePermissionMapper.deleteByQuery(
-                    QueryWrapper.create().eq(RolePermissionPO::getRoleId, roleId));
+            // 3. 清理用户-角色关联（硬删除）
             userRoleMapper.deleteByQuery(
                     QueryWrapper.create().eq(UserRolePO::getRoleId, roleId));
         } catch (Exception e) {
             log.error("删除角色失败, roleId: {}", roleId, e);
             throw new RepositoryException(ErrorCodeEnum.DB_DELETE_ERROR, "删除角色数据异常", e);
-        }
-    }
-
-    @Override
-    public List<PermissionEntity> queryAllPermissions() throws RepositoryException {
-        try {
-            QueryWrapper wrapper = QueryWrapper.create().orderBy(PermissionPO::getId, true);
-            return roleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
-        } catch (Exception e) {
-            log.error("查询全部权限点失败", e);
-            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询权限数据异常", e);
-        }
-    }
-
-    @Override
-    public List<PermissionEntity> queryPermissionsByIds(List<Long> permissionIds) throws RepositoryException {
-        try {
-            if (CollUtil.isEmpty(permissionIds)) {
-                return Collections.emptyList();
-            }
-            QueryWrapper wrapper = QueryWrapper.create().in(PermissionPO::getId, permissionIds);
-            return roleConverter.toPermissionEntityList(permissionMapper.selectListByQuery(wrapper));
-        } catch (Exception e) {
-            log.error("批量查询权限点失败, permissionIds: {}", permissionIds, e);
-            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询权限数据异常", e);
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void saveRolePermissions(Long roleId, List<Long> permissionIds) throws RepositoryException {
-        try {
-            // 全量覆盖：先删后插
-            rolePermissionMapper.deleteByQuery(
-                    QueryWrapper.create().eq(RolePermissionPO::getRoleId, roleId));
-            if (CollUtil.isEmpty(permissionIds)) {
-                return;
-            }
-            LocalDateTime now = LocalDateTime.now();
-            List<RolePermissionPO> poList = permissionIds.stream().map(permissionId -> {
-                RolePermissionPO po = new RolePermissionPO();
-                po.setRoleId(roleId);
-                po.setPermissionId(permissionId);
-                po.setCreateAt(now);
-                return po;
-            }).toList();
-            rolePermissionMapper.insertBatch(poList);
-        } catch (Exception e) {
-            log.error("保存角色权限关联失败, roleId: {}, permissionIds: {}", roleId, permissionIds, e);
-            throw new RepositoryException(ErrorCodeEnum.DB_SAVE_ERROR, "保存角色权限关联异常", e);
         }
     }
 
@@ -303,35 +237,6 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    public List<String> queryPermKeysByUserId(Long userId) throws RepositoryException {
-        try {
-            // 1. 用户的启用角色
-            List<RolePO> roles = queryEnabledRolesByUserId(userId);
-            if (roles.isEmpty()) {
-                return Collections.emptyList();
-            }
-            List<Long> roleIds = roles.stream().map(RolePO::getId).toList();
-
-            // 2. 角色关联的权限ID
-            List<RolePermissionPO> rolePermissions = rolePermissionMapper.selectListByQuery(
-                    QueryWrapper.create().in(RolePermissionPO::getRoleId, roleIds));
-            if (rolePermissions.isEmpty()) {
-                return Collections.emptyList();
-            }
-            List<Long> permissionIds = rolePermissions.stream()
-                    .map(RolePermissionPO::getPermissionId).distinct().toList();
-
-            // 3. 权限标识
-            List<PermissionPO> permissions = permissionMapper.selectListByQuery(
-                    QueryWrapper.create().in(PermissionPO::getId, permissionIds));
-            return permissions.stream().map(PermissionPO::getPermKey).distinct().toList();
-        } catch (Exception e) {
-            log.error("查询用户权限标识失败, userId: {}", userId, e);
-            throw new RepositoryException(ErrorCodeEnum.DB_QUERY_ERROR, "查询用户权限数据异常", e);
-        }
-    }
-
-    @Override
     public LevelLock buildLock(String lockKey) {
         return lockFactory.buildLock(lockKey);
     }
@@ -349,26 +254,6 @@ public class RoleRepositoryImpl implements RoleRepository {
         return roleMapper.selectListByQuery(QueryWrapper.create()
                 .in(RolePO::getId, roleIds)
                 .eq(RolePO::getStatus, RoleStatusEnum.ENABLED.getCode()));
-    }
-
-    /**
-     * 查询聚合根详情时填充权限 key 集合
-     */
-    private void fillPermKeys(RoleAggregate aggregate) {
-        if (aggregate == null || aggregate.getRoleEntity() == null || aggregate.getRoleEntity().getId() == null) {
-            return;
-        }
-        List<RolePermissionPO> rolePermissions = rolePermissionMapper.selectListByQuery(
-                QueryWrapper.create().eq(RolePermissionPO::getRoleId, aggregate.getRoleEntity().getId()));
-        if (rolePermissions.isEmpty()) {
-            aggregate.setPermissionKeys(PermissionKeysValue.empty());
-            return;
-        }
-        List<Long> permissionIds = rolePermissions.stream()
-                .map(RolePermissionPO::getPermissionId).distinct().toList();
-        List<PermissionPO> permissions = permissionMapper.selectListByQuery(
-                QueryWrapper.create().in(PermissionPO::getId, permissionIds));
-        aggregate.setPermissionKeys(PermissionKeysValue.of(permissions.stream().map(PermissionPO::getPermKey).toList()));
     }
 
     /**

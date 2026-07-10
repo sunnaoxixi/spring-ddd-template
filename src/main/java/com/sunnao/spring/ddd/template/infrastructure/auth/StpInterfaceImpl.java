@@ -11,10 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Sa-Token 权限数据提供实现
+ * Sa-Token 角色数据提供实现
  * <p>
- * 角色与权限点均取自 RBAC 表（sys_role / sys_permission 及关联表），
- * 仅统计启用状态角色；查询失败降级为空集合（表现为无权限）。
+ * 角色取自 sys_role / sys_user_role，仅统计启用状态角色；
+ * 查询失败降级为空集合（表现为无可用角色）。
  */
 @Slf4j
 @Component
@@ -25,16 +25,7 @@ public class StpInterfaceImpl implements StpInterface {
 
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        try {
-            Long userId = Convert.toLong(loginId);
-            if (userId == null) {
-                return Collections.emptyList();
-            }
-            return roleRepository.queryPermKeysByUserId(userId);
-        } catch (Exception e) {
-            log.error("查询用户权限失败, loginId: {}", loginId, e);
-            return Collections.emptyList();
-        }
+        return Collections.emptyList();
     }
 
     @Override

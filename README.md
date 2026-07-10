@@ -11,8 +11,8 @@
 | MyBatis-Flex      | 1.11.8（`mybatis-flex-spring-boot4-starter`）                    |
 | PostgreSQL        | 17（数据库，docker-compose 默认镜像）                                      |
 | Redis             | 7（会话 / 分布式锁 / 字典缓存 / 登录失败限制）                                  |
-| Sa-Token          | 1.45.0，认证鉴权（token 存 Redis，注解鉴权 `@SaCheckRole` / `@SaCheckPermission`） |
-| Flyway            | 数据库迁移（`db/migration/V1~V6`）                                    |
+| Sa-Token          | 1.45.0，认证鉴权（token 存 Redis，使用 `@SaCheckRole` 按角色鉴权）              |
+| Flyway            | 数据库迁移（`db/migration/V1~V7`）                                    |
 | springdoc-openapi | 3.0.3，API 文档（`/swagger-ui.html`）                             |
 | AWS SDK S3        | 2.31.63，S3 兼容对象存储                                            |
 | Lombok / Hutool / MapStruct | 工具库 / 对象转换                                            |
@@ -91,14 +91,14 @@ Windows 可先执行 `copy .env.example .env`，再用 `.\mvnw.cmd spring-boot:r
 | 模块            | 路由前缀                | 说明                                                                                           |
 |---------------|---------------------|----------------------------------------------------------------------------------------------|
 | 认证 auth       | `/api/auth`         | 登录 / 注册 / 登出 / 当前用户；Sa-Token 会话存 Redis，登录成功写入 token-session 附加信息，登录失败有 Redis 限流 |
-| 用户 user       | `/api/system/users` | 用户 CRUD、启用/禁用、逻辑删除；按 `system:user:read` / `system:user:write` 权限鉴权，角色经 RBAC 关联 |
-| 角色 role（RBAC） | `/api/system/roles` | 角色 CRUD、分配权限、给用户授角色、权限点查询；按 `system:role:read` / `system:role:write` 权限鉴权，`StpInterfaceImpl` 从 RBAC 表读取角色与权限点 |
-| 字典 dict       | `/api/system/dicts` | 类型/数据 CRUD、按 typeKey 查询启用数据；按 `system:dict:read` / `system:dict:write` 权限鉴权，查询走 Redis 缓存，写操作自动失效缓存 |
-| 系统日志 log     | `/api/system/logs`  | 操作日志和登录日志分页查询；按 `system:log:read` 权限鉴权，操作日志由 `@OperLog` 切面异步落库，登录日志由登录流程事件异步落库 |
-| 文件 file       | `/api/system/files` | multipart 上传、下载、删除、分页查询；按 `system:file:read` / `system:file:write` 权限鉴权，`FileStorage` 抽象 + 本地磁盘 / S3 对象存储双实现 |
+| 用户 user       | `/api/system/users` | 用户 CRUD、启用/禁用、逻辑删除；仅 `admin` 角色可访问，角色经用户-角色关联表维护 |
+| 角色 role       | `/api/system/roles` | 角色 CRUD、给用户授角色；仅 `admin` 角色可访问，`StpInterfaceImpl` 从角色表读取用户角色 |
+| 字典 dict       | `/api/system/dicts` | 类型/数据 CRUD、按 typeKey 查询启用数据；写操作仅 `admin`，查询允许 `admin` 或 `user`，查询走 Redis 缓存 |
+| 系统日志 log     | `/api/system/logs`  | 操作日志和登录日志分页查询；仅 `admin` 角色可访问，操作日志和登录日志均异步落库 |
+| 文件 file       | `/api/system/files` | multipart 上传、下载、删除、分页查询；允许 `admin` 或 `user` 角色访问，支持本地磁盘 / S3 双实现 |
 | 在线用户 online  | `/api/system/online` | 在线会话分页查询、按 token 踢下线、按用户踢全部会话；按 `admin` 角色鉴权 |
 
-数据库迁移脚本：`src/main/resources/db/migration/`（V1 用户、V2 RBAC、V3 操作日志、V4 字典、V5 文件、V6 登录日志）。
+数据库迁移脚本：`src/main/resources/db/migration/`（V1 用户、V2 角色关系、V3 操作日志、V4 字典、V5 文件、V6 登录日志、V7 移除权限码表）。
 
 ### 文件存储
 
@@ -168,10 +168,9 @@ $env:TEST_REDIS_HOST = "your-redis-host"
    model 层）。
 6. **application 层**：`scenario/OrderAppServiceImpl`（校验 → Assembler 转 Param → 领域服务 → 组装响应）、
    `assembler/OrderAssembler`。
-7. **adaptor 层**：`input/OrderController`（写接口标 `@OperLog`，按需 `@SaCheckRole` / `@SaCheckPermission`）；调用第三方服务时在
+7. **adaptor 层**：`input/OrderController`（写接口标 `@OperLog`，使用 `@SaCheckRole` 声明允许访问的角色）；调用第三方服务时在
    application 层定义接口、`output/` 提供实现。
-8. **权限点**（可选）：在 RBAC 迁移或新迁移脚本中插入 `sys_permission` 种子并关联角色。
-9. **测试**：领域层单测（Mockito）+ 集成测试（`@EnabledIfEnvironmentVariable` 条件跳过）。
+8. **测试**：领域层单测（Mockito）+ 集成测试（`@EnabledIfEnvironmentVariable` 条件跳过）。
 
 ## 项目结构
 

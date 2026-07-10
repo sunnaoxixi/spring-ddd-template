@@ -6,10 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serial;
-import java.util.List;
-
 /**
- * 获取角色详情响应DTO（含权限 key 集合）
+ * 获取角色详情响应DTO
  */
 @Getter
 @Setter
@@ -23,9 +21,4 @@ public class GetRoleDetailResponseDTO extends BaseDto {
      * 角色信息
      */
     private RoleDTO role;
-
-    /**
-     * 角色拥有的权限标识集合
-     */
-    private List<String> permKeys;
 }

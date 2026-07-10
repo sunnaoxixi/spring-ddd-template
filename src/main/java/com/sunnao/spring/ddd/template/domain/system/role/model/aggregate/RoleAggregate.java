@@ -7,7 +7,6 @@ import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.CreateRoleParam;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.UpdateRoleParam;
-import com.sunnao.spring.ddd.template.domain.system.role.model.value.PermissionKeysValue;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * 角色聚合根
  * <p>
- * 包含角色实体与该角色拥有的权限 key 集合；
+ * 包含角色实体；
  * 外部通过聚合根的业务方法访问和变更内部实体，不通过 getter 直接修改实体。
  */
 @Getter
@@ -30,11 +29,6 @@ public class RoleAggregate extends BaseAggregate {
      * 角色实体
      */
     private RoleEntity roleEntity;
-
-    /**
-     * 权限标识集合值对象
-     */
-    private PermissionKeysValue permissionKeys;
 
     /**
      * 创建角色聚合根

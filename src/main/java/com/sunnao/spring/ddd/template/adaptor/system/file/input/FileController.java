@@ -1,6 +1,7 @@
 package com.sunnao.spring.ddd.template.adaptor.system.file.input;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaMode;
 import com.sunnao.spring.ddd.template.client.system.file.FileAppService;
 import com.sunnao.spring.ddd.template.client.system.file.FileQueryAppService;
 import com.sunnao.spring.ddd.template.client.system.file.req.DeleteFileRequestDTO;
@@ -28,10 +29,11 @@ import java.nio.charset.StandardCharsets;
  * 文件管理 Controller（Input Adaptor）
  * 职责：接收 HTTP 请求，MultipartFile 在本层转换为 DTO 后调用应用层服务，禁止编写业务逻辑
  * <p>
- * 按权限点鉴权（Sa-Token）：下载/分页查询需 system:file:read，上传/删除需 system:file:write。
+ * 管理员和普通用户角色均可访问。
  */
 @Slf4j
-@Tag(name = "文件管理", description = "下载/分页查询（需 system:file:read 权限），上传/删除（需 system:file:write 权限）")
+@Tag(name = "文件管理", description = "上传、下载、删除和分页查询（需 admin 或 user 角色）")
+@SaCheckRole(value = {"admin", "user"}, mode = SaMode.OR)
 @RestController
 @RequestMapping("/api/system/files")
 public class FileController {
@@ -47,7 +49,6 @@ public class FileController {
      */
     @Operation(summary = "上传文件", description = "multipart/form-data，字段名 file")
     @OperLog(module = "file", action = "上传文件")
-    @SaCheckPermission("system:file:write")
     @PostMapping
     public ResultDO<UploadFileResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         // MultipartFile 不越过 adaptor 层，此处转换为自包含 DTO
@@ -67,7 +68,6 @@ public class FileController {
      * 下载文件
      */
     @Operation(summary = "下载文件", description = "返回文件二进制流")
-    @SaCheckPermission("system:file:read")
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> downloadFile(@PathVariable("id") Long id) {
         DownloadFileRequestDTO requestDTO = new DownloadFileRequestDTO();
@@ -100,7 +100,6 @@ public class FileController {
      */
     @Operation(summary = "删除文件", description = "逻辑删除元数据并清理物理文件")
     @OperLog(module = "file", action = "删除文件")
-    @SaCheckPermission("system:file:write")
     @DeleteMapping("/{id}")
     public ResultDO<DeleteFileResponseDTO> deleteFile(@PathVariable("id") Long id) {
         DeleteFileRequestDTO requestDTO = new DeleteFileRequestDTO();
@@ -112,7 +111,6 @@ public class FileController {
      * 分页查询文件列表
      */
     @Operation(summary = "分页查询文件列表")
-    @SaCheckPermission("system:file:read")
     @GetMapping("/page")
     public ResultDO<QueryFilePageResponseDTO> queryFilePage(
             @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,

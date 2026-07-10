@@ -6,7 +6,6 @@ import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
-import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.*;
 import com.sunnao.spring.ddd.template.domain.system.role.repository.RoleRepository;
 import com.sunnao.spring.ddd.template.domain.system.user.repository.UserRepository;
@@ -122,45 +121,6 @@ public class RoleDomainServiceImpl implements RoleDomainService {
             return ResultDO.buildFailResult(e.getCode(), e.getMessage());
         } catch (Throwable e) {
             log.error("删除角色系统异常, param: {}", param, e);
-            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
-        } finally {
-            levelLock.unlock();
-        }
-    }
-
-    @Override
-    public ResultDO<Void> assignPermissions(AssignPermissionParam param) {
-        // 1. 获取锁
-        LevelLock levelLock = roleRepository.buildLock("system:role:update:" + param.getRoleId());
-        if (!levelLock.tryLock()) {
-            return ResultDO.buildFailResult(ErrorCodeEnum.LOCK_FAIL);
-        }
-        try {
-            // 2. 加载聚合根，确认存在
-            RoleAggregate aggregate = roleRepository.query(param.getRoleId());
-            if (aggregate == null) {
-                return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND);
-            }
-
-            // 3. 校验权限点存在性
-            List<Long> permissionIds = param.getPermissionIds() == null
-                    ? List.of() : param.getPermissionIds().stream().distinct().toList();
-            if (CollUtil.isNotEmpty(permissionIds)) {
-                List<PermissionEntity> permissions = roleRepository.queryPermissionsByIds(permissionIds);
-                if (permissions.size() != permissionIds.size()) {
-                    return ResultDO.buildFailResult(ErrorCodeEnum.PERMISSION_NOT_FOUND, "存在无效的权限ID");
-                }
-            }
-
-            // 4. 全量覆盖角色权限关联
-            roleRepository.saveRolePermissions(param.getRoleId(), permissionIds);
-
-            return ResultDO.buildSuccessResult();
-        } catch (BizException e) {
-            log.error("分配权限业务异常, param: {}", param, e);
-            return ResultDO.buildFailResult(e.getCode(), e.getMessage());
-        } catch (Throwable e) {
-            log.error("分配权限系统异常, param: {}", param, e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         } finally {
             levelLock.unlock();

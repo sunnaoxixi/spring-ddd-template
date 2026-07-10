@@ -4,7 +4,6 @@ import com.sunnao.spring.ddd.template.common.exception.RepositoryException;
 import com.sunnao.spring.ddd.template.common.lock.LevelLock;
 import com.sunnao.spring.ddd.template.common.model.AggregateRepository;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
-import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.RoleQuery;
 
 import java.util.List;
@@ -14,8 +13,8 @@ import java.util.Map;
  * 角色仓储接口
  * <p>
  * 定义在 domain 层，实现在 infrastructure 层。
- * 除聚合根 CRUD 外，提供权限点查询、角色-权限/用户-角色关联维护，
- * 以及按用户维度的角色/权限查询（供 Sa-Token StpInterfaceImpl 使用）。
+ * 除聚合根 CRUD 外，提供用户-角色关联维护，
+ * 以及按用户维度的角色查询（供 Sa-Token StpInterfaceImpl 使用）。
  */
 public interface RoleRepository extends AggregateRepository<RoleAggregate, RoleQuery> {
 
@@ -38,39 +37,13 @@ public interface RoleRepository extends AggregateRepository<RoleAggregate, RoleQ
     List<RoleAggregate> queryByIds(List<Long> roleIds) throws RepositoryException;
 
     /**
-     * 逻辑删除角色（同时清理角色-权限、用户-角色关联）
+     * 逻辑删除角色（同时清理用户-角色关联）
      *
      * @param roleId     角色ID
      * @param operatorId 操作人ID
      * @throws RepositoryException 异常
      */
     void delete(Long roleId, Long operatorId) throws RepositoryException;
-
-    /**
-     * 查询全部权限点
-     *
-     * @return 权限实体列表
-     * @throws RepositoryException 异常
-     */
-    List<PermissionEntity> queryAllPermissions() throws RepositoryException;
-
-    /**
-     * 根据权限ID集合批量查询权限点（用于分配权限时校验存在性）
-     *
-     * @param permissionIds 权限ID集合
-     * @return 权限实体列表
-     * @throws RepositoryException 异常
-     */
-    List<PermissionEntity> queryPermissionsByIds(List<Long> permissionIds) throws RepositoryException;
-
-    /**
-     * 保存角色的权限关联（全量覆盖：先删后插）
-     *
-     * @param roleId        角色ID
-     * @param permissionIds 权限ID集合（空集合表示清空权限）
-     * @throws RepositoryException 异常
-     */
-    void saveRolePermissions(Long roleId, List<Long> permissionIds) throws RepositoryException;
 
     /**
      * 保存用户的角色关联（全量覆盖：先删后插）
@@ -98,15 +71,6 @@ public interface RoleRepository extends AggregateRepository<RoleAggregate, RoleQ
      * @throws RepositoryException 异常
      */
     Map<Long, List<String>> queryRoleKeysByUserIds(List<Long> userIds) throws RepositoryException;
-
-    /**
-     * 查询用户拥有的权限标识集合（经启用状态的角色关联，供 Sa-Token 鉴权）
-     *
-     * @param userId 用户ID
-     * @return 权限标识列表
-     * @throws RepositoryException 异常
-     */
-    List<String> queryPermKeysByUserId(Long userId) throws RepositoryException;
 
     /**
      * 构建分布式锁

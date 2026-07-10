@@ -5,7 +5,6 @@ import com.sunnao.spring.ddd.template.client.system.role.RoleQueryAppService;
 import com.sunnao.spring.ddd.template.client.system.role.req.GetRoleDetailRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.role.req.QueryRolePageRequestDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryRolePageResponseDTO;
 import com.sunnao.spring.ddd.template.common.model.PageQuery;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
@@ -41,7 +40,7 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
                 return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
             }
 
-            // 2. 查询本领域角色数据（含权限 key 集合）
+            // 2. 查询本领域角色数据
             RoleAggregate aggregate = roleRepository.query(requestDTO.getRoleId());
             if (aggregate == null) {
                 return ResultDO.buildFailResult(ErrorCodeEnum.ROLE_NOT_FOUND);
@@ -77,19 +76,6 @@ public class RoleQueryAppServiceImpl implements RoleQueryAppService {
                     roleAssembler.toQueryRolePageResponseDTO(page.getTotalElements(), page.getContent()));
         } catch (Exception e) {
             log.error("分页查询角色失败, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
-        }
-    }
-
-    @Override
-    public ResultDO<QueryPermissionListResponseDTO> queryPermissionList() {
-        try {
-            // 1. 查询全部权限点
-            // 2. 组装响应 DTO
-            return ResultDO.buildSuccessResult(
-                    roleAssembler.toQueryPermissionListResponseDTO(roleRepository.queryAllPermissions()));
-        } catch (Exception e) {
-            log.error("查询权限点列表失败", e);
             return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
         }
     }

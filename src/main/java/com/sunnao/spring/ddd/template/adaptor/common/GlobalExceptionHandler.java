@@ -1,7 +1,6 @@
 package com.sunnao.spring.ddd.template.adaptor.common;
 
 import cn.dev33.satoken.exception.NotLoginException;
-import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
@@ -41,16 +40,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotRoleException.class)
     public ResponseEntity<ResultDO<Void>> handleNotRole(NotRoleException e) {
         log.warn("角色鉴权未通过, role: {}", e.getRole());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ResultDO.buildFailResult(ErrorCodeEnum.NO_PERMISSION));
-    }
-
-    /**
-     * 权限不满足
-     */
-    @ExceptionHandler(NotPermissionException.class)
-    public ResponseEntity<ResultDO<Void>> handleNotPermission(NotPermissionException e) {
-        log.warn("权限鉴权未通过, permission: {}", e.getPermission());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ResultDO.buildFailResult(ErrorCodeEnum.NO_PERMISSION));
     }

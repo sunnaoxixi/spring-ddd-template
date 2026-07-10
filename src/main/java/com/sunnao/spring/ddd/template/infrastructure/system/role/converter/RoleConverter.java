@@ -1,9 +1,7 @@
 package com.sunnao.spring.ddd.template.infrastructure.system.role.converter;
 
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
-import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
-import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.PermissionPO;
 import com.sunnao.spring.ddd.template.infrastructure.system.role.mysql.po.RolePO;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
 import org.mapstruct.Mapper;
@@ -15,7 +13,7 @@ import java.util.List;
 
 /**
  * 角色数据转换器
- * 职责：聚合根（内部 RoleEntity）/ 权限实体与 PO 之间的纯技术转换，无业务逻辑
+ * 职责：聚合根（内部 RoleEntity）与 PO 之间的纯技术转换，无业务逻辑
  */
 @Mapper(componentModel = "spring")
 public interface RoleConverter {
@@ -34,12 +32,7 @@ public interface RoleConverter {
     RolePO toRolePO(RoleEntity entity);
 
     /**
-     * 权限 PO 转换为权限实体
-     */
-    PermissionEntity toPermissionEntity(PermissionPO po);
-
-    /**
-     * PO 转换为聚合根（内部构建 RoleEntity，权限 key 集合由仓储按需填充）
+     * PO 转换为聚合根（内部构建 RoleEntity）
      */
     default RoleAggregate toAggregate(RolePO po) {
         if (po == null) {
@@ -68,16 +61,6 @@ public interface RoleConverter {
             return Collections.emptyList();
         }
         return poList.stream().map(this::toAggregate).toList();
-    }
-
-    /**
-     * 权限 PO 列表转换为权限实体列表
-     */
-    default List<PermissionEntity> toPermissionEntityList(List<PermissionPO> poList) {
-        if (poList == null || poList.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return poList.stream().map(this::toPermissionEntity).toList();
     }
 
     // ========== 枚举转换辅助方法 ==========

@@ -57,15 +57,12 @@
 - **修复**：在 `DictRepositoryImpl.queryEnabledDataByTypeKey` 回源数据库时，先校验字典类型状态为启用；类型不存在或已禁用时返回空列表。
 - **关键文件**：`@/src/main/java/com/sunnao/spring/ddd/template/infrastructure/system/dict/repository/DictRepositoryImpl.java`
 
-### 2.5 P1-5 按种子权限矩阵落地 `@SaCheckPermission`
+### 2.5 P1-5 角色鉴权访问矩阵
 
-- **问题**：控制器统一使用 `@SaCheckRole("admin")`，未体现 RBAC 细粒度权限点。
-- **修复**：按种子权限矩阵替换为 `@SaCheckPermission`：
-  - `UserController`：读操作 `system:user:read`，写操作 `system:user:write`
-  - `RoleController`：读操作 `system:role:read`，写操作 `system:role:write`
-  - `DictController`：读操作 `system:dict:read`，写操作 `system:dict:write`
-  - `FileController`：读操作 `system:file:read`，写操作 `system:file:write`
-  - `LogController`：读操作 `system:log:read`
+- **当前方案**：项目已移除权限码功能，控制器统一使用 `@SaCheckRole`：
+  - `UserController`、`RoleController`、`LogController`、`OnlineController`：仅 `admin`
+  - `DictController`：写操作仅 `admin`，查询允许 `admin` 或 `user`
+  - `FileController`：允许 `admin` 或 `user`
 - **关键文件**：`@/src/main/java/com/sunnao/spring/ddd/template/adaptor/system/**/input/*Controller.java`
 
 ### 2.6 M-6 `JvmLevelLock` 锁注册表引用计数防泄漏
@@ -170,7 +167,7 @@
 4. **关注事务传播**：`UserRepositoryImpl.saveWithRoles` / `deleteWithRoles` 已在实现类加 `@Transactional`，调用方（`UserDomainServiceImpl`）无需再加事务，避免嵌套事务带来的回滚边界问题。
 5. **缓存一致性**：M-11 已把字典缓存失效延迟到事务提交后，但仍建议在高并发场景下增加缓存读取的短暂降级或双删策略兜底。
 6. **接口兼容性**：M-9 改变了 `OnlineController.kickByToken` 的 URL 与入参方式，前端/接口文档需同步更新；DTO 的 `toString` 已排除 token，但仍需确保日志框架不单独打印请求体字段。
-7. **权限矩阵落地**：P1-5 已按种子矩阵替换 `@SaCheckPermission`，需同步检查数据库初始化脚本（`V2__init_rbac.sql`）中的权限点是否包含上述编码，否则管理员接口会 403。
+7. **角色矩阵落地**：P1-5 已改为角色鉴权；新增接口时需明确标注允许访问的角色，并同步前端菜单可见性。
 
 ---
 

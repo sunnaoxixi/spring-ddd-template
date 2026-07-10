@@ -1,13 +1,10 @@
 package com.sunnao.spring.ddd.template.application.system.role.assembler;
 
-import com.sunnao.spring.ddd.template.client.system.role.res.PermissionDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.RoleDTO;
 import com.sunnao.spring.ddd.template.client.system.role.req.*;
 import com.sunnao.spring.ddd.template.client.system.role.res.GetRoleDetailResponseDTO;
-import com.sunnao.spring.ddd.template.client.system.role.res.QueryPermissionListResponseDTO;
 import com.sunnao.spring.ddd.template.client.system.role.res.QueryRolePageResponseDTO;
 import com.sunnao.spring.ddd.template.domain.system.role.model.aggregate.RoleAggregate;
-import com.sunnao.spring.ddd.template.domain.system.role.model.entity.PermissionEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.entity.RoleEntity;
 import com.sunnao.spring.ddd.template.domain.system.role.model.param.*;
 import com.sunnao.spring.ddd.template.model.system.role.RoleStatusEnum;
@@ -52,12 +49,6 @@ public interface RoleAssembler {
     DeleteRoleParam toDeleteParam(DeleteRoleRequestDTO requestDTO, @Context Long operatorId);
 
     /**
-     * 分配权限 RequestDTO 转领域 Param
-     */
-    @Mapping(target = "operatorId", expression = "java(operatorId)")
-    AssignPermissionParam toAssignPermissionParam(AssignPermissionRequestDTO requestDTO, @Context Long operatorId);
-
-    /**
      * 给用户授角色 RequestDTO 转领域 Param
      */
     @Mapping(target = "operatorId", expression = "java(operatorId)")
@@ -96,13 +87,11 @@ public interface RoleAssembler {
     }
 
     /**
-     * 聚合根转角色详情 ResponseDTO（含权限 key 集合）
+     * 聚合根转角色详情 ResponseDTO
      */
     default GetRoleDetailResponseDTO toGetRoleDetailResponseDTO(RoleAggregate aggregate) {
         GetRoleDetailResponseDTO responseDTO = new GetRoleDetailResponseDTO();
         responseDTO.setRole(toRoleDTO(aggregate));
-        responseDTO.setPermKeys(aggregate.getPermissionKeys() == null
-                ? Collections.emptyList() : aggregate.getPermissionKeys().getKeys());
         return responseDTO;
     }
 
@@ -119,24 +108,6 @@ public interface RoleAssembler {
         responseDTO.setRoles(aggregates.stream().map(this::toRoleDTO).toList());
         return responseDTO;
     }
-
-    /**
-     * 权限实体列表转 ResponseDTO
-     */
-    default QueryPermissionListResponseDTO toQueryPermissionListResponseDTO(List<PermissionEntity> entities) {
-        QueryPermissionListResponseDTO responseDTO = new QueryPermissionListResponseDTO();
-        if (entities == null || entities.isEmpty()) {
-            responseDTO.setPermissions(Collections.emptyList());
-            return responseDTO;
-        }
-        responseDTO.setPermissions(entities.stream().map(this::toPermissionDTO).toList());
-        return responseDTO;
-    }
-
-    /**
-     * 权限实体转 PermissionDTO
-     */
-    PermissionDTO toPermissionDTO(PermissionEntity entity);
 
     // ========== 枚举转换辅助方法 ==========
 

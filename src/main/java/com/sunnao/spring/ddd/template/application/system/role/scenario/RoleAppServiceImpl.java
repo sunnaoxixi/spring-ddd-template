@@ -106,32 +106,6 @@ public class RoleAppServiceImpl implements RoleAppService {
     }
 
     @Override
-    public ResultDO<AssignPermissionResponseDTO> assignPermissions(AssignPermissionRequestDTO requestDTO) {
-        try {
-            // 1. 参数自校验
-            ResultDO<Void> checkResult = requestDTO.check();
-            if (!checkResult.isSuccess()) {
-                return ResultDO.buildFailResult(checkResult.getCode(), checkResult.getMsg());
-            }
-
-            // 2. 调用领域服务分配权限（操作人取自当前登录用户）
-            ResultDO<Void> domainResult = roleDomainService.assignPermissions(
-                    roleAssembler.toAssignPermissionParam(requestDTO, CurrentUserContext.getUserId()));
-            if (!domainResult.isSuccess()) {
-                return ResultDO.buildFailResult(domainResult.getCode(), domainResult.getMsg());
-            }
-
-            // 3. 组装响应
-            AssignPermissionResponseDTO responseDTO = new AssignPermissionResponseDTO();
-            responseDTO.setRoleId(requestDTO.getRoleId());
-            return ResultDO.buildSuccessResult(responseDTO);
-        } catch (Exception e) {
-            log.error("分配权限系统异常, requestDTO: {}", requestDTO, e);
-            return ResultDO.buildFailResult(ErrorCodeEnum.SYSTEM_ERROR);
-        }
-    }
-
-    @Override
     public ResultDO<AssignUserRoleResponseDTO> assignUserRoles(AssignUserRoleRequestDTO requestDTO) {
         try {
             // 1. 参数自校验

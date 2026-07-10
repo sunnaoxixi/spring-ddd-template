@@ -1,12 +1,12 @@
 # Spring DDD Template 前端需求文档
 
-> 本文档基于后端项目 `spring-ddd-template` 的实际 Controller / DTO / 权限配置逐一梳理生成，
+> 本文档基于后端项目 `spring-ddd-template` 的实际 Controller / DTO / 角色配置逐一梳理生成，
 > 描述前端需要实现的菜单结构、页面清单与每个页面的功能点、所需接口，供前端团队据此设计具体实现方案。
 > 文档不涉及技术选型与代码实现方式，仅描述"需要什么"，"怎么做"由前端团队自行决定。
 >
 > 后端源码依据：`adaptor/**/input/*Controller.java`、`client/**/req|res|model/*.java`、
 > `common/result/ErrorCodeEnum.java`、`infrastructure/auth/StpInterfaceImpl.java`、
-> `db/migration/V2__init_rbac.sql`（截至最近一次同步）。
+> `db/migration/V2__init_rbac.sql`、`db/migration/V7__drop_permission_tables.sql`（截至最近一次同步）。
 
 ---
 
@@ -30,19 +30,15 @@
 
 ---
 
-## 2. 权限模型说明
+## 2. 角色鉴权模型说明
 
-系统采用"角色 + 权限点"两级鉴权模型：
+系统只按角色鉴权，登录、注册和 `GET /api/auth/me` 返回用户的角色标识列表。前端应直接使用该列表控制菜单和操作入口：
 
-- 大多数管理功能按**权限点**校验，权限点命名规则为 `{模块}:{read|write}`，例如 `system:user:read`（查询用户）、`system:user:write`（新增/编辑/删除/启停用户）。查询类操作需要 `read`，写操作（新增/编辑/删除/状态变更）需要 `write`。
-- **在线用户管理**是唯一的例外，不按权限点校验，而是要求用户必须拥有 `admin` 角色。
-- 角色可以在"角色管理"页面自由创建，每个角色可分配任意权限点组合（不局限于预置的 `admin`/`user` 两种角色），因此一个用户实际拥有哪些权限点取决于他被分配的角色。
+- `admin`：可访问用户、角色、字典、文件、日志和在线用户管理。
+- `user`：可读取字典数据，并可使用文件上传、下载、删除和查询接口。
+- 自定义角色：可以创建并分配给用户，但只有后端接口显式声明该角色时才获得对应访问能力。
 
-### ⚠️ 需要与后端确认的接口缺口
-
-当前"获取当前登录用户信息"接口（`GET /api/auth/me`）只返回用户的**角色标识列表**（如 `["admin"]`），**不返回该用户实际拥有的权限点列表**。由于权限点是通过角色间接分配、且角色可自定义，前端目前**没有可用接口**得知"当前用户是否拥有 `system:user:write` 这类具体权限点"，无法据此实现按钮级的权限显隐控制，只能做到"是否拥有某个角色"的粗粒度判断。
-
-建议后端补充一个"获取当前用户权限点列表"的接口（例如 `GET /api/auth/permissions`，返回当前用户的 `permKeys` 数组），前端登录后拉取一次即可支撑页面级和按钮级的权限控制。在该接口补齐之前，前端只能对"用户管理""角色管理""字典管理""文件管理""日志管理""在线用户"等菜单做粗粒度的角色级展示/隐藏，无法精确到具体的新增/编辑/删除按钮。
+后端不再提供权限码列表、角色分配权限或按钮级权限码接口。前端无需维护权限码集合，也不应请求角色权限列表。
 
 ---
 
@@ -71,7 +67,6 @@
 | `ROLE_NOT_FOUND` | 角色不存在 | —— |
 | `ROLE_KEY_DUPLICATE` | 角色标识已存在 | 创建角色时标识冲突，需在表单对应字段提示 |
 | `ROLE_BUILT_IN` | 内置角色不允许该操作 | 尝试删除/禁用内置角色（`admin`/`user`）时返回，页面上应提前禁用相关按钮 |
-| `PERMISSION_NOT_FOUND` | 权限不存在 | —— |
 | `DICT_TYPE_NOT_FOUND` / `DICT_DATA_NOT_FOUND` | 字典类型/数据不存在 | —— |
 | `DICT_VALUE_DUPLICATE` | 同类型下字典值已存在 | 创建字典数据时值冲突 |
 | `TYPE_KEY_DUPLICATE` | 字典类型键已存在 | 创建字典类型时键冲突 |
@@ -84,7 +79,7 @@
 
 ## 4. 菜单结构设计
 
-依据后端 7 个功能模块设计的菜单树（方括号内为该菜单项可见所需的权限，多个权限点用 `|` 表示"满足其一即可见"）：
+依据后端 7 个功能模块设计的菜单树（方括号内为该菜单项可见所需的角色）：
 
 ```
 ├─ 登录页                                （游客可访问；已登录自动跳转首页）
@@ -92,16 +87,16 @@
 │
 └─ 登录后主框架
    ├─ 首页                               （任意已登录用户）
-   ├─ 系统管理                            [下级任一权限满足即可见]
-   │  ├─ 用户管理                        [system:user:read]
-   │  ├─ 角色管理                        [system:role:read]
-   │  ├─ 字典管理                        [system:dict:read]
+   ├─ 系统管理                            [admin | user]
+   │  ├─ 用户管理                        [admin]
+   │  ├─ 角色管理                        [admin]
+   │  ├─ 字典管理                        [admin | user]
    │  │   └─ 字典数据（二级页面，从字典类型列表跳转进入，非独立菜单项）
-   │  ├─ 文件管理                        [system:file:read]
+   │  ├─ 文件管理                        [admin | user]
    │  ├─ 日志管理
-   │  │  ├─ 操作日志                     [system:log:read]
-   │  │  └─ 登录日志                     [system:log:read]
-   │  └─ 在线用户                        [角色: admin]
+   │  │  ├─ 操作日志                     [admin]
+   │  │  └─ 登录日志                     [admin]
+   │  └─ 在线用户                        [admin]
    ├─ 个人中心                            （任意已登录用户，不在侧边菜单，通过头像入口进入）
    ├─ 403 无权限提示页
    └─ 404 未找到提示页
@@ -109,9 +104,9 @@
 
 **设计依据：**
 
-- 用户 / 角色 / 字典 / 文件 / 日志 5 个子菜单严格对应后端 `system:{模块}:read|write` 权限点。
-- **在线用户**要求 `admin` 角色而非权限点，菜单可见性判断逻辑与其余 5 项不同。
-- **日志管理**下操作日志与登录日志共用同一权限点 `system:log:read`，但两者字段结构、筛选条件完全不同，建议拆成两个独立页面分别维护各自的筛选状态（也可合并为一个页面用 Tab 切换，取决于前端团队的取舍，不影响接口对接方式）。
+- 用户、角色、日志和在线用户仅对 `admin` 展示。
+- 字典和文件对 `admin`、`user` 展示，但字典写操作按钮只对 `admin` 展示。
+- **日志管理**下操作日志与登录日志字段结构、筛选条件不同，建议拆成两个独立页面分别维护各自的筛选状态，也可合并为一个页面用 Tab 切换。
 - **字典数据**不是独立菜单项，而是"字典类型列表 → 选中某个类型 → 进入该类型下的字典数据管理"的二级页面，因为字典数据必须归属于某个已存在的字典类型。
 
 ---
@@ -159,7 +154,7 @@
 | 权限控制 | 任意已登录用户可访问 |
 | 所需接口 | `GET /api/auth/me`（回显）；`PUT /api/system/users/{id}`（保存修改，`id` 为当前登录用户自身的 ID） |
 | 跳转关系 | 无 |
-| ⚠️ 需与后端确认 | 保存资料所调用的接口当前要求 `system:user:write` 权限，若普通用户没有该权限，将无法修改自己的资料——需要确认"修改本人资料"是否应豁免该权限校验，这属于需求确认事项，不是前端能自行决定的 |
+| ⚠️ 需与后端确认 | 保存资料所调用的用户修改接口仅允许 `admin` 角色，普通用户当前无法通过该接口修改本人资料；如需开放，应新增独立的个人资料接口 |
 
 ---
 
@@ -173,7 +168,7 @@
 | 数据展示 | 用户 ID、邮箱、昵称、头像、状态（启用/禁用）、所属角色（可能多个）、创建时间；分页展示 |
 | 搜索筛选 | 邮箱（模糊匹配）、昵称（模糊匹配）、状态（全部/启用/禁用） |
 | 表单操作 | 新增用户（邮箱、昵称、密码、头像、角色，角色可不选，不选时默认赋予"普通用户"角色）；编辑资料（仅昵称、头像可改，邮箱和密码不可在此修改）；启用/禁用；删除（逻辑删除，需二次确认）；分配角色（勾选角色列表，保存后整体覆盖该用户的角色） |
-| 权限控制 | 查看列表/详情需要 `system:user:read`；新增、编辑、启停、删除、分配角色均需要 `system:user:write` |
+| 权限控制 | 整个页面及全部操作仅 `admin` 角色可访问 |
 | 所需接口 | `GET /api/system/users/page`（分页列表）<br>`GET /api/system/users/{id}`（用户详情）<br>`POST /api/system/users`（新增）<br>`PUT /api/system/users/{id}`（编辑资料）<br>`PUT /api/system/users/{id}/status`（启用/禁用）<br>`DELETE /api/system/users/{id}`（删除）<br>`PUT /api/system/roles/users/{userId}`（分配角色，接口属于角色模块，入口放在用户页） |
 | 跳转关系 | 无强制跳转，分配角色/编辑等均可用弹窗或抽屉在本页完成 |
 
@@ -185,15 +180,14 @@
 | 项目 | 内容 |
 |---|---|
 | 路径建议 | `/system/role` |
-| 功能描述 | 角色的增删改查与权限分配 |
+| 功能描述 | 角色的增删改查与用户角色分配 |
 | 数据展示 | 角色 ID、角色标识、角色名称、状态、备注、创建时间；内置角色（`admin`/`user`）需要有视觉区分标识 |
 | 搜索筛选 | 角色标识（精确匹配）、角色名称（模糊匹配）、状态 |
-| 表单操作 | 新增角色（角色标识、角色名称、备注；角色标识需以小写字母开头，仅含小写字母/数字/下划线/中划线）；编辑角色（仅名称/状态/备注可改，角色标识创建后不可变更）；删除角色（内置角色 `admin`/`user` 不允许删除，页面上应提前禁用其删除按钮）；分配权限（展示全部权限点供勾选，保存后整体覆盖该角色的权限集合） |
-| 权限控制 | 查看列表/详情/权限点列表需要 `system:role:read`；新增、编辑、删除、分配权限均需要 `system:role:write` |
-| 所需接口 | `GET /api/system/roles/page`（分页列表）<br>`GET /api/system/roles/{id}`（角色详情，含已拥有的权限点集合，用于回显"分配权限"弹窗）<br>`GET /api/system/roles/permissions`（获取全部权限点，用于渲染权限勾选列表）<br>`POST /api/system/roles`（新增）<br>`PUT /api/system/roles/{id}`（编辑）<br>`DELETE /api/system/roles/{id}`（删除）<br>`PUT /api/system/roles/{id}/permissions`（分配权限，整体覆盖，需提示"未勾选的权限将被移除"） |
-| 权限点分组说明 | 权限点接口返回的是扁平列表（如 `system:user:read`），没有层级结构，前端展示权限勾选列表时建议按权限标识的模块前缀（`user`/`role`/`dict`/`file`/`log`）自行分组，便于用户理解 |
+| 表单操作 | 新增角色（角色标识、角色名称、备注；角色标识需以小写字母开头，仅含小写字母/数字/下划线/中划线）；编辑角色（仅名称/状态/备注可改，角色标识创建后不可变更）；删除角色（内置角色 `admin`/`user` 不允许删除，页面上应提前禁用其删除按钮） |
+| 权限控制 | 整个页面及全部操作仅 `admin` 角色可访问 |
+| 所需接口 | `GET /api/system/roles/page`（分页列表）<br>`GET /api/system/roles/{id}`（角色详情）<br>`POST /api/system/roles`（新增）<br>`PUT /api/system/roles/{id}`（编辑）<br>`DELETE /api/system/roles/{id}`（删除）<br>`PUT /api/system/roles/users/{userId}`（给用户分配角色） |
 | 特殊说明 | 禁用 `admin` 角色会被后端拒绝（内置管理员角色不允许禁用），建议前端对该角色的状态切换控件直接禁用交互 |
-| 跳转关系 | 分配权限、分配角色均在本页内以弹窗/抽屉方式完成，不跳转 |
+| 跳转关系 | 角色编辑和用户角色分配可在本页或用户页以弹窗/抽屉方式完成 |
 
 ---
 
@@ -207,7 +201,7 @@
 | 数据展示 | 类型 ID、类型键、类型名称、状态、备注、创建时间 |
 | 搜索筛选 | 类型键（精确匹配）、类型名称（模糊匹配）、状态 |
 | 表单操作 | 新增字典类型（类型键、类型名称、备注）；编辑（仅名称/状态/备注可改，类型键创建后不可变更）；删除（需在二次确认提示中明确说明"将同时删除其下全部字典数据"，因为后端是级联删除） |
-| 权限控制 | 查看需要 `system:dict:read`；新增、编辑、删除需要 `system:dict:write` |
+| 权限控制 | `admin`、`user` 可查看；新增、编辑、删除仅 `admin` 可操作 |
 | 所需接口 | `GET /api/system/dicts/types/page`（分页列表）<br>`POST /api/system/dicts/types`（新增）<br>`PUT /api/system/dicts/types/{id}`（编辑）<br>`DELETE /api/system/dicts/types/{id}`（删除，级联删除其下数据） |
 | 跳转关系 | 每行提供"字典数据"操作，点击后进入该类型对应的字典数据管理页，并携带类型键作为定位参数 |
 
@@ -219,7 +213,7 @@
 | 数据展示 | 页面需明确标识当前所属的字典类型；表格列：数据 ID、标签、值、排序、状态、备注；默认按排序升序展示 |
 | 搜索筛选 | 该场景数据量通常不大，可不做服务端分页筛选，一次性拉取当前类型下全部数据 |
 | 表单操作 | 新增字典数据（标签、值、排序、备注，类型键固定为当前类型不可选）；编辑（标签/值/排序/状态/备注可改，类型键不可变更）；删除 |
-| 权限控制 | 查看需要 `system:dict:read`；新增、编辑、删除需要 `system:dict:write` |
+| 权限控制 | `admin`、`user` 可查看；新增、编辑、删除仅 `admin` 可操作 |
 | 所需接口 | `GET /api/system/dicts/data/all?typeKey=xxx`（管理端查询，含禁用项，本页面使用这个接口而非下方业务表单用的接口）<br>`POST /api/system/dicts/data`（新增）<br>`PUT /api/system/dicts/data/{id}`（编辑）<br>`DELETE /api/system/dicts/data/{id}`（删除） |
 | 跳转关系 | 提供返回字典类型列表页的入口 |
 | 补充说明 | 系统内其他业务表单如需要展示"字典下拉选项"（例如某处需要选择一个启用状态的字典项），应调用另一个只读接口 `GET /api/system/dicts/data?typeKey=xxx`（仅返回启用项），与本页面管理用的"查询全部"接口是两个不同的接口，用途不同不要混用 |
@@ -236,7 +230,7 @@
 | 数据展示 | 文件 ID、原始文件名、大小、文件类型、存储方式、上传人、上传时间 |
 | 搜索筛选 | 原始文件名（模糊匹配）、上传人 |
 | 表单操作 | 上传文件（单文件，建议上传前校验大小不超过 10MB 且非空）；下载文件；删除文件（逻辑删除 + 清理物理文件，需二次确认） |
-| 权限控制 | 查看、下载需要 `system:file:read`；上传、删除需要 `system:file:write` |
+| 权限控制 | `admin`、`user` 均可查看、上传、下载和删除 |
 | 所需接口 | `GET /api/system/files/page`（分页列表）<br>`POST /api/system/files`（上传）<br>`GET /api/system/files/{id}/download`（下载，返回二进制流，与其他接口的统一响应结构不同）<br>`DELETE /api/system/files/{id}`（删除） |
 | 跳转关系 | 无 |
 
@@ -252,7 +246,7 @@
 | 数据展示 | 日志 ID、链路追踪 ID、操作人、业务模块、操作动作、请求地址、参数摘要、结果、耗时、客户端 IP、操作时间 |
 | 搜索筛选 | 业务模块、操作人、操作时间范围 |
 | 表单操作 | 无（纯查询页面） |
-| 权限控制 | 需要 `system:log:read` |
+| 权限控制 | 仅 `admin` 角色可访问 |
 | 所需接口 | `GET /api/system/logs/page` |
 | 跳转关系 | 无 |
 
@@ -264,11 +258,11 @@
 | 数据展示 | 日志 ID、链路追踪 ID、用户 ID（登录失败时可能为空）、登录邮箱、是否成功、结果说明（失败原因）、客户端 IP、User-Agent、登录时间 |
 | 搜索筛选 | 邮箱、用户 ID、是否成功、登录时间范围 |
 | 表单操作 | 无（纯查询页面） |
-| 权限控制 | 需要 `system:log:read` |
+| 权限控制 | 仅 `admin` 角色可访问 |
 | 所需接口 | `GET /api/system/logs/login/page` |
 | 跳转关系 | 无 |
 
-> 两个日志页面共用同一个权限点，是否合并为一个页面用 Tab 区分由前端自行决定，不影响接口调用方式。
+> 两个日志页面都要求 `admin` 角色，是否合并为一个页面用 Tab 区分由前端自行决定，不影响接口调用方式。
 
 ---
 
@@ -282,7 +276,7 @@
 | 数据展示 | 用户 ID、登录邮箱、昵称、登录 IP、User-Agent、登录时间；同一用户多端登录会展示为多条独立记录 |
 | 搜索筛选 | 当前接口只支持分页，不支持按用户/邮箱筛选；如需要该能力需与后端沟通扩展接口 |
 | 表单操作 | 按单个会话强制下线；按用户强制下线其全部会话（一键踢出该用户所有在线设备） |
-| 权限控制 | 整个页面仅 `admin` 角色可访问（与其余系统管理页面按权限点校验不同，这里是按角色校验） |
+| 权限控制 | 整个页面仅 `admin` 角色可访问 |
 | 所需接口 | `GET /api/system/online/page`（分页列表）<br>`DELETE /api/system/online/tokens`（按会话强制下线，需要传递该会话的标识）<br>`DELETE /api/system/online/users/{userId}`（按用户强制下线全部会话） |
 | 跳转关系 | 无 |
 | 特殊说明 | 若管理员踢下线的正是自己当前所在的会话，操作成功后应引导用户重新登录 |
@@ -291,60 +285,55 @@
 
 ## 6. 接口总览表
 
-| 模块 | Method | 路径 | 说明 | 所需权限 |
+| 模块 | Method | 路径 | 说明 | 所需角色 |
 |---|---|---|---|---|
 | 认证 | POST | `/api/auth/login` | 登录 | 无 |
 | 认证 | POST | `/api/auth/register` | 注册（自动登录） | 无 |
 | 认证 | POST | `/api/auth/logout` | 登出 | 已登录 |
 | 认证 | GET | `/api/auth/me` | 当前登录用户信息 | 已登录 |
-| 认证 | GET | `/api/auth/permissions` | ⚠️ 待新增：当前用户权限点列表 | 已登录 |
-| 用户 | GET | `/api/system/users/page` | 分页查询用户 | `system:user:read` |
-| 用户 | GET | `/api/system/users/{id}` | 用户详情 | `system:user:read` |
-| 用户 | POST | `/api/system/users` | 创建用户 | `system:user:write` |
-| 用户 | PUT | `/api/system/users/{id}` | 修改用户资料 | `system:user:write` |
-| 用户 | PUT | `/api/system/users/{id}/status` | 启用/禁用用户 | `system:user:write` |
-| 用户 | DELETE | `/api/system/users/{id}` | 删除用户 | `system:user:write` |
-| 角色 | GET | `/api/system/roles/page` | 分页查询角色 | `system:role:read` |
-| 角色 | GET | `/api/system/roles/{id}` | 角色详情（含权限点） | `system:role:read` |
-| 角色 | GET | `/api/system/roles/permissions` | 查询全部权限点 | `system:role:read` |
-| 角色 | POST | `/api/system/roles` | 创建角色 | `system:role:write` |
-| 角色 | PUT | `/api/system/roles/{id}` | 修改角色 | `system:role:write` |
-| 角色 | DELETE | `/api/system/roles/{id}` | 删除角色（内置角色禁止） | `system:role:write` |
-| 角色 | PUT | `/api/system/roles/{id}/permissions` | 分配权限（全量覆盖） | `system:role:write` |
-| 角色 | PUT | `/api/system/roles/users/{userId}` | 给用户授角色（全量覆盖） | `system:role:write` |
-| 字典 | GET | `/api/system/dicts/types/page` | 分页查询字典类型 | `system:dict:read` |
-| 字典 | POST | `/api/system/dicts/types` | 创建字典类型 | `system:dict:write` |
-| 字典 | PUT | `/api/system/dicts/types/{id}` | 修改字典类型 | `system:dict:write` |
-| 字典 | DELETE | `/api/system/dicts/types/{id}` | 删除字典类型（级联删数据） | `system:dict:write` |
-| 字典 | GET | `/api/system/dicts/data?typeKey=` | 查询启用字典数据（业务表单下拉用） | `system:dict:read` |
-| 字典 | GET | `/api/system/dicts/data/all?typeKey=` | 查询全部字典数据（管理端页面用） | `system:dict:read` |
-| 字典 | POST | `/api/system/dicts/data` | 创建字典数据 | `system:dict:write` |
-| 字典 | PUT | `/api/system/dicts/data/{id}` | 修改字典数据 | `system:dict:write` |
-| 字典 | DELETE | `/api/system/dicts/data/{id}` | 删除字典数据 | `system:dict:write` |
-| 文件 | GET | `/api/system/files/page` | 分页查询文件 | `system:file:read` |
-| 文件 | GET | `/api/system/files/{id}/download` | 下载文件（二进制流） | `system:file:read` |
-| 文件 | POST | `/api/system/files` | 上传文件（multipart） | `system:file:write` |
-| 文件 | DELETE | `/api/system/files/{id}` | 删除文件 | `system:file:write` |
-| 日志 | GET | `/api/system/logs/page` | 分页查询操作日志 | `system:log:read` |
-| 日志 | GET | `/api/system/logs/login/page` | 分页查询登录日志 | `system:log:read` |
-| 在线用户 | GET | `/api/system/online/page` | 分页查询在线用户 | 角色 `admin` |
-| 在线用户 | DELETE | `/api/system/online/tokens` | 按会话踢下线 | 角色 `admin` |
-| 在线用户 | DELETE | `/api/system/online/users/{userId}` | 按用户踢下线全部会话 | 角色 `admin` |
+| 用户 | GET | `/api/system/users/page` | 分页查询用户 | `admin` |
+| 用户 | GET | `/api/system/users/{id}` | 用户详情 | `admin` |
+| 用户 | POST | `/api/system/users` | 创建用户 | `admin` |
+| 用户 | PUT | `/api/system/users/{id}` | 修改用户资料 | `admin` |
+| 用户 | PUT | `/api/system/users/{id}/status` | 启用/禁用用户 | `admin` |
+| 用户 | DELETE | `/api/system/users/{id}` | 删除用户 | `admin` |
+| 角色 | GET | `/api/system/roles/page` | 分页查询角色 | `admin` |
+| 角色 | GET | `/api/system/roles/{id}` | 角色详情 | `admin` |
+| 角色 | POST | `/api/system/roles` | 创建角色 | `admin` |
+| 角色 | PUT | `/api/system/roles/{id}` | 修改角色 | `admin` |
+| 角色 | DELETE | `/api/system/roles/{id}` | 删除角色（内置角色禁止） | `admin` |
+| 角色 | PUT | `/api/system/roles/users/{userId}` | 给用户授角色（全量覆盖） | `admin` |
+| 字典 | GET | `/api/system/dicts/types/page` | 分页查询字典类型 | `admin` 或 `user` |
+| 字典 | POST | `/api/system/dicts/types` | 创建字典类型 | `admin` |
+| 字典 | PUT | `/api/system/dicts/types/{id}` | 修改字典类型 | `admin` |
+| 字典 | DELETE | `/api/system/dicts/types/{id}` | 删除字典类型（级联删数据） | `admin` |
+| 字典 | GET | `/api/system/dicts/data?typeKey=` | 查询启用字典数据（业务表单下拉用） | `admin` 或 `user` |
+| 字典 | GET | `/api/system/dicts/data/all?typeKey=` | 查询全部字典数据（管理端页面用） | `admin` 或 `user` |
+| 字典 | POST | `/api/system/dicts/data` | 创建字典数据 | `admin` |
+| 字典 | PUT | `/api/system/dicts/data/{id}` | 修改字典数据 | `admin` |
+| 字典 | DELETE | `/api/system/dicts/data/{id}` | 删除字典数据 | `admin` |
+| 文件 | GET | `/api/system/files/page` | 分页查询文件 | `admin` 或 `user` |
+| 文件 | GET | `/api/system/files/{id}/download` | 下载文件（二进制流） | `admin` 或 `user` |
+| 文件 | POST | `/api/system/files` | 上传文件（multipart） | `admin` 或 `user` |
+| 文件 | DELETE | `/api/system/files/{id}` | 删除文件 | `admin` 或 `user` |
+| 日志 | GET | `/api/system/logs/page` | 分页查询操作日志 | `admin` |
+| 日志 | GET | `/api/system/logs/login/page` | 分页查询登录日志 | `admin` |
+| 在线用户 | GET | `/api/system/online/page` | 分页查询在线用户 | `admin` |
+| 在线用户 | DELETE | `/api/system/online/tokens` | 按会话踢下线 | `admin` |
+| 在线用户 | DELETE | `/api/system/online/users/{userId}` | 按用户踢下线全部会话 | `admin` |
 
 ---
 
-## 附：后端权限点全集（种子数据，来自 `V2__init_rbac.sql`）
+## 附：内置角色访问矩阵
 
-| 权限点 | 名称 | admin 默认拥有 | user 默认拥有 |
-|---|---|:---:|:---:|
-| `system:user:read` | 用户查询 | ✅ | ❌ |
-| `system:user:write` | 用户管理 | ✅ | ❌ |
-| `system:role:read` | 角色查询 | ✅ | ❌ |
-| `system:role:write` | 角色管理 | ✅ | ❌ |
-| `system:dict:read` | 字典查询 | ✅ | ✅ |
-| `system:dict:write` | 字典管理 | ✅ | ❌ |
-| `system:file:read` | 文件查询/下载 | ✅ | ✅ |
-| `system:file:write` | 文件上传/删除 | ✅ | ✅ |
-| `system:log:read` | 操作日志查询 | ✅ | ❌ |
+| 模块 | admin | user |
+|---|:---:|:---:|
+| 用户管理 | 可访问 | 不可访问 |
+| 角色管理 | 可访问 | 不可访问 |
+| 字典查询 | 可访问 | 可访问 |
+| 字典写操作 | 可访问 | 不可访问 |
+| 文件管理 | 可访问 | 可访问 |
+| 日志管理 | 可访问 | 不可访问 |
+| 在线用户 | 可访问 | 不可访问 |
 
-> 注：在线用户模块没有独立权限点，走的是角色鉴权（要求 `admin`），与本表的权限点体系是两套并行的鉴权维度。角色可以在角色管理页面自由创建并分配任意权限点组合，本表仅为初始种子数据，实际权限分配以角色详情接口返回为准。
+> 自定义角色只有在后端 Controller 显式声明后才具备对应接口的访问能力。

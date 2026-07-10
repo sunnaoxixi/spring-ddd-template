@@ -8,7 +8,7 @@ import com.sunnao.spring.ddd.template.domain.system.role.model.param.*;
 /**
  * 角色领域服务接口（写模式）
  * <p>
- * 封装角色领域核心业务逻辑：角色 CRUD、分配权限、给用户授角色。
+ * 封装角色领域核心业务逻辑：角色 CRUD、给用户授角色。
  */
 public interface RoleDomainService extends DomainService {
 
@@ -35,14 +35,6 @@ public interface RoleDomainService extends DomainService {
      * @return 操作结果
      */
     ResultDO<Void> deleteRole(DeleteRoleParam param);
-
-    /**
-     * 给角色分配权限（全量覆盖）
-     *
-     * @param param 分配参数
-     * @return 操作结果
-     */
-    ResultDO<Void> assignPermissions(AssignPermissionParam param);
 
     /**
      * 给用户授予角色（全量覆盖）

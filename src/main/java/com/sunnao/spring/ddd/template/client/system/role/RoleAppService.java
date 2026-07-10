@@ -36,14 +36,6 @@ public interface RoleAppService extends ApplicationCmdService {
     ResultDO<DeleteRoleResponseDTO> deleteRole(DeleteRoleRequestDTO requestDTO);
 
     /**
-     * 给角色分配权限（全量覆盖）
-     *
-     * @param requestDTO 请求参数
-     * @return 分配结果
-     */
-    ResultDO<AssignPermissionResponseDTO> assignPermissions(AssignPermissionRequestDTO requestDTO);
-
-    /**
      * 给用户授予角色（全量覆盖）
      *
      * @param requestDTO 请求参数
