@@ -73,7 +73,7 @@
 | `FILE_NOT_FOUND` | 文件不存在 | —— |
 | `FILE_EMPTY` | 文件内容不能为空 | 上传空文件 |
 | `FILE_TOO_LARGE` | 文件大小超出限制 | 上传文件超过 10MB，建议前端上传前预校验 |
-| `FILE_READ_ERROR` / `FILE_STORE_ERROR` / `FILE_DELETE_ERROR` / `FILE_PATH_INVALID` | 文件读写异常 | —— |
+| `FILE_READ_ERROR` / `FILE_STORE_ERROR` / `FILE_DELETE_ERROR` | 文件读写异常 | —— |
 
 ---
 

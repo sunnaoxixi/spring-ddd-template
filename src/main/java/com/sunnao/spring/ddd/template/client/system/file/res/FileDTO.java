@@ -42,11 +42,6 @@ public class FileDTO extends BaseDto {
     private String contentType;
 
     /**
-     * 存储类型：local-本地磁盘
-     */
-    private String storageType;
-
-    /**
      * 上传人ID
      */
     private Long uploadBy;

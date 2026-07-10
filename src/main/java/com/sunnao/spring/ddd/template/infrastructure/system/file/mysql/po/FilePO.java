@@ -47,11 +47,6 @@ public class FilePO extends BasePO {
     private String contentType;
 
     /**
-     * 存储类型：local-本地磁盘
-     */
-    private String storageType;
-
-    /**
      * 逻辑删除：0-正常，1-已删除
      */
     @Column(isLogicDelete = true)

@@ -34,11 +34,6 @@ public class CreateFileParam extends BaseParam {
     private String contentType;
 
     /**
-     * 存储类型标识（如 local）
-     */
-    private String storageType;
-
-    /**
      * 操作人ID（上传人）
      */
     private Long operatorId;

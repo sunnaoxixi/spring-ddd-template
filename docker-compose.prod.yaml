@@ -8,8 +8,6 @@ services:
       - .env.prod
     ports:
       - "8080:8080"
-    volumes:
-      - app-files:/app/data/files
     depends_on:
       postgres:
         condition: service_healthy
@@ -55,5 +53,3 @@ volumes:
     name: spring-ddd-template-postgres-data
   redis-data:
     name: spring-ddd-template-redis-data
-  app-files:
-    name: spring-ddd-template-app-files

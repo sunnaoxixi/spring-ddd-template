@@ -27,14 +27,12 @@ public interface FileAssembler {
     /**
      * 上传 RequestDTO + 存储结果转领域 Param（操作人由应用层从当前用户上下文获取）
      */
-    default CreateFileParam toCreateParam(UploadFileRequestDTO requestDTO, String path,
-                                          String storageType, Long operatorId) {
+    default CreateFileParam toCreateParam(UploadFileRequestDTO requestDTO, String path, Long operatorId) {
         CreateFileParam param = new CreateFileParam();
         param.setOriginalName(requestDTO.getOriginalName());
         param.setPath(path);
         param.setSize((long) requestDTO.getContent().length);
         param.setContentType(requestDTO.getContentType());
-        param.setStorageType(storageType);
         param.setOperatorId(operatorId);
         return param;
     }
@@ -98,9 +96,6 @@ public interface FileAssembler {
         dto.setOriginalName(entity.getOriginalName());
         dto.setSize(entity.getSize());
         dto.setContentType(entity.getContentType());
-        if (entity.getStorageType() != null) {
-            dto.setStorageType(entity.getStorageType().getCode());
-        }
         dto.setUploadBy(entity.getCreateBy());
         dto.setCreateAt(entity.getCreateAt());
         return dto;

@@ -3,10 +3,8 @@ package com.sunnao.spring.ddd.template.infrastructure.system.file.converter;
 import com.sunnao.spring.ddd.template.domain.system.file.model.aggregate.FileAggregate;
 import com.sunnao.spring.ddd.template.domain.system.file.model.entity.FileEntity;
 import com.sunnao.spring.ddd.template.infrastructure.system.file.mysql.po.FilePO;
-import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,15 +17,13 @@ import java.util.List;
 public interface FileConverter {
 
     /**
-     * PO 转换为 FileEntity（枚举转换：数据库 String → 领域枚举）
+     * PO 转换为 FileEntity
      */
-    @Mapping(target = "storageType", source = "storageType", qualifiedByName = "strToFileStorageType")
     FileEntity toEntity(FilePO po);
 
     /**
-     * FileEntity 转换为 PO（枚举转换：领域枚举 → 数据库 String）
+     * FileEntity 转换为 PO
      */
-    @Mapping(target = "storageType", source = "storageType", qualifiedByName = "fileStorageTypeToStr")
     @Mapping(target = "deleted", ignore = true)
     FilePO toFilePO(FileEntity entity);
 
@@ -61,23 +57,5 @@ public interface FileConverter {
             return Collections.emptyList();
         }
         return poList.stream().map(this::toAggregate).toList();
-    }
-
-    // ========== 枚举转换辅助方法 ==========
-
-    /**
-     * 数据库 String → 领域枚举
-     */
-    @Named("strToFileStorageType")
-    default FileStorageTypeEnum strToFileStorageType(String code) {
-        return FileStorageTypeEnum.getByCode(code);
-    }
-
-    /**
-     * 领域枚举 → 数据库 String
-     */
-    @Named("fileStorageTypeToStr")
-    default String fileStorageTypeToStr(FileStorageTypeEnum storageType) {
-        return storageType == null ? null : storageType.getCode();
     }
 }

@@ -12,7 +12,7 @@
 | PostgreSQL        | 17（数据库，docker-compose 默认镜像）                                      |
 | Redis             | 7（会话 / 分布式锁 / 字典缓存 / 登录失败限制）                                  |
 | Sa-Token          | 1.45.0，认证鉴权（token 存 Redis，使用 `@SaCheckRole` 按角色鉴权）              |
-| Flyway            | 数据库迁移（`db/migration/V1~V7`）                                    |
+| Flyway            | 数据库迁移（`db/migration/V1~V8`）                                    |
 | springdoc-openapi | 3.0.3，API 文档（`/swagger-ui.html`）                             |
 | AWS SDK S3        | 2.31.63，S3 兼容对象存储                                            |
 | Lombok / Hutool / MapStruct | 工具库 / 对象转换                                            |
@@ -28,7 +28,7 @@ adaptor(input) → application → domain → repository 接口（infrastructure
 
 | 层              | 包路径                                                  | 职责                                                                  |
 |----------------|------------------------------------------------------|---------------------------------------------------------------------|
-| adaptor        | `adaptor/{业务}/input`、`adaptor/{业务}/output`           | Controller 接收请求；Output Adaptor 实现应用层定义的外部服务接口（如 `LocalFileStorage`） |
+| adaptor        | `adaptor/{业务}/input`、`adaptor/{业务}/output`           | Controller 接收请求；Output Adaptor 实现应用层定义的外部服务接口（如 `S3FileStorage`）    |
 | application    | `application/{业务}/scenario`、`assembler`              | 场景编排、DTO ↔ 领域对象转换，不写业务规则                                            |
 | client         | `client/{业务}/req`、`res`、`model`、`enums`              | 对外接口定义与自包含 DTO（禁止依赖 model 层）                                        |
 | domain         | `domain/{业务}/model`、`service`、`repository`           | 聚合根/实体承载业务逻辑，领域服务编排"锁 → 聚合根 → 持久化"，仓储只定义接口                          |
@@ -65,10 +65,12 @@ adaptor(input) → application → domain → repository 接口（infrastructure
 # 1. 复制本地环境变量模板（macOS / Linux）
 cp .env.example .env
 
-# 2. 启动本地依赖（PostgreSQL 17 + Redis 7）
+# 2. 编辑 .env，填写 S3_ENDPOINT、S3_ACCESS_KEY、S3_SECRET_KEY、S3_BUCKET 等必填配置
+
+# 3. 启动本地依赖（PostgreSQL 17 + Redis 7）
 docker compose up -d
 
-# 3. 启动应用（默认 dev profile，Flyway 自动建表并写入种子数据）
+# 4. 启动应用（默认 dev profile，Flyway 自动建表并写入种子数据）
 ./mvnw spring-boot:run            # Linux / macOS
 ```
 
@@ -82,7 +84,7 @@ Windows 可先执行 `copy .env.example .env`，再用 `.\mvnw.cmd spring-boot:r
 
 | 环境      | 文件                                         | 说明                                                                                                |
 |---------|--------------------------------------------|---------------------------------------------------------------------------------------------------|
-| dev（默认） | `application.yaml` + `.env`                | `spring.profiles.active` 默认 `dev`；`.env.example` 提供本地 PostgreSQL/Redis 默认值，配合 docker-compose 使用 |
+| dev（默认） | `application.yaml` + `.env`                | `spring.profiles.active` 默认 `dev`；`.env.example` 提供本地 PostgreSQL/Redis 默认值，S3 连接信息需自行填写 |
 | prod    | `application.yaml` + `application-prod.yaml` | 连接信息走环境变量（`DB_HOST`、`DB_PORT`、`DB_NAME`、`DB_USERNAME`、`DB_PASSWORD`、`REDIS_HOST` 等）；`application-prod.yaml` 关闭 OpenAPI/Swagger |
 | test    | `src/test/resources/application-test.yaml` | 集成测试用，走 `TEST_PG_URL`、`TEST_REDIS_HOST` 等环境变量；缺失时相关集成测试自动跳过 |
 
@@ -95,21 +97,18 @@ Windows 可先执行 `copy .env.example .env`，再用 `.\mvnw.cmd spring-boot:r
 | 角色 role       | `/api/system/roles` | 角色 CRUD、给用户授角色；仅 `admin` 角色可访问，`StpInterfaceImpl` 从角色表读取用户角色 |
 | 字典 dict       | `/api/system/dicts` | 类型/数据 CRUD、按 typeKey 查询启用数据；写操作仅 `admin`，查询允许 `admin` 或 `user`，查询走 Redis 缓存 |
 | 系统日志 log     | `/api/system/logs`  | 操作日志和登录日志分页查询；仅 `admin` 角色可访问，操作日志和登录日志均异步落库 |
-| 文件 file       | `/api/system/files` | multipart 上传、下载、删除、分页查询；允许 `admin` 或 `user` 角色访问，支持本地磁盘 / S3 双实现 |
+| 文件 file       | `/api/system/files` | multipart 上传、下载、删除、分页查询；允许 `admin` 或 `user` 角色访问，仅支持配置的 S3 兼容对象存储 |
 | 在线用户 online  | `/api/system/online` | 在线会话分页查询、按 token 踢下线、按用户踢全部会话；按 `admin` 角色鉴权 |
 
-数据库迁移脚本：`src/main/resources/db/migration/`（V1 用户、V2 角色关系、V3 操作日志、V4 字典、V5 文件、V6 登录日志、V7 移除权限码表）。
+数据库迁移脚本：`src/main/resources/db/migration/`（V1 用户、V2 角色关系、V3 操作日志、V4 字典、V5 文件、V6 登录日志、V7 移除权限码表、V8 移除文件存储类型字段）。
 
 ### 文件存储
 
-`app.file.storage-type` 切换存储实现（均实现 application 层 `FileStorage` 接口，`@ConditionalOnProperty` 条件装配）：
+文件上传、下载和删除统一通过 `S3FileStorage` 完成。该实现是 application 层 `FileStorage` 接口的唯一 Output Adaptor，
+使用 AWS SDK v2 通用 S3 协议客户端，兼容阿里云 OSS、腾讯云 COS、MinIO、七牛云 Kodo 等对象存储。
 
-| 实现                 | 配置值    | 说明                                                                         |
-|--------------------|--------|----------------------------------------------------------------------------|
-| `LocalFileStorage` | `local`（默认） | 本地磁盘，根目录 `app.file.local.base-path`                                        |
-| `S3FileStorage`    | `s3`   | AWS SDK v2 通用 S3 协议客户端，兼容阿里云 OSS、腾讯云 COS、MinIO、七牛云 Kodo 等对象存储 |
-
-S3 连接配置走环境变量（`app.file.s3.*`，密钥不落盘）：
+S3 连接配置走环境变量（`app.file.s3.*`，密钥不落盘）。`endpoint`、`region`、访问密钥和 `bucket` 均为必填项，
+任一配置缺失时应用启动失败：
 
 | 环境变量                  | 说明                            | 阿里云 OSS 示例                              | 腾讯云 COS 示例                                | MinIO 示例               |
 |-----------------------|-------------------------------|----------------------------------------|------------------------------------------|------------------------|
@@ -120,7 +119,9 @@ S3 连接配置走环境变量（`app.file.s3.*`，密钥不落盘）：
 | `S3_BUCKET`           | 存储桶（需预先创建）                    | —                                      | —                                         | —                      |
 | `S3_PATH_STYLE_ACCESS` | 路径风格访问                        | `false`（虚拟主机风格）                        | `false`（虚拟主机风格）                          | `true`                 |
 
-上传时存储类型随元数据落库（`sys_file.storage_type`）；切换存储实现后，存量文件的下载/删除需保证原存储仍可访问（或自行迁移物理文件）。
+文件元数据仅保存 S3 对象 key，不再保存或切换存储类型。
+
+已有环境升级前，需先将历史本地文件按 `sys_file.path` 的原值作为对象 key 上传到配置的 S3 存储桶，再部署应用并执行 V8 迁移。
 
 ## 横切能力
 
@@ -138,7 +139,7 @@ S3 连接配置走环境变量（`app.file.s3.*`，密钥不落盘）：
 ./mvnw test
 ```
 
-- **单元测试**：`UserAggregateTest`（聚合根业务规则）、`UserDomainServiceImplTest`（Mockito mock 仓储，验证写模式流程）、`S3FileStorageTest`（mock S3 client，验证 S3 存储适配器）——无需外部依赖。
+- **单元测试**：`UserAggregateTest`、`FileAggregateTest`（聚合根业务规则）、`UserDomainServiceImplTest`（Mockito mock 仓储，验证写模式流程）、`S3FileStorageTest`（mock S3 client，验证 S3 存储适配器）——无需外部依赖。
 - **集成测试**：`AuthLoginIntegrationTest`、`AuthRegisterIntegrationTest`、`UserCrudIntegrationTest`、`SpringDddTemplateApplicationTests`——需要真实
   PostgreSQL / Redis，通过环境变量注入连接信息，**缺失时自动跳过**：
 

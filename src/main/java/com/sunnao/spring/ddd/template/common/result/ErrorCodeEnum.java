@@ -179,11 +179,6 @@ public enum ErrorCodeEnum {
      * 文件删除失败
      */
     FILE_DELETE_ERROR("FILE_DELETE_ERROR", "文件删除失败"),
-
-    /**
-     * 文件路径不合法
-     */
-    FILE_PATH_INVALID("FILE_PATH_INVALID", "文件路径不合法"),
     ;
 
     /**

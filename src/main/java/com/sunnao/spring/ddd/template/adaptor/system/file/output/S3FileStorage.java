@@ -4,12 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import com.sunnao.spring.ddd.template.application.system.file.FileStorage;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
-import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -33,12 +31,10 @@ import java.net.URI;
  * 基于 AWS SDK v2 通用 S3 协议客户端，通过 endpoint 切换服务商，兼容：
  * 阿里云 OSS、腾讯云 COS、MinIO、七牛云 Kodo 等（参考 yudao S3FileClient 方案）。
  * 连接配置走 app.file.s3.*（endpoint/region/access-key/secret-key/bucket/path-style-access）；
- * 对象 key 格式与本地存储一致：yyyy/MM/dd/{uuid}.{ext}。
- * 通过 app.file.storage-type=s3 启用本实现（默认 local-LocalFileStorage）。
+ * 对象 key 格式：yyyy/MM/dd/{uuid}.{ext}。
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(name = "app.file.storage-type", havingValue = "s3")
 public class S3FileStorage implements FileStorage {
 
     /**
@@ -78,7 +74,7 @@ public class S3FileStorage implements FileStorage {
     private boolean pathStyleAccess;
 
     /**
-     * 单文件大小上限（与 LocalFileStorage 共用 app.file.max-size 配置）
+     * 单文件大小上限
      */
     @Value("${app.file.max-size:10MB}")
     private DataSize maxSize;
@@ -133,7 +129,7 @@ public class S3FileStorage implements FileStorage {
                         "文件大小超过上限（" + maxSize + "）");
             }
 
-            // 生成对象 key：yyyy/MM/dd/{uuid}.{ext}（与本地存储路径规则一致）
+            // 生成对象 key：yyyy/MM/dd/{uuid}.{ext}
             String key = StoragePathGenerator.generate(originalName);
 
             PutObjectRequest request = PutObjectRequest.builder()
@@ -182,8 +178,4 @@ public class S3FileStorage implements FileStorage {
         }
     }
 
-    @Override
-    public String getStorageType() {
-        return FileStorageTypeEnum.S3.getCode();
-    }
 }

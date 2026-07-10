@@ -53,8 +53,7 @@ public class FileAppServiceImpl implements FileAppService {
 
             // 3. 调用领域服务登记元数据（操作人取自当前登录用户）
             ResultDO<FileAggregate> domainResult = fileDomainService.createFile(
-                    fileAssembler.toCreateParam(requestDTO, path,
-                            fileStorage.getStorageType(), CurrentUserContext.getUserId()));
+                    fileAssembler.toCreateParam(requestDTO, path, CurrentUserContext.getUserId()));
             if (!domainResult.isSuccess()) {
                 // 元数据登记失败，回滚物理文件（尽力而为，失败仅记录日志）
                 fileStorage.delete(path);

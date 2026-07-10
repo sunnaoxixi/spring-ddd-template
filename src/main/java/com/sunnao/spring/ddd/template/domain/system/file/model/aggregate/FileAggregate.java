@@ -6,7 +6,6 @@ import com.sunnao.spring.ddd.template.common.model.BaseAggregate;
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.domain.system.file.model.entity.FileEntity;
 import com.sunnao.spring.ddd.template.domain.system.file.model.param.CreateFileParam;
-import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -45,19 +44,11 @@ public class FileAggregate extends BaseAggregate {
         if (param.getSize() == null || param.getSize() <= 0) {
             throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "文件大小必须大于0");
         }
-        if (param.getStorageType() == null) {
-            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "存储类型不能为空");
-        }
-
         FileEntity entity = new FileEntity();
         entity.setOriginalName(param.getOriginalName());
         entity.setPath(param.getPath());
         entity.setSize(param.getSize());
         entity.setContentType(param.getContentType());
-        entity.setStorageType(FileStorageTypeEnum.getByCode(param.getStorageType()));
-        if (entity.getStorageType() == null) {
-            throw new AggregateException(ErrorCodeEnum.PARAM_ERROR, "存储类型不合法");
-        }
         entity.setCreateBy(param.getOperatorId());
         entity.setUpdateBy(param.getOperatorId());
 

@@ -167,7 +167,7 @@ docker compose --env-file .env.prod -f docker-compose.prod.yaml stop
 docker compose --env-file .env.prod -f docker-compose.prod.yaml down
 ```
 
-删除服务和数据卷会清空数据库、Redis 和本地文件，请谨慎执行：
+删除服务和数据卷会清空数据库和 Redis，请谨慎执行：
 
 ```bash
 docker compose --env-file .env.prod -f docker-compose.prod.yaml down -v
@@ -189,15 +189,6 @@ docker compose --env-file .env.prod -f docker-compose.prod.yaml exec -T postgres
   sh -c 'psql -U "$DB_USERNAME" "$DB_NAME"' < backup.sql
 ```
 
-备份应用本地上传文件：
-
-```bash
-docker run --rm \
-  -v spring-ddd-template-app-files:/data \
-  -v "$PWD":/backup \
-  alpine tar czf /backup/app-files.tar.gz -C /data .
-```
-
 ## 前端网关和 HTTPS
 
 后端 Compose 不管理 `80/443`。生产 HTTPS 应由前端项目、统一 Nginx、云负载均衡或 CDN 承担。
@@ -215,5 +206,5 @@ docker run --rm \
 - 如果 `8080` 不需要公网直连，建议在云服务器安全组或系统防火墙中限制来源。
 - `DB_PASSWORD` 和 `REDIS_PASSWORD` 必须使用强密码。
 - 首次部署后立即修改默认管理员密码。
-- 定期备份 PostgreSQL 数据卷和 `app-files` 文件卷。
+- 定期备份 PostgreSQL 数据卷，并按所用对象存储服务配置 S3 数据保护策略。
 - 如果应用需要识别真实客户端 IP，确认前端 Nginx 或网关是唯一可信入口后，再评估是否开启 `app.security.trust-x-forwarded-for`。

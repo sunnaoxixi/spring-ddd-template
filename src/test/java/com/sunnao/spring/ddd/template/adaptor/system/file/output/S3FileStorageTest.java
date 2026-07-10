@@ -2,7 +2,6 @@ package com.sunnao.spring.ddd.template.adaptor.system.file.output;
 
 import com.sunnao.spring.ddd.template.common.result.ErrorCodeEnum;
 import com.sunnao.spring.ddd.template.common.result.ResultDO;
-import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -161,12 +160,6 @@ class S3FileStorageTest {
 
         assertFalse(result.isSuccess());
         assertEquals(ErrorCodeEnum.FILE_DELETE_ERROR.getCode(), result.getCode());
-    }
-
-    @Test
-    @DisplayName("存储类型标识为 s3")
-    void getStorageType() {
-        assertEquals(FileStorageTypeEnum.S3.getCode(), s3FileStorage.getStorageType());
     }
 
     @Test

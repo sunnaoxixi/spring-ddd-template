@@ -1,7 +1,6 @@
 package com.sunnao.spring.ddd.template.domain.system.file.model.entity;
 
 import com.sunnao.spring.ddd.template.common.model.BaseEntity;
-import com.sunnao.spring.ddd.template.model.system.file.FileStorageTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,8 +34,4 @@ public class FileEntity extends BaseEntity {
      */
     private String contentType;
 
-    /**
-     * 存储类型
-     */
-    private FileStorageTypeEnum storageType;
 }
